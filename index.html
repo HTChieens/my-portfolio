@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoàng Thanh Chiến | Backend & AI Engineer</title>
+  <meta name="description" content="Portfolio của Hoàng Thanh Chiến - Backend & AI Engineer. Chuyên xây dựng các ứng dụng thông minh, hệ thống RAG và Multi-Agent với FastAPI, LangGraph và Python.">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Decorative Canvas & Patterns -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <div class="container">
+      <a href="#" class="logo">
+        Chiến<span class="logo-dot"></span>
+      </a>
+      
+      <nav class="nav-menu" id="nav-menu">
+        <a href="#hero" class="nav-link active">Trang chủ</a>
+        <a href="#services" class="nav-link">Dịch vụ</a>
+        <a href="#projects" class="nav-link">Dự án</a>
+        <a href="#skills" class="nav-link">Kỹ năng</a>
+        <a href="#timeline" class="nav-link">Kinh nghiệm</a>
+        <a href="#contact" class="nav-link">Liên hệ</a>
+      </nav>
+
+      <div class="nav-toggle" id="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content reveal">
+          <div class="hero-badge">
+            <span class="hero-badge-pulse"></span>
+            Sẵn sàng làm việc (Intern / Fresher)
+          </div>
+          <h1 class="hero-title">
+            Hi, Tôi là <span class="text-gradient">Thanh Chiến</span><br>
+            Backend & AI Engineer
+          </h1>
+          <p class="hero-subtitle">
+            Chuyên thiết kế và phát triển lõi xử lý thông minh cho các ứng dụng hiện đại. 
+            Tập trung tối ưu hóa hệ thống, phát triển các giải pháp RAG và quy trình tự động hóa Multi-Agent.
+          </p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary">
+              Liên hệ với tôi <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#projects" class="btn btn-secondary">
+              Xem các dự án
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <!-- Background rotating rings -->
+          <div class="visual-ring visual-ring-1"></div>
+          <div class="visual-ring visual-ring-2"></div>
+          
+          <!-- Cyber avatar container -->
+          <div class="hero-avatar-wrapper">
+            <div class="hero-avatar-inner">
+              <span>TC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <span class="stat-number text-gradient">01+</span>
+          <span class="stat-label">Năm Kinh Nghiệm</span>
+        </div>
+        <div class="stat-item reveal" style="transition-delay: 0.1s;">
+          <span class="stat-number text-gradient-cyan">03+</span>
+          <span class="stat-label">Dự Án AI/Backend</span>
+        </div>
+        <div class="stat-item reveal" style="transition-delay: 0.2s;">
+          <span class="stat-number text-gradient">99%</span>
+          <span class="stat-label">Thời Gian Hoạt Động API</span>
+        </div>
+        <div class="stat-item reveal" style="transition-delay: 0.3s;">
+          <span class="stat-number text-gradient-cyan">100%</span>
+          <span class="stat-label">Đam Mê Công Nghệ</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES SECTION -->
+  <section class="section-padding" id="services">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-tag">Thế mạnh của tôi</span>
+        <h2 class="section-title">Dịch vụ & Giải pháp</h2>
+        <p class="section-desc">Tôi xây dựng các thành phần cốt lõi mạnh mẽ và tích hợp AI để tối ưu hóa hiệu suất ứng dụng.</p>
+      </div>
+
+      <div class="services-grid">
+        <!-- Service 1 -->
+        <div class="service-card glass-card reveal">
+          <div class="service-icon">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <h3 class="service-title">Hệ Thống AI & RAG</h3>
+          <p class="service-desc">
+            Xây dựng các trợ lý AI thông minh bằng phương pháp Retrieval-Augmented Generation (RAG). 
+            Giúp ứng dụng truy xuất dữ liệu nội bộ chính xác và phản hồi tự nhiên.
+          </p>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="service-card glass-card reveal" style="transition-delay: 0.1s;">
+          <div class="service-icon">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <h3 class="service-title">Multi-Agent Workflow</h3>
+          <p class="service-desc">
+            Thiết kế và điều phối mạng lưới các tác nhân tự động (AI Agents) sử dụng LangGraph. 
+            Giải quyết các tác vụ phức tạp bằng cách chia nhỏ cho các agent chuyên biệt.
+          </p>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="service-card glass-card reveal" style="transition-delay: 0.2s;">
+          <div class="service-icon">
+            <i class="fa-solid fa-server"></i>
+          </div>
+          <h3 class="service-title">Backend API Development</h3>
+          <p class="service-desc">
+            Xây dựng API hiệu năng cao, bảo mật và dễ mở rộng với FastAPI và Python. 
+            Kết nối cơ sở dữ liệu mượt mà, xử lý bất đồng bộ (async) tối ưu.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS SECTION -->
+  <section class="section-padding" id="projects">
+    <div class="container">
+      <div>
+        <span class="section-tag">Sản phẩm thực tế</span>
+        <h2 class="section-title">Các dự án tiêu biểu</h2>
+        <p class="section-desc">Các sản phẩm AI và Backend được thiết kế để giải quyết các bài toán thực tiễn.</p>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <div class="project-card glass-card reveal">
+          <div class="project-media">
+            <div class="project-media-grid"></div>
+            <div class="project-media-asset">
+              <i class="fa-solid fa-users-gear text-gradient"></i>
+            </div>
+          </div>
+          <div class="project-content">
+            <div class="project-tags">
+              <span class="project-tag">FastAPI</span>
+              <span class="project-tag">LangGraph</span>
+              <span class="project-tag">RAG</span>
+              <span class="project-tag">AI Agent</span>
+            </div>
+            <h3 class="project-title">HR HELPDESK</h3>
+            <p class="project-desc">
+              Trợ lý nhân sự thông minh giúp tự động trả lời các câu hỏi và chính sách cho nhân viên trong công ty. 
+              Sử dụng RAG để tra cứu dữ liệu quy chế nội bộ và LangGraph để xử lý luồng hội thoại phức tạp.
+            </p>
+            <a href="https://github.com/HTChieens" target="_blank" class="project-link">
+              Xem mã nguồn <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="project-card glass-card reveal" style="transition-delay: 0.1s;">
+          <div class="project-media">
+            <div class="project-media-grid"></div>
+            <div class="project-media-asset">
+              <i class="fa-solid fa-magnifying-glass-chart text-gradient-cyan"></i>
+            </div>
+          </div>
+          <div class="project-content">
+            <div class="project-tags">
+              <span class="project-tag">Python</span>
+              <span class="project-tag">Vector DB</span>
+              <span class="project-tag">FastAPI</span>
+              <span class="project-tag">Embeddings</span>
+            </div>
+            <h3 class="project-title">Semantic Code Search</h3>
+            <p class="project-desc">
+              Hệ thống tìm kiếm ngữ nghĩa mã nguồn hỗ trợ lập trình viên tra cứu thư viện nhanh chóng. 
+              Chuyển đổi dữ liệu code thành vector embeddings và tìm kiếm tương đồng với độ trễ cực thấp.
+            </p>
+            <a href="https://github.com/HTChieens" target="_blank" class="project-link">
+              Xem mã nguồn <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS SECTION -->
+  <section class="section-padding" id="skills">
+    <div class="container">
+      <div class="skills-wrapper">
+        <div class="skills-left reveal">
+          <span class="section-tag">Công cụ sử dụng</span>
+          <h2 class="section-title">Kỹ năng công nghệ</h2>
+          <p class="section-desc">
+            Stack công nghệ tập trung vào phát triển Backend hiện đại và tích hợp Trí tuệ nhân tạo. 
+            Tôi luôn không ngừng cập nhật các công nghệ AI mới để tối ưu hóa quy trình.
+          </p>
+        </div>
+
+        <div class="skills-right">
+          <div class="skills-grid">
+            <!-- Skill 1 -->
+            <div class="skill-card glass-card reveal">
+              <div class="skill-icon-name">
+                <i class="fa-brands fa-python"></i>
+                <span class="skill-name">Python</span>
+              </div>
+              <div class="skill-progress-bar">
+                <div class="skill-progress" data-progress="90%"></div>
+              </div>
+            </div>
+
+            <!-- Skill 2 -->
+            <div class="skill-card glass-card reveal" style="transition-delay: 0.1s;">
+              <div class="skill-icon-name">
+                <i class="fa-solid fa-bolt"></i>
+                <span class="skill-name">FastAPI</span>
+              </div>
+              <div class="skill-progress-bar">
+                <div class="skill-progress" data-progress="85%"></div>
+              </div>
+            </div>
+
+            <!-- Skill 3 -->
+            <div class="skill-card glass-card reveal" style="transition-delay: 0.2s;">
+              <div class="skill-icon-name">
+                <i class="fa-solid fa-brain"></i>
+                <span class="skill-name">RAG Systems</span>
+              </div>
+              <div class="skill-progress-bar">
+                <div class="skill-progress" data-progress="80%"></div>
+              </div>
+            </div>
+
+            <!-- Skill 4 -->
+            <div class="skill-card glass-card reveal" style="transition-delay: 0.3s;">
+              <div class="skill-icon-name">
+                <i class="fa-solid fa-network-wired"></i>
+                <span class="skill-name">LangGraph</span>
+              </div>
+              <div class="skill-progress-bar">
+                <div class="skill-progress" data-progress="75%"></div>
+              </div>
+            </div>
+
+            <!-- Skill 5 -->
+            <div class="skill-card glass-card reveal" style="transition-delay: 0.4s;">
+              <div class="skill-icon-name">
+                <i class="fa-solid fa-database"></i>
+                <span class="skill-name">Databases & Vector DB</span>
+              </div>
+              <div class="skill-progress-bar">
+                <div class="skill-progress" data-progress="75%"></div>
+              </div>
+            </div>
+
+            <!-- Skill 6 -->
+            <div class="skill-card glass-card reveal" style="transition-delay: 0.5s;">
+              <div class="skill-icon-name">
+                <i class="fa-brands fa-git-alt"></i>
+                <span class="skill-name">Git & Version Control</span>
+              </div>
+              <div class="skill-progress-bar">
+                <div class="skill-progress" data-progress="80%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE TIMELINE -->
+  <section class="section-padding" id="timeline">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-tag">Quá trình phát triển</span>
+        <h2 class="section-title">Hành trình học tập & Làm việc</h2>
+        <p class="section-desc">Những cột mốc quan trọng trong sự nghiệp nghiên cứu và phát triển phần mềm của tôi.</p>
+      </div>
+
+      <div class="timeline">
+        <!-- Item 1 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-date">2025 - Hiện tại</span>
+            <h3 class="timeline-title">Backend & AI Engineer</h3>
+            <span class="timeline-company">Intern / Fresher Developer</span>
+            <p class="timeline-desc">
+              Tập trung thiết kế các giải pháp AI Agents, tích hợp LangGraph xây dựng luồng hội thoại thông minh và các API xử lý RAG.
+              Nghiên cứu tối ưu hóa tốc độ phản hồi và độ chính xác của mô hình LLM trên FastAPI.
+            </p>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-date">2024 - 2025</span>
+            <h3 class="timeline-title">Python Developer & AI Researcher</h3>
+            <span class="timeline-company">Dự Án Cá Nhân & Nghiên Cứu</span>
+            <p class="timeline-desc">
+              Lập trình Python chuyên sâu, tiếp cận các hệ thống quản trị dữ liệu, xây dựng công cụ trích xuất thông tin tự động 
+              và triển khai các mô hình Machine Learning cơ bản.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="section-padding" id="contact">
+    <div class="container">
+      <div class="contact-wrapper">
+        <div class="contact-info reveal">
+          <div>
+            <span class="section-tag">Liên hệ</span>
+            <h2 class="section-title">Kết nối với tôi</h2>
+            <p class="section-desc">Tôi luôn sẵn sàng đón nhận các cơ hội thử thách mới. Hãy gửi tin nhắn cho tôi nếu bạn quan tâm!</p>
+          </div>
+
+          <div class="contact-details">
+            <!-- Email -->
+            <div class="contact-detail-item">
+              <div class="contact-detail-icon">
+                <i class="fa-solid fa-envelope"></i>
+              </div>
+              <div class="contact-detail-text">
+                <h4>Email</h4>
+                <p><a href="mailto:hoangthanhchien0720@gmail.com">hoangthanhchien0720@gmail.com</a></p>
+              </div>
+            </div>
+
+            <!-- GitHub -->
+            <div class="contact-detail-item">
+              <div class="contact-detail-icon">
+                <i class="fa-brands fa-github"></i>
+              </div>
+              <div class="contact-detail-text">
+                <h4>GitHub</h4>
+                <p><a href="https://github.com/HTChieens" target="_blank">github.com/HTChieens</a></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="social-links">
+            <a href="https://github.com/HTChieens" target="_blank" class="social-link">
+              <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="mailto:hoangthanhchien0720@gmail.com" class="social-link">
+              <i class="fa-solid fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-form-container reveal" style="transition-delay: 0.15s;">
+          <form class="contact-form glass-card" id="contact-form" action="#" method="POST">
+            <div class="form-group">
+              <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
+              <label for="name" class="form-label">Tên của bạn</label>
+            </div>
+            <div class="form-group">
+              <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
+              <label for="email" class="form-label">Địa chỉ email</label>
+            </div>
+            <div class="form-group">
+              <textarea id="message" name="message" class="form-input" placeholder=" " required></textarea>
+              <label for="message" class="form-label">Nội dung tin nhắn</label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              Gửi tin nhắn <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">
+        &copy; 2026 Hoàng Thanh Chiến. All rights reserved. Designed with premium AI Developer aesthetics.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
