@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Ngày 02 | Nhật Ký VinSmart Future</title>
+  <meta name="description" content="Chi tiết báo cáo Ngày 02 - Tái cấu trúc kiến trúc sản phẩm PAL & PAM từ góc nhìn bên ngoài của Hoàng Thanh Chiến tại VinSmart Future.">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Decorative Canvas & Patterns -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        Chiến<span class="logo-dot"></span>
+      </a>
+      
+      <nav class="nav-menu" id="nav-menu">
+        <a href="index.html#hero" class="nav-link">Trang chủ</a>
+        <a href="index.html#services" class="nav-link">Dịch vụ</a>
+        <a href="index.html#projects" class="nav-link">Dự án</a>
+        <a href="index.html#skills" class="nav-link">Kỹ năng</a>
+        <a href="index.html#timeline" class="nav-link">Kinh nghiệm</a>
+        <a href="vinsmart-log.html" class="nav-link active">Nhật ký VinSmart</a>
+        <a href="index.html#contact" class="nav-link">Liên hệ</a>
+      </nav>
+
+      <div class="nav-toggle" id="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- REPORT SECTION -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="log-header" style="text-align: left; max-width: 900px; margin: 0 auto;">
+        <a href="vinsmart-log.html" class="btn-back">
+          <i class="fa-solid fa-arrow-left"></i> Quay lại Nhật ký
+        </a>
+        <span class="section-tag" style="margin-top: 15px;">Bản thiết kế trực quan</span>
+        <h1 class="section-title text-gradient" style="margin-bottom: 12px; font-size: clamp(30px, 4vw, 40px);">
+          Ngày 02: Reconstruct Product Architecture (PAL & PAM)
+        </h1>
+        <p style="color: hsl(var(--text-muted)); font-size: 16px; margin-bottom: 40px; line-height: 1.6;">
+          Bản thiết kế trực quan tái dựng kiến trúc vận hành của PAM (Front-end Creative Studio) và PAL (Back-end AI Orchestrator) cùng luồng bàn giao dữ liệu (Hand-off Flow) và phân tích quyết định kiến trúc sản phẩm.
+        </p>
+
+        <!-- Main Card Wrapper -->
+        <div class="glass-card" style="padding: 40px; margin-bottom: 40px;">
+          
+          <!-- PART 1: VISUAL SYSTEM MAP & WORKFLOW -->
+          <div style="margin-bottom: 50px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">1</span>
+              PHẦN 1: VISUAL SYSTEM MAP & WORKFLOW (Bản đồ trực quan & Luồng xử lý)
+            </h2>
+
+            <!-- The Visual Canvas -->
+            <div style="background: rgba(0, 0, 0, 0.04); border: 1px solid var(--glass-border); padding: 30px; border-radius: 20px; position: relative; overflow-x: auto; margin-bottom: 30px;">
+              
+              <!-- Diagram Grid Wrapper -->
+              <div style="display: flex; justify-content: space-between; align-items: stretch; min-width: 800px; gap: 20px; position: relative;">
+                
+                <!-- 1. PAM Creative Studio Block -->
+                <div style="width: 32%; background: var(--glass-bg); border: 2px solid hsl(var(--color-primary)); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 15px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                  <div style="background: hsl(var(--color-primary)); color: #fff; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-palette"></i> PAM Creative Studio
+                  </div>
+                  
+                  <!-- Entities Stack -->
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <span style="font-size: 11px; text-transform: uppercase; color: hsl(var(--text-dim)); font-weight: 700; letter-spacing: 0.05em;">Core Objects / Interface</span>
+                    
+                    <!-- Brand -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px;">
+                      <i class="fa-solid fa-shield-halved" style="color: hsl(var(--text-primary));"></i>
+                      <div><strong>Brand:</strong> Guidelines, Styles, Tone</div>
+                    </div>
+                    
+                    <!-- Session -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px;">
+                      <i class="fa-solid fa-comments" style="color: hsl(var(--text-primary));"></i>
+                      <div><strong>Session:</strong> Context & Chat History</div>
+                    </div>
+                    
+                    <!-- Design Brief -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px; border-left: 3px solid hsl(var(--color-secondary));">
+                      <i class="fa-solid fa-file-signature" style="color: hsl(var(--color-secondary));"></i>
+                      <div><strong>Design Brief:</strong> Brief + <code>@logo</code> tag</div>
+                    </div>
+                    
+                    <!-- Artifact / Version -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px;">
+                      <i class="fa-solid fa-photo-film" style="color: hsl(var(--text-primary));"></i>
+                      <div><strong>Artifact:</strong> Result Image / Video</div>
+                    </div>
+                  </div>
+
+                  <!-- Role / JTBD -->
+                  <div style="border-top: 1px dashed var(--glass-border); padding-top: 12px; font-size: 12.5px;">
+                    <strong style="color: hsl(var(--text-dim)); display: block; margin-bottom: 4px;">User Roles:</strong>
+                    <span style="color: hsl(var(--text-primary)); font-weight: 600;">Marketer, Creative Manager (SSO)</span>
+                  </div>
+                </div>
+
+                <!-- 2. The Data Bridge / Flow Connectors -->
+                <div style="width: 32%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; position: relative;">
+                  
+                  <!-- Flow 1: PAM -> PAL (JSON brief payload) -->
+                  <div style="width: 100%; position: relative;">
+                    <div style="text-align: center; font-size: 10px; font-family: monospace; background: rgba(0,0,0,0.06); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--glass-border); color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: bold;">
+                      POST /api/v1/trigger
+                    </div>
+                    <!-- Animated Connection Line -->
+                    <div style="height: 4px; background: rgba(32, 65, 119, 0.1); border-radius: 2px; position: relative; overflow: hidden;">
+                      <div class="glow-flow-right" style="position: absolute; height: 100%; width: 40px; background: linear-gradient(90deg, transparent, hsl(var(--color-secondary)), transparent); animation: streamRight 2s linear infinite;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: hsl(var(--text-dim)); margin-top: 4px; font-weight: 600;">
+                      <span>PAM Brief</span>
+                      <span>&rarr; Webhook &rarr;</span>
+                      <span>PAL Start</span>
+                    </div>
+                  </div>
+
+                  <!-- JSON Payload Node Preview -->
+                  <div style="background: rgba(255, 255, 255, 0.15); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; width: 95%; font-family: monospace; font-size: 10.5px; color: hsl(var(--text-primary)); box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);">
+                    <div style="color: hsl(var(--color-secondary)); font-weight: 700; margin-bottom: 4px;">// Hand-off JSON</div>
+                    {<br>
+                    &nbsp;&nbsp;"brand_id": "VSF_03",<br>
+                    &nbsp;&nbsp;"brief": "Tạo banner...",<br>
+                    &nbsp;&nbsp;"tags": ["@logo"]<br>
+                    }
+                  </div>
+
+                  <!-- Flow 2: PAL -> PAM (Image URL Response) -->
+                  <div style="width: 100%; position: relative;">
+                    <!-- Animated Connection Line -->
+                    <div style="height: 4px; background: rgba(32, 65, 119, 0.1); border-radius: 2px; position: relative; overflow: hidden;">
+                      <div class="glow-flow-left" style="position: absolute; height: 100%; width: 40px; background: linear-gradient(90deg, transparent, hsl(var(--color-primary)), transparent); animation: streamLeft 2s linear infinite;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: hsl(var(--text-dim)); margin-top: 4px; font-weight: 600;">
+                      <span>Render V1</span>
+                      <span>&larr; Response &larr;</span>
+                      <span>PAL Output</span>
+                    </div>
+                    <div style="text-align: center; font-size: 10px; font-family: monospace; background: rgba(0,0,0,0.06); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--glass-border); color: hsl(var(--text-primary)); margin-top: 8px; font-weight: bold;">
+                      200 OK { "url": "..." }
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- 3. PAL AI Orchestrator Block -->
+                <div style="width: 32%; background: var(--glass-bg); border: 2px solid hsl(var(--color-secondary)); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 15px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                  <div style="background: hsl(var(--color-secondary)); color: #fff; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-gears"></i> PAL AI Orchestrator
+                  </div>
+                  
+                  <!-- Nodes Workflow -->
+                  <div style="display: flex; flex-direction: column; gap: 8px; position: relative;">
+                    <span style="font-size: 11px; text-transform: uppercase; color: hsl(var(--text-dim)); font-weight: 700; letter-spacing: 0.05em;">Workflow Pipeline Nodes</span>
+                    
+                    <!-- Webhook Node -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 12px; color: hsl(var(--text-primary)); display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fa-solid fa-cloud-arrow-down" style="color: hsl(var(--text-primary)); margin-right: 6px;"></i> Webhook Trigger</span>
+                      <span style="font-size: 9px; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 4px; font-weight: bold;">IN</span>
+                    </div>
+                    
+                    <!-- Arrow down -->
+                    <div style="text-align: center; line-height: 1; color: hsl(var(--text-dim)); margin: -2px 0;"><i class="fa-solid fa-arrow-down" style="font-size: 10px;"></i></div>
+
+                    <!-- Knowledge Node (RAG) -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 12px; color: hsl(var(--text-primary)); display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fa-solid fa-database" style="color: hsl(var(--text-primary)); margin-right: 6px;"></i> Brand RAG Node</span>
+                      <span style="font-size: 9px; background: rgba(251,191,36,0.2); color: hsl(var(--color-secondary)); padding: 2px 4px; border-radius: 4px; font-weight: bold;">RAG</span>
+                    </div>
+
+                    <!-- Arrow down -->
+                    <div style="text-align: center; line-height: 1; color: hsl(var(--text-dim)); margin: -2px 0;"><i class="fa-solid fa-arrow-down" style="font-size: 10px;"></i></div>
+
+                    <!-- Agent Node -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 12px; color: hsl(var(--text-primary)); display: flex; align-items: center; justify-content: space-between; border-left: 3px solid hsl(var(--color-primary));">
+                      <span><i class="fa-solid fa-robot" style="color: hsl(var(--color-primary)); margin-right: 6px;"></i> AI Agent Specialist</span>
+                      <span style="font-size: 9px; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 4px; font-weight: bold;">AGENT</span>
+                    </div>
+
+                    <!-- Arrow down -->
+                    <div style="text-align: center; line-height: 1; color: hsl(var(--text-dim)); margin: -2px 0;"><i class="fa-solid fa-arrow-down" style="font-size: 10px;"></i></div>
+
+                    <!-- Tool Node (Composio) -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 12px; color: hsl(var(--text-primary)); display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fa-solid fa-screwdriver-wrench" style="color: hsl(var(--text-primary)); margin-right: 6px;"></i> Midjourney / DALL-E</span>
+                      <span style="font-size: 9px; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 4px; font-weight: bold;">TOOL</span>
+                    </div>
+
+                    <!-- Arrow down -->
+                    <div style="text-align: center; line-height: 1; color: hsl(var(--text-dim)); margin: -2px 0;"><i class="fa-solid fa-arrow-down" style="font-size: 10px;"></i></div>
+
+                    <!-- Evaluator Node -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px; font-size: 12px; color: hsl(var(--text-primary)); display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fa-solid fa-clipboard-check" style="color: hsl(var(--text-primary)); margin-right: 6px;"></i> Evaluator Critic Node</span>
+                      <span style="font-size: 9px; background: rgba(16, 185, 129, 0.15); color: #047857; padding: 2px 4px; border-radius: 4px; font-weight: bold;">OUT</span>
+                    </div>
+                  </div>
+
+                  <!-- Role / JTBD -->
+                  <div style="border-top: 1px dashed var(--glass-border); padding-top: 12px; font-size: 12.5px;">
+                    <strong style="color: hsl(var(--text-dim)); display: block; margin-bottom: 4px;">User Roles:</strong>
+                    <span style="color: hsl(var(--text-primary)); font-weight: 600;">Workflow Builder, Admin</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Overlap description block -->
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px; font-size: 14px; line-height: 1.6;">
+              <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 6px;"><i class="fa-solid fa-circle-info"></i> Giải thích Luồng Bàn giao (Hand-off Flow):</strong>
+              PAM và PAL kết nối với nhau thông qua kiến trúc hướng sự kiện (Event-Driven):
+              <ol style="margin-left: 20px; margin-top: 8px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 6px;">
+                <li>Người dùng tại <strong>PAM</strong> khởi tạo Brief, tích hợp tệp đính kèm và tag tri thức bằng thẻ <code>@logo</code>.</li>
+                <li><strong>PAM</strong> đóng gói yêu cầu thành file JSON gửi trực tiếp đến <strong>PAL</strong> Webhook Endpoint.</li>
+                <li><strong>PAL</strong> phân rã dữ liệu, kết nối các tri thức (RAG) và gọi mô hình sinh ảnh (Tool), sau đó phê duyệt (Evaluator).</li>
+                <li><strong>PAL</strong> phản hồi thành công và trả về URL ảnh cho <strong>PAM</strong> để đóng gói thành <strong>Artifact</strong> và lưu trữ phiên bản mới.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- PART 2: DESIGN DECISIONS WRITE-UP -->
+          <div>
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">2</span>
+              PHẦN 2: WRITE-UP (Phân tích các Quyết định Thiết kế - Design Decisions)
+            </h2>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+              
+              <!-- Decision 1 -->
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  1. Quyết định "Tách vỏ" (Decoupling Engine vs. Application)
+                </h3>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6;">
+                  <strong>Suy luận:</strong> Đội ngũ thiết kế giữ PAL là một nền tảng điều phối tổng quát (Agnostic AI Builder) và tách biệt hoàn toàn ứng dụng Creative Studio (PAM) làm giao diện chuyên biệt.<br><br>
+                  <strong>Lý do:</strong> Việc tách biệt này giảm thiểu Tải nhận thức (Cognitive Load). Một Marketer không cần (và không nên) nhìn thấy các Node logic phức tạp, Router, hay Webhook của PAL. Họ chỉ cần làm việc với khái niệm quen thuộc (Brand, Brief, Gallery). Thiết kế này giúp hệ thống dễ dàng mở rộng, hỗ trợ phát triển các App tiếp theo trên cùng lõi PAL mà không làm phình to mã nguồn.
+                </p>
+              </div>
+
+              <!-- Decision 2 -->
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  2. Ẩn RAG và Context Injection qua UX @-mention
+                </h3>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6;">
+                  <strong>Suy luận:</strong> Tính năng <code>@-mention</code> trong PAM là phương án UX tuyệt vời để che giấu cơ chế kỹ thuật phức tạp của việc truy xuất tri thức bổ trợ (RAG) từ PAL.<br><br>
+                  <strong>Lý do:</strong> Thay vì bắt người dùng tải tệp tin thủ công lên cơ sở tri thức (Knowledge Base) và cấu hình biến, PAM mượn thói quen "tag tên" trực quan từ các mạng xã hội. Khi gõ <code>@logo</code>, hệ thống tự động liên kết tài liệu hướng dẫn thương hiệu tương ứng đưa vào Prompt ngầm, tạo nên một Frictionless UX mượt mà.
+                </p>
+              </div>
+
+              <!-- Decision 3 -->
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  3. Kiến trúc State Management qua "Session" & "Version"
+                </h3>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6;">
+                  <strong>Suy luận:</strong> Workflow của PAL về bản chất hoạt động theo kiểu không lưu trạng thái (Stateless), trong khi PAM sinh ra các thực thể Session (Phiên làm việc) và Version (Phiên bản) để quản lý hội thoại.<br><br>
+                  <strong>Lý do:</strong> Ảnh tạo bằng Generative AI hiếm khi hoàn hảo ngay từ lần đầu. Thiết kế Versioning cho phép người dùng quay lui (Undo) dễ dàng, và cấu trúc Session duy trì bộ nhớ ngữ cảnh để hiểu lệnh chỉnh sửa tiếp theo (ví dụ: "làm tối ảnh này đi một chút"). PAM đảm nhận quản lý trạng thái, giải phóng tài nguyên tính toán thuần túy cho PAL.
+                </p>
+              </div>
+
+              <!-- Decision 4 -->
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  4. Tính đóng - mở của hệ thống (Enterprise vs. SaaS)
+                </h3>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6;">
+                  <strong>Suy luận:</strong> PAL hoạt động như một SaaS mở rộng rãi hỗ trợ cổng thanh toán, trong khi PAM được cấu hình bảo mật cực cao với V-ID SSO và cam kết dữ liệu riêng tư hoàn toàn.<br><br>
+                  <strong>Lý do:</strong> Đây là quyết định phân luồng mô hình kinh doanh (Business Model). PAL tập trung thu hút khách hàng số đông (B2C/B2B nhỏ), còn PAM đóng vai trò giải pháp nội bộ Enterprise bảo vệ tối đa tài sản thương hiệu. Việc phân tách giúp đáp ứng các tiêu chuẩn tuân thủ (Compliance) khắt khe mà không cản trước khả năng tiếp cận rộng rãi của MindPal.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">
+        &copy; 2026 Hoàng Thanh Chiến. All rights reserved. Designed with premium AI Developer aesthetics.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>

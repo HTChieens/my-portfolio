@@ -4,23 +4,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* HSL Colors - Yellow & Black Theme */
-  --bg-base: 48, 96%, 53%;        /* Golden Yellow #facc15 */
-  --bg-surface: 48, 96%, 47%;     /* Deeper Yellow #eab308 */
-  --bg-card: 48, 96%, 44%;        /* Warm Honey Yellow #ca8a04 */
-  --bg-card-hover: 48, 96%, 40%;   /* Darker Golden Amber #a16207 */
+  /* HSL Colors - Sunflower Yellow & Steel Blue Theme */
+  --bg-base: 43, 100%, 66%;        /* #FFCE54 Sunflower Yellow */
+  --bg-surface: 43, 100%, 60%;     /* Deeper Yellow #f5c23d */
+  --bg-card: 43, 100%, 56%;        /* Warm Honey Yellow #ebba2d */
+  --bg-card-hover: 43, 100%, 52%;   /* Richer Golden Amber #deab1b */
   
-  --text-primary: 224, 25%, 5%;    /* Obsidian Black #06070a */
-  --text-secondary: 224, 25%, 12%;  /* Charcoal Black #12151e */
-  --text-muted: 224, 20%, 25%;     /* Dark Slate Grey #334155 */
-  --text-dim: 224, 15%, 35%;       /* Muted Grey #475569 */
+  --text-primary: 217, 58%, 30%;    /* #204177 Steel Blue */
+  --text-secondary: 217, 50%, 35%;  /* Navy Blue #294c87 */
+  --text-muted: 217, 30%, 48%;     /* Slate Blue #516b9b */
+  --text-dim: 217, 20%, 60%;       /* Muted Slate #7b90b8 */
   
-  --color-primary: 224, 25%, 5%;    /* Obsidian Black */
+  --color-primary: 217, 58%, 30%;    /* Steel Blue */
   --color-secondary: 28, 95%, 45%;  /* Tech Amber / Orange */
   --color-success: 142, 60%, 25%;   /* Deep Emerald Green */
   
-  --glow-primary: rgba(0, 0, 0, 0.1);
-  --glow-secondary: rgba(251, 191, 36, 0.2);
+  --glow-primary: rgba(32, 65, 119, 0.1);
+  --glow-secondary: rgba(255, 206, 84, 0.2);
   
   /* Fonts */
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -30,10 +30,10 @@
   --container-width: 1200px;
   --header-height: 80px;
   
-  /* Glassmorphism settings for Yellow Theme */
-  --glass-bg: rgba(255, 255, 255, 0.22);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-border-glow: rgba(0, 0, 0, 0.15);
+  /* Glassmorphism settings for Sunflower Theme */
+  --glass-bg: rgba(255, 255, 255, 0.26);
+  --glass-border: rgba(32, 65, 119, 0.09);
+  --glass-border-glow: rgba(32, 65, 119, 0.16);
   
   /* Animation Speeds */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1320,4 +1320,22 @@ textarea.form-input {
 .log-placeholder {
   font-style: italic;
   color: hsl(var(--text-dim));
+}
+
+.log-card i.fa-arrow-right-long {
+  transition: transform var(--transition-fast);
+}
+
+.log-card:hover i.fa-arrow-right-long {
+  transform: translateX(4px);
+}
+
+@keyframes streamRight {
+  0% { left: -40px; }
+  100% { left: 100%; }
+}
+
+@keyframes streamLeft {
+  0% { right: -40px; }
+  100% { right: 100%; }
 }
