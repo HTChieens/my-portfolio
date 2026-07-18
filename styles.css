@@ -1197,3 +1197,126 @@ textarea.form-input {
     padding: 24px;
   }
 }
+
+/* ==========================================================================
+   LOG SPECIAL SUBPAGE STYLES
+   ========================================================================== */
+.log-header {
+  padding: 140px 0 60px 0;
+  text-align: center;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: hsl(var(--color-secondary));
+}
+
+.btn-back i {
+  transition: transform var(--transition-fast);
+}
+
+.btn-back:hover i {
+  transform: translateX(-4px);
+}
+
+.log-timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-left: 30px;
+}
+
+.log-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8px;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, 
+    var(--glass-border-glow) 10%, 
+    rgba(56, 189, 248, 0.3) 90%, 
+    transparent);
+}
+
+.log-item {
+  position: relative;
+  padding-bottom: 40px;
+}
+
+.log-dot {
+  position: absolute;
+  top: 8px;
+  left: -29px; /* center it on the timeline line (-30px padding + line offset) */
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: hsl(var(--bg-base));
+  border: 3px solid hsl(var(--color-secondary));
+  box-shadow: 0 0 8px hsl(var(--color-secondary));
+  z-index: 10;
+  transition: var(--transition-normal);
+}
+
+.log-item:hover .log-dot {
+  background: hsl(var(--color-primary));
+  border-color: #fff;
+  box-shadow: 0 0 12px hsl(var(--color-primary));
+  transform: scale(1.2);
+}
+
+.log-card {
+  padding: 24px;
+}
+
+.log-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.log-day {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 18px;
+  color: #fff;
+}
+
+.log-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.08);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-done {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.log-desc {
+  color: hsl(var(--text-muted));
+  font-size: 15px;
+}
+
+.log-placeholder {
+  font-style: italic;
+  color: hsl(var(--text-dim));
+}
