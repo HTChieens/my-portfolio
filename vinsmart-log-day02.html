@@ -61,15 +61,552 @@
 
         <!-- Main Card Wrapper -->
         <div class="glass-card" style="padding: 40px; margin-bottom: 40px;">
-          
-          <!-- PART 1: VISUAL SYSTEM MAP & WORKFLOW -->
+          <!-- PART 1: ANNOTATED SYSTEM MAP (Bản đồ Hệ thống Chú thích) -->
           <div style="margin-bottom: 50px;">
             <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
               <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">1</span>
-              PHẦN 1: VISUAL SYSTEM MAP & WORKFLOW (Bản đồ trực quan & Luồng xử lý)
+              PHẦN 1: ANNOTATED SYSTEM MAP (Bản đồ hệ thống & Ràng buộc thực thể)
+            </h2>
+            
+            <!-- Bổ sung 2: Entity Relationship Diagram (CSS-based ERD) -->
+            <div style="background: rgba(0, 0, 0, 0.04); border: 1px solid var(--glass-border); padding: 25px; border-radius: 16px; margin-bottom: 30px;">
+              <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-diagram-project" style="color: hsl(var(--color-secondary));"></i> Bản đồ Thực thể Quan hệ Hệ thống (PAM & PAL Dual ERD)
+              </h3>
+              
+              <!-- Dual Column Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; position: relative;">
+                
+                <!-- PAM Column (Client Side) -->
+                <div style="border-right: 1px dashed var(--glass-border); padding-right: 20px;">
+                  <h4 style="font-size: 14px; color: hsl(var(--color-primary)); margin-bottom: 15px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-desktop"></i> PAM (Creative Application)
+                  </h4>
+                  <div style="display: flex; flex-direction: column; gap: 15px;">
+                    
+                    <!-- User / Member -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid hsl(var(--color-primary));">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">User / Member (Thành viên)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: user_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">N : M (Brand)</span>
+                    </div>
+
+                    <!-- Brand -->
+                    <div style="background: var(--glass-bg); border: 1px solid hsl(var(--color-primary)); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Brand (Thương hiệu)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: brand_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">1 : N (Session)</span>
+                    </div>
+
+                    <!-- Playbook -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Playbook (Kịch bản sáng tạo)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: playbook_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">1 : N (Session)</span>
+                    </div>
+
+                    <!-- Connector -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Connector (Cổng kết nối)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: connector_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">1 : N (Brand)</span>
+                    </div>
+                    
+                    <!-- Session -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Session (Phiên chat)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: session_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">1 : N (Brief)</span>
+                    </div>
+                    
+                    <!-- Design Brief -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid hsl(var(--color-secondary));">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Design Brief (Brief yêu cầu)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: brief_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">1 : N (Artifact)</span>
+                    </div>
+                    
+                    <!-- Artifact -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Artifact (Tài nguyên)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: artifact_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">1 : N (Version)</span>
+                    </div>
+                    
+                    <!-- Version -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Version (Bản chỉnh sửa)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: version_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(32, 65, 119, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--text-primary));">Lưu lịch sử</span>
+                    </div>
+                    
+                  </div>
+                </div>
+
+                <!-- PAL Column (Engine Side) -->
+                <div>
+                  <h4 style="font-size: 14px; color: hsl(var(--color-secondary)); margin-bottom: 15px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-server"></i> PAL (AI Workflow Engine)
+                  </h4>
+                  <div style="display: flex; flex-direction: column; gap: 15px;">
+                    
+                    <!-- Workspace -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid hsl(var(--color-secondary));">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Workspace (Không gian làm việc)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: workspace_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">1 : N (Workflow)</span>
+                    </div>
+
+                    <!-- Trigger -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Trigger (Cổng kích hoạt)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: trigger_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">1 : 1 (Workflow)</span>
+                    </div>
+
+                    <!-- Workflow -->
+                    <div style="background: var(--glass-bg); border: 1px solid hsl(var(--color-secondary)); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Workflow (Luồng xử lý)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: workflow_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">1 : N (Node)</span>
+                    </div>
+
+                    <!-- Execution Log -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Execution Log (Nhật ký chạy)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: log_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">1 : N (Node Run)</span>
+                    </div>
+
+                    <!-- Channel / Deployment -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Channel (Kênh Form/Chatbot)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: channel_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">1 : N (Deploy)</span>
+                    </div>
+
+                    <!-- Node -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Node (Nút tác vụ)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: node_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">N : M (Edges)</span>
+                    </div>
+
+                    <!-- Knowledge Source -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Knowledge Source (RAG)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: knowledge_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">N : M (Agent Node)</span>
+                    </div>
+
+                    <!-- Agent -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Agent (AI Specialist)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: agent_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">1 : 1 (Agent Node)</span>
+                    </div>
+
+                    <!-- Tool / Integration -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <strong style="color: hsl(var(--text-primary)); font-size: 13px; display: block;">Tool (Công cụ / API)</strong>
+                        <span style="font-size: 10px; color: hsl(var(--text-dim)); font-family: monospace;">PK: tool_id</span>
+                      </div>
+                      <span style="font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: hsl(var(--color-secondary));">N : M (Agent Node)</span>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+
+            </div>
+            
+            <!-- Bổ sung 3: Ràng buộc mối quan hệ thực thể (Tách bảng) -->
+            <div style="margin-bottom: 30px;">
+              <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-table-list" style="color: hsl(var(--color-secondary));"></i> Ràng buộc Mối quan hệ giữa các Thực thể (Entity Relationships)
+              </h3>
+              
+              <!-- 1. PAM Internal Table -->
+              <div style="margin-bottom: 25px; overflow-x: auto;">
+                <h4 style="font-size: 13.5px; color: hsl(var(--color-primary)); margin-bottom: 12px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-desktop"></i> 1. Mối quan hệ nội bộ PAM (Creative Application)
+                </h4>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
+                  <thead>
+                    <tr style="background: rgba(32, 65, 119, 0.08); border-bottom: 1px solid var(--glass-border); color: hsl(var(--text-primary));">
+                      <th style="padding: 10px 14px; font-weight: 700; width: 220px;">Thực thể nguồn</th>
+                      <th style="padding: 10px 14px; font-weight: 700; width: 220px;">Thực thể đích</th>
+                      <th style="padding: 10px 14px; font-weight: 700; width: 120px;">Lượng số (Ratio)</th>
+                      <th style="padding: 10px 14px; font-weight: 700;">Logic Nghiệp vụ (Business Logic)</th>
+                    </tr>
+                  </thead>
+                  <tbody style="color: hsl(var(--text-muted));">
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">User / Member</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Brand</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">N : M</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Thành viên thuộc nhiều Thương hiệu với các vai trò khác nhau (Marketer, Creative Manager).</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">User / Member</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Session</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Thành viên khởi tạo nhiều phiên làm việc để thiết kế các chiến dịch quảng cáo.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Brand</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Playbook</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Thương hiệu có thể thiết lập nhiều Kịch bản (Playbook) mẫu để hướng dẫn sinh ảnh định kỳ.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Brand</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Connector</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Thương hiệu có thể cấu hình nhiều cổng kết nối (Connector) để kéo dữ liệu chiến dịch hoặc chia sẻ file.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Playbook</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Session</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Kịch bản có thể được tải vào nhiều Phiên làm việc khác nhau của người dùng để áp dụng cùng bộ quy tắc.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Brand</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Session</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Thương hiệu chứa nhiều Phiên thiết kế sáng tạo của các chiến dịch khác nhau.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Session</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Design Brief</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Phiên chat duy trì bộ nhớ (Memory context) cho nhiều Brief sửa đổi liên tiếp của người dùng.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Design Brief</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Artifact</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Brief yêu cầu đầu vào có thể sinh ra nhiều phương án tài nguyên thô (V1).</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(32, 65, 119, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Artifact</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Version</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Mỗi tài nguyên đầu ra có nhiều phiên bản do resize, chỉnh tỷ lệ hoặc làm chuyển động ảnh.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- 2. PAL Internal Table -->
+              <div style="margin-bottom: 25px; overflow-x: auto;">
+                <h4 style="font-size: 13.5px; color: hsl(var(--color-secondary)); margin-bottom: 12px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-server"></i> 2. Mối quan hệ nội bộ PAL (AI Workflow Engine)
+                </h4>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
+                  <thead>
+                    <tr style="background: rgba(251, 191, 36, 0.08); border-bottom: 1px solid var(--glass-border); color: hsl(var(--text-primary));">
+                      <th style="padding: 10px 14px; font-weight: 700; width: 220px;">Thực thể nguồn</th>
+                      <th style="padding: 10px 14px; font-weight: 700; width: 220px;">Thực thể đích</th>
+                      <th style="padding: 10px 14px; font-weight: 700; width: 120px;">Lượng số (Ratio)</th>
+                      <th style="padding: 10px 14px; font-weight: 700;">Logic Nghiệp vụ (Business Logic)</th>
+                    </tr>
+                  </thead>
+                  <tbody style="color: hsl(var(--text-muted));">
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workspace</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workflow</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Không gian làm việc chứa nhiều luồng xử lý AI tự động phục vụ các tác vụ khác nhau.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workspace</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Agent</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Không gian làm việc quản lý nhiều thực thể AI Agent chuyên biệt dùng chung trong các Workflow.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workspace</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Tool</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Không gian làm việc quản trị nhiều công cụ tích hợp (API, MCP, Composio) để chia sẻ chéo.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workflow</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Execution Log</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Mỗi lần chạy Workflow ghi lại lịch sử thực thi để theo dõi trạng thái, thời gian chạy và chi phí.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workflow</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Channel / Deployment</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Workflow có thể được triển khai công khai thành nhiều trang Web Form hoặc Chatbot widget nhúng.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Agent Node</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Tool</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">N : M</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Node AI Agent có thể truy cập và sử dụng nhiều công cụ/API bổ trợ để thực thi hành động.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Trigger</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workflow</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : 1</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Mỗi Webhook/API endpoint trigger ánh xạ và kích hoạt đúng một Workflow cụ thể bên PAL.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Workflow</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Node</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : N</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một luồng AI điều phối (SOP) được cấu thành bởi nhiều node logic và node hành động.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Node</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Node</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">N : M</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Các node kết nối với nhau bằng các cung có hướng (Edges) tạo thành đồ thị xử lý (DAG).</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Agent Node</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Agent</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">1 : 1</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Mỗi Node LLM Agent thừa kế một cấu hình đặc tả Agent cụ thể (Prompt, System role, Model).</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--glass-border); background: rgba(251, 191, 36, 0.02);">
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Agent Node</td>
+                      <td style="padding: 10px 14px; font-weight: 600; color: hsl(var(--text-primary));">Knowledge Source</td>
+                      <td style="padding: 10px 14px; font-family: monospace;">N : M</td>
+                      <td style="padding: 10px 14px; line-height: 1.4;">Một Node AI Agent có thể truy cập nhiều tri thức bổ trợ (RAG) khác nhau trong cùng Vector DB.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Dotted Cross-System Connections Legend -->
+              <div style="margin-top: 25px; border-top: 1px dashed var(--glass-border); padding-top: 15px; font-size: 13px; color: hsl(var(--text-muted));">
+                <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 8px;"><i class="fa-solid fa-link"></i> Mối quan hệ liên kết liên hệ thống (Cross-System Linkages):</strong>
+                <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 6px; line-height: 1.5;">
+                  <li><strong>User / Member (PAM) &larr;[Đồng bộ SSO 1:1 / 1:N]&rarr; Workspace (PAL)</strong>: Thành viên định danh bên PAM (qua SSO V-ID) sẽ được phân quyền tương ứng để truy cập Workspace thiết kế Workflow bên PAL (nếu là Builder/Admin).</li>
+                  <li><strong>Brand (PAM) &larr;[Liên kết RAG 1:1 / 1:N]&rarr; Knowledge Source (PAL)</strong>: Mỗi thương hiệu (Brand) định nghĩa cấu hình guideline, hình ảnh chuẩn hóa bên PAM sẽ tương ứng với các tệp tin lưu trữ tri thức (RAG) bên PAL nhằm nhúng vào vector database khi gọi tác vụ.</li>
+                  <li><strong>Playbook (PAM) &larr;[Cấu hình tham số Workflow 1:1]&rarr; Workflow (PAL)</strong>: Kịch bản mẫu (Playbook) trong PAM ánh xạ tới một Workflow cụ thể bên PAL cùng với các tham số/Agent được định hình trước để sinh ảnh đồng bộ.</li>
+                  <li><strong>Connector (PAM) &larr;[Ủy quyền API 1:1]&rarr; Tool (PAL)</strong>: Cổng kết nối cấu hình trên PAM cung cấp Token/Credentials xác thực cho các Node Tool bên PAL thực thi gọi API (đọc dữ liệu chiến dịch Ads, đồng bộ Drive).</li>
+                  <li><strong>Design Brief (PAM) &larr;[Webhook Trigger 1:1]&rarr; Trigger (PAL)</strong>: Việc nhập Design Brief và gửi đi từ PAM kích hoạt một lần gọi Endpoint Webhook bên PAL để khởi động luồng Workflow.</li>
+                  <li><strong>Artifact (PAM) &larr;[Response Payload 1:1]&rarr; Node (PAL Output/Evaluator)</strong>: Node thẩm định và kết xuất bên PAL trả dữ liệu hình ảnh về để PAM render thành Artifact thô ban đầu hiển thị trên màn hình sáng tạo.</li>
+                  <li><strong>Session (PAM) &larr;[Theo dõi tiến độ 1:N]&rarr; Execution Log (PAL)</strong>: Mỗi phiên chat sáng tạo (Session) chứa lịch sử nhiều lần chạy workflow, tương ứng với các bản ghi Execution Logs bên PAL phục vụ giám sát tài nguyên tiêu thụ.</li>
+                </ul>
+              </div>
+            </div><!-- Bổ sung 1: Jobs-to-be-Done (JTBD) Mapping -->
+            <div style="background: rgba(0, 0, 0, 0.04); border: 1px solid var(--glass-border); padding: 25px; border-radius: 16px; margin-bottom: 30px;">
+              <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-crosshairs" style="color: hsl(var(--color-secondary));"></i> Jobs-to-be-Done (JTBD) - Nhiệm vụ Cốt lõi của Người dùng
+              </h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- PAM JTBD -->
+                <div style="background: var(--glass-bg); border: 1px solid hsl(var(--color-primary)); border-radius: 12px; padding: 20px;">
+                  <h4 style="font-size: 14px; color: hsl(var(--color-primary)); margin-bottom: 15px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-palette"></i> PAM (Creative Studio UX)
+                  </h4>
+                  <ul style="padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.5;">
+                    <li style="border-bottom: 1px dashed rgba(32, 65, 119, 0.1); padding-bottom: 10px;">
+                      <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">1. Thiết lập Guidelines Thương hiệu:</strong>
+                      "Khi tôi là <em>Creative Manager</em>, tôi muốn định cấu hình các tài sản thương hiệu chuẩn (Logo, Font, Color Palette) tập trung, để toàn bộ ảnh AI sinh ra đồng bộ và tuân thủ nhận diện thương hiệu."
+                    </li>
+                    <li style="border-bottom: 1px dashed rgba(32, 65, 119, 0.1); padding-bottom: 10px;">
+                      <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">2. Tạo phác thảo ý tưởng nhanh:</strong>
+                      "Khi tôi là <em>Marketer</em>, tôi muốn gõ một Brief mô tả ý tưởng và sử dụng thẻ <code>@logo</code> trực quan, để nhận lại các bản phác thảo hình ảnh chất lượng cao mà không cần mở các công cụ chỉnh sửa chuyên nghiệp."
+                    </li>
+                    <li>
+                      <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">3. So sánh & Tinh chỉnh Phiên bản:</strong>
+                      "Khi tôi là <em>Marketer</em>, tôi muốn theo dõi lịch sử phiên bản ảnh, thử nghiệm nhiều tỷ lệ khung hình khác nhau, để dễ dàng chọn ra ấn phẩm tối ưu nhất cho từng kênh social."
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- PAL JTBD -->
+                <div style="background: var(--glass-bg); border: 1px solid hsl(var(--color-secondary)); border-radius: 12px; padding: 20px;">
+                  <h4 style="font-size: 14px; color: hsl(var(--color-secondary)); margin-bottom: 15px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-gears"></i> PAL (AI Workflow Engine)
+                  </h4>
+                  <ul style="padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.5;">
+                    <li style="border-bottom: 1px dashed rgba(251, 191, 36, 0.2); padding-bottom: 10px;">
+                      <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">1. Thiết kế Luồng Tác vụ AI Tự động (General DAG):</strong>
+                      <span style="display: block; margin-bottom: 4px;">"Khi tôi là <em>Workflow Builder</em>, tôi muốn kéo thả liên kết các Agent AI, các khối RAG tri thức và các công cụ API để tự động hóa bất kỳ quy trình nghiệp vụ nhận thức nào."</span>
+                      <small style="color: hsl(var(--text-muted)); font-style: italic; display: block; border-left: 2px solid hsl(var(--color-secondary)); padding-left: 6px;">* Ngữ cảnh PAM: Kết nối Prompt Designer Agent, Brand Guidelines RAG và API Midjourney thành SOP sinh ảnh tự động.</small>
+                    </li>
+                    <li style="border-bottom: 1px dashed rgba(251, 191, 36, 0.2); padding-bottom: 10px;">
+                      <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">2. Kiểm định & Tối ưu hóa Kết quả (Evaluator Loop):</strong>
+                      <span style="display: block; margin-bottom: 4px;">"Khi tôi là <em>Workflow Builder</em>, tôi muốn cài đặt các Node Evaluator để tự động chấm điểm và tối ưu hóa kết quả đầu ra của Agent, đảm bảo chất lượng trước khi trả dữ liệu về client."</span>
+                      <small style="color: hsl(var(--text-muted)); font-style: italic; display: block; border-left: 2px solid hsl(var(--color-secondary)); padding-left: 6px;">* Ngữ cảnh PAM: Chấm điểm chất lượng ảnh sinh ra so với brief gốc và guidelines thương hiệu để loại bỏ ảnh lỗi.</small>
+                    </li>
+                    <li>
+                      <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">3. Cung cấp API và Giám sát Hệ thống (Execution Governance):</strong>
+                      <span style="display: block; margin-bottom: 4px;">"Khi tôi là <em>System Admin</em>, tôi muốn giám sát chi tiết nhật ký thực thi (Execution Logs) của từng Node và đóng gói luồng thành API/Webhook, để phân phối dịch vụ AI một cách ổn định."</span>
+                      <small style="color: hsl(var(--text-muted)); font-style: italic; display: block; border-left: 2px solid hsl(var(--color-secondary)); padding-left: 6px;">* Ngữ cảnh PAM: Cung cấp API Endpoint bảo mật cao cho PAM Client gọi đồng thời ở quy mô lớn.</small>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PART 2: SCREENS & CONNECTING FLOWS (Màn hình & Luồng liên kết hệ thống) -->
+          <div style="margin-bottom: 50px; border-top: 1px solid var(--glass-border); padding-top: 40px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">2</span>
+              PHẦN 2: SCREENS MAP & CONNECTING FLOWS (Màn hình, Điểm bàn giao & Kiến trúc luồng)
             </h2>
 
-            <!-- The Visual Canvas -->
+            <!-- Bổ sung 4: Map the Screens (Bản đồ các màn hình và Luồng tương tác) -->
+            <div style="background: rgba(0, 0, 0, 0.04); border: 1px solid var(--glass-border); padding: 25px; border-radius: 16px; margin-bottom: 30px;">
+              <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-window-restore" style="color: hsl(var(--color-secondary));"></i> Bản đồ các Màn hình Chính & Luồng Tương tác (Screen Map)
+              </h3>
+              
+              <!-- Screen Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                
+                <!-- PAM Screens -->
+                <div>
+                  <h4 style="font-size: 14px; color: hsl(var(--color-primary)); margin-bottom: 15px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-desktop"></i> Màn hình PAM (Giao diện Sáng tạo)
+                  </h4>
+                  <div style="display: flex; flex-direction: column; gap: 12px;">
+                    
+                    <!-- PAM Screen 1 -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: hsl(var(--text-primary));"><i class="fa-solid fa-folder-open"></i> 1. Brand Asset Hub (Cấu hình)</strong>
+                        <span style="font-size: 10px; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Thiết lập</span>
+                      </div>
+                      <p style="color: hsl(var(--text-muted)); font-size: 12.5px;">Nơi người dùng tải lên Logo gốc, định nghĩa hệ màu chủ đạo (HSL/Hex), Font chữ và hình ảnh Brand Guidelines. Từ đây chọn Brand để khởi động phiên thiết kế mới.</p>
+                      <div style="font-size: 11px; margin-top: 6px; color: hsl(var(--color-secondary)); font-family: monospace;">&rarr; Chuyển tiếp sang Screen 2 (Workspace) khi tạo Session.</div>
+                    </div>
+
+                    <!-- PAM Screen 2 -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; border-left: 3px solid hsl(var(--color-primary));">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: hsl(var(--text-primary));"><i class="fa-solid fa-comments"></i> 2. Creative Workspace (Chat UI)</strong>
+                        <span style="font-size: 10px; background: rgba(32, 65, 119, 0.1); color: hsl(var(--color-primary)); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Workspace chính</span>
+                      </div>
+                      <p style="color: hsl(var(--text-muted)); font-size: 12.5px;">Giao diện chat trực quan. Marketer gõ prompt mô tả ảnh và sử dụng <code>@</code> để tag tài sản thương hiệu. Khi gửi, hệ thống gửi gói tin JSON sang PAL và hiển thị hiệu ứng Loading.</p>
+                      <div style="font-size: 11px; margin-top: 6px; color: hsl(var(--color-secondary)); font-family: monospace;">&rarr; Click vào ảnh kết quả để mở Screen 3 (Inspector).</div>
+                    </div>
+
+                    <!-- PAM Screen 3 -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: hsl(var(--text-primary));"><i class="fa-solid fa-magnifying-glass-chart"></i> 3. Artifact & Version Gallery</strong>
+                        <span style="font-size: 10px; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Chi tiết</span>
+                      </div>
+                      <p style="color: hsl(var(--text-muted)); font-size: 12.5px;">Màn hình xem ảnh gốc độ phân giải cao kèm bảng điểm đánh giá của Evaluator Node. Cung cấp các nút công cụ nhanh: Resize (1:1, 16:9), Upscale, Variant (tạo biến thể).</p>
+                      <div style="font-size: 11px; margin-top: 6px; color: hsl(var(--color-secondary)); font-family: monospace;">&rarr; Ấn chỉnh sửa gửi lệnh chat mới và quay lại Screen 2.</div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- PAL Screens -->
+                <div>
+                  <h4 style="font-size: 14px; color: hsl(var(--color-secondary)); margin-bottom: 15px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-server"></i> Màn hình PAL (AI Orchestration Canvas)
+                  </h4>
+                  <div style="display: flex; flex-direction: column; gap: 12px;">
+                    
+                    <!-- PAL Screen 1 -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; border-left: 3px solid hsl(var(--color-secondary));">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: hsl(var(--text-primary));"><i class="fa-solid fa-circle-nodes"></i> 1. Workflow Canvas (Thiết kế Luồng)</strong>
+                        <span style="font-size: 10px; background: rgba(251, 191, 36, 0.15); color: hsl(var(--color-secondary)); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Canvas chính</span>
+                      </div>
+                      <p style="color: hsl(var(--text-muted)); font-size: 12.5px;">Giao diện kéo thả Canvas đồ thị trực quan (DAG). Người dùng cấu hình Trigger (Webhook), kéo thả các Node kết nối với nhau để định nghĩa SOP tạo ảnh tự động.</p>
+                      <div style="font-size: 11px; margin-top: 6px; color: hsl(var(--color-secondary)); font-family: monospace;">&rarr; Double-click Node AI để mở Screen 2; Node RAG để mở Screen 3.</div>
+                    </div>
+
+                    <!-- PAL Screen 2 -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: hsl(var(--text-primary));"><i class="fa-solid fa-user-gear"></i> 2. Agent Config Panel (Cấu hình AI)</strong>
+                        <span style="font-size: 10px; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Chi tiết</span>
+                      </div>
+                      <p style="color: hsl(var(--text-muted)); font-size: 12.5px;">Nơi cấu hình các Agent AI chuyên biệt: Nhập System Prompt, định nghĩa vai trò, chọn mô hình LLM nền tảng (GPT-4o, Claude) và điều chỉnh tham số sinh (Temperature, Top P).</p>
+                      <div style="font-size: 11px; margin-top: 6px; color: hsl(var(--color-secondary)); font-family: monospace;">&rarr; Lưu cấu hình để đóng panel và cập nhật Node trên Screen 1.</div>
+                    </div>
+
+                    <!-- PAL Screen 3 -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: hsl(var(--text-primary));"><i class="fa-solid fa-database"></i> 3. Knowledge Source Manager (RAG)</strong>
+                        <span style="font-size: 10px; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Cơ sở tri thức</span>
+                      </div>
+                      <p style="color: hsl(var(--text-muted)); font-size: 12.5px;">Màn hình quản lý tài liệu tri thức thương hiệu bổ trợ. Cấu hình cơ chế Chunking size, Vector store Index. Nơi đây nhận dữ liệu đồng bộ tự động từ thư viện Brand bên PAM.</p>
+                      <div style="font-size: 11px; margin-top: 6px; color: hsl(var(--color-secondary)); font-family: monospace;">&rarr; Liên kết Vector store ID tới Agent Node trong Screen 1.</div>
+                    </div>
+
+                    <!-- PAL Screen 4 -->
+                    <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: hsl(var(--text-primary));"><i class="fa-solid fa-chart-line"></i> 4. Execution Monitor & API Settings</strong>
+                        <span style="font-size: 10px; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Giám sát</span>
+                      </div>
+                      <p style="color: hsl(var(--text-muted)); font-size: 12.5px;">Bảng điều khiển cho System Admin quản lý các Trigger Webhook, kiểm tra nhật ký chạy (Execution Logs) của từng Node, theo dõi chi phí API và đo lường thời gian phản hồi (Latency).</p>
+                      <div style="font-size: 11px; margin-top: 6px; color: hsl(var(--color-secondary)); font-family: monospace;">&rarr; Tra cứu chi tiết lỗi của các Node để sửa đổi trên Screen 1.</div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+              
+              <!-- Screen Interaction Flow Summary -->
+              <div style="margin-top: 20px; border-top: 1px dashed var(--glass-border); padding-top: 12px; font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5;">
+                <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;"><i class="fa-solid fa-arrows-spin"></i> Luồng tương tác liên màn hình (Handoff Screen Flow):</strong>
+                Người dùng chọn Brand ở <strong>PAM Screen 1</strong> &rarr; Vào <strong>PAM Screen 2</strong> để chat nhập brief &rarr; Khi gửi brief, PAM kích hoạt chạy ngầm Workflow cấu hình bởi <strong>PAL Screen 1</strong> &rarr; Workflow này lấy tri thức từ <strong>PAL Screen 3</strong> cấp cho Agent cấu hình ở <strong>PAL Screen 2</strong> &rarr; Trả kết quả ảnh về <strong>PAM Screen 3</strong> để hiển thị & quản lý phiên bản. Song song đó, System Admin giám sát hiệu năng chạy của các Node thông qua <strong>PAL Screen 4</strong>.
+              </div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+              <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-network-wired" style="color: hsl(var(--color-secondary));"></i> Sơ đồ Vận hành & Luồng Bàn giao trực quan (Visual Canvas)
+              </h3>
+              <!-- The Visual Canvas -->
             <div style="background: rgba(0, 0, 0, 0.04); border: 1px solid var(--glass-border); padding: 30px; border-radius: 20px; position: relative; overflow-x: auto; margin-bottom: 30px;">
               
               <!-- Diagram Grid Wrapper -->
@@ -89,6 +626,18 @@
                     <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px;">
                       <i class="fa-solid fa-shield-halved" style="color: hsl(var(--text-primary));"></i>
                       <div><strong>Brand:</strong> Guidelines, Styles, Tone</div>
+                    </div>
+                    
+                    <!-- Playbook -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px;">
+                      <i class="fa-solid fa-list-check" style="color: hsl(var(--text-primary));"></i>
+                      <div><strong>Playbook:</strong> Reusable Creative Recipes</div>
+                    </div>
+                    
+                    <!-- Connector -->
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; font-size: 13px; color: hsl(var(--text-primary)); display: flex; align-items: center; gap: 8px;">
+                      <i class="fa-solid fa-plug" style="color: hsl(var(--text-primary));"></i>
+                      <div><strong>Connector:</strong> External Tools (Meta, Drive)</div>
                     </div>
                     
                     <!-- Session -->
@@ -229,25 +778,92 @@
             </div>
 
             <!-- Overlap description block -->
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px; font-size: 14px; line-height: 1.6;">
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 25px; border-radius: 12px; font-size: 14px; line-height: 1.6; margin-bottom: 30px;">
               <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 6px;"><i class="fa-solid fa-circle-info"></i> Giải thích Luồng Bàn giao (Hand-off Flow):</strong>
               PAM và PAL kết nối với nhau thông qua kiến trúc hướng sự kiện (Event-Driven):
               <ol style="margin-left: 20px; margin-top: 8px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 6px;">
                 <li>Người dùng tại <strong>PAM</strong> khởi tạo Brief, tích hợp tệp đính kèm và tag tri thức bằng thẻ <code>@logo</code>.</li>
                 <li><strong>PAM</strong> đóng gói yêu cầu thành file JSON gửi trực tiếp đến <strong>PAL</strong> Webhook Endpoint.</li>
-                <li><strong>PAL</strong> phân rã dữ liệu, kết nối các tri thức (RAG) và gọi mô hình sinh ảnh (Tool), sau đó phê duyệt (Evaluator).</li>
-                <li><strong>PAL</strong> phản hồi thành công và trả về URL ảnh cho <strong>PAM</strong> để đóng gói thành <strong>Artifact</strong> và lưu trữ phiên bản mới.</li>
+                <li><strong>PAL</strong> phân rã dữ liệu, truy xuất các tri thức bổ trợ (RAG), gọi các tác vụ và API mở rộng (Tool), sau đó thẩm định kết quả đầu ra (Evaluator).</li>
+                <li><strong>PAL</strong> phản hồi thành công và trả về URL tài nguyên đầu ra cho <strong>PAM</strong> để đóng gói thành <strong>Artifact</strong> và lưu trữ phiên bản mới.</li>
               </ol>
+            </div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+              <!-- Bổ sung 5: Hand-off Data Schema Details -->
+            <div style="margin-bottom: 40px;">
+              <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-code" style="color: hsl(var(--color-secondary));"></i> Chi tiết Cấu trúc Dữ liệu Bàn giao (Hand-off Data Schema)
+              </h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                
+                <!-- Request schema -->
+                <div style="background: rgba(255, 255, 255, 0.08); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                  <h4 style="font-size: 14px; color: hsl(var(--text-primary)); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <span style="font-weight: 700; color: hsl(var(--color-secondary)); font-size: 11px; background: rgba(251, 191, 36, 0.15); padding: 2px 6px; border-radius: 4px;">POST</span> REQUEST (PAM &rarr; PAL Webhook)
+                  </h4>
+                  <pre style="margin: 0; font-family: monospace; font-size: 12px; color: hsl(var(--text-primary)); overflow-x: auto; background: rgba(0,0,0,0.06); padding: 12px; border-radius: 8px;">
+{
+  "session_id": "sess_99a8c23d",
+  "brand_id": "vsf_smart_car",
+  "input_brief": "Tạo banner điện thoại...",
+  "context_tags": [
+    {
+      "tag_name": "@logo_white",
+      "s3_path": "s3://vsf-brand/logo.png"
+    }
+  ],
+  "output_settings": {
+    "aspect_ratio": "16:9",
+    "format": "PNG"
+  }
+}</pre>
+                  <p style="font-size: 12.5px; color: hsl(var(--text-muted)); margin-top: 10px; line-height: 1.4;">
+                    * <code>brand_id</code> được sử dụng để kích hoạt kết nối Knowledge Source (RAG) tương ứng trên PAL.<br>
+                    * <code>context_tags</code> gửi chi tiết tệp S3 đính kèm từ hành động gõ @-mention.
+                  </p>
+                </div>
+
+                <!-- Response schema -->
+                <div style="background: rgba(255, 255, 255, 0.08); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                  <h4 style="font-size: 14px; color: hsl(var(--text-primary)); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <span style="font-weight: 700; color: #10b981; font-size: 11px; background: rgba(16, 185, 129, 0.15); padding: 2px 6px; border-radius: 4px;">200 OK</span> RESPONSE (PAL &rarr; PAM API)
+                  </h4>
+                  <pre style="margin: 0; font-family: monospace; font-size: 12px; color: hsl(var(--text-primary)); overflow-x: auto; background: rgba(0,0,0,0.06); padding: 12px; border-radius: 8px;">
+{
+  "status": "success",
+  "artifact": {
+    "type": "image",
+    "original_url": "https://pal-res.s3/img.png",
+    "width": 1920,
+    "height": 1080
+  },
+  "evaluation": {
+    "passed": true,
+    "brand_score": 96.5,
+    "feedback": "Logo placement correct"
+  }
+}</pre>
+                  <p style="font-size: 12.5px; color: hsl(var(--text-muted)); margin-top: 10px; line-height: 1.4;">
+                    * <code>original_url</code> chứa liên kết ảnh gốc do Tool Node xuất bản.<br>
+                    * <code>evaluation</code> phản hồi kết quả kiểm định của Evaluator Node để PAM xác thực hiển thị.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          </div>
             </div>
           </div>
 
-          <!-- PART 2: DESIGN DECISIONS WRITE-UP -->
-          <div>
+          <!-- PART 3: DESIGN DECISIONS WRITE-UP (Phân tích Quyết định Thiết kế) -->
+          <div style="border-top: 1px solid var(--glass-border); padding-top: 40px;">
             <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">2</span>
-              PHẦN 2: WRITE-UP (Phân tích các Quyết định Thiết kế - Design Decisions)
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">3</span>
+              PHẦN 3: WRITE-UP (Phân tích các Quyết định Thiết kế - Design Decisions)
             </h2>
-
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
               
               <!-- Decision 1 -->
@@ -294,6 +910,28 @@
                 </p>
               </div>
 
+              <!-- Decision 5 -->
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  5. Trừu tượng hóa khả năng mở rộng (Playbook/Connector vs. Workflow/Tool)
+                </h3>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6;">
+                  <strong>Suy luận:</strong> PAM trừu tượng hóa các luồng AI phức tạp của PAL thành các khái niệm nghiệp vụ đơn giản là <code>Playbook</code> (Kịch bản chạy mẫu) và <code>Connector</code> (Cổng API liên kết ngoài).<br><br>
+                  <strong>Lý do:</strong> Người dùng PAM (Marketer) không cần biết cách lập trình Python hay xây dựng đồ thị DAG phức tạp trên PAL. Bằng cách đóng gói luồng AI thô thành Playbook và chuyển đổi thông tin xác thực thành Connector, PAM tạo ra một lớp bảo vệ tính toàn vẹn (Safety boundary) – cho phép người dùng mở rộng khả năng sáng tạo mà không thể làm hỏng logic vận hành của các AI Specialities nền tảng.
+                </p>
+              </div>
+
+              <!-- Decision 6 -->
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 20px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  6. Vòng lặp Kiểm định Chất lượng Tự động (Evaluator Loop & Execution Log)
+                </h3>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6;">
+                  <strong>Suy luận:</strong> PAL thiết lập các Node Evaluator để chấm điểm và tự động tối ưu hóa (Optimizer Loop) kết quả sinh ảnh, kết hợp ghi chép <code>Execution Logs</code> chi tiết trước khi gửi phản hồi về PAM.<br><br>
+                  <strong>Lý do:</strong> Trong quy trình Generative AI, rủi ro lệch guideline hoặc lỗi hình ảnh là rất cao. Việc tích hợp cơ chế tự động đánh giá ở cấp độ Engine giúp sàng lọc ảnh lỗi ngay lập tức, tiết kiệm băng thông và dung lượng lưu trữ của PAM (chỉ lưu các ảnh chất lượng đạt chuẩn làm Artifact), đồng thời giúp System Admin dễ dàng kiểm soát chi phí token thông qua nhật ký thực thi.
+                </p>
+              </div>
+
             </div>
           </div>
 
@@ -303,7 +941,7 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+<!-- FOOTER -->
   <footer class="footer">
     <div class="container">
       <p class="footer-text">
