@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Ngày 03 | Nhật Ký VinSmart Future</title>
+  <meta name="description" content="Chi tiết báo cáo Ngày 03 - Phân tích cơ chế chạy Agent ngầm (Execution Harness) của PAL & PAM tại VinSmart Future.">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <style>
+    /* Custom diagram styling */
+    .harness-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: 30px 0;
+      position: relative;
+    }
+    
+    .harness-stage {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .stage-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .stage-nodes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .node-box {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      line-height: 1.4;
+      transition: all 0.3s ease;
+    }
+    
+    .node-box:hover {
+      border-color: hsl(var(--color-primary));
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .flow-connector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 25px;
+      color: hsl(var(--text-dim));
+      font-size: 14px;
+      position: relative;
+    }
+    
+    .flow-connector::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 100%;
+      background: dashed var(--glass-border);
+      z-index: -1;
+    }
+    
+    .flow-badge {
+      font-size: 9px;
+      font-weight: 700;
+      background: rgba(0,0,0,0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    /* Grid for hypotheses */
+    .hypotheses-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    @media (min-width: 768px) {
+      .hypotheses-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .hypothesis-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hypothesis-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+    
+    .tag-orchestration::before { background: hsl(var(--color-primary)); }
+    .tag-tool::before { background: hsl(var(--color-secondary)); }
+    .tag-context::before { background: #8b5cf6; }
+    .tag-guardrails::before { background: #ef4444; }
+    .tag-hitl::before { background: #10b981; }
+    
+    .card-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    
+    .badge-orchestration { background: rgba(32, 65, 119, 0.1); color: hsl(var(--color-primary)); }
+    .badge-tool { background: rgba(251, 191, 36, 0.15); color: hsl(var(--color-secondary)); }
+    .badge-context { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .badge-guardrails { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    .badge-hitl { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+    .glow-line-active {
+      animation: pulseGlow 2s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { border-color: var(--glass-border); }
+      to { border-color: hsl(var(--color-primary)); box-shadow: 0 0 10px rgba(32, 65, 119, 0.15); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Decorative Canvas & Patterns -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        Chiến<span class="logo-dot"></span>
+      </a>
+      
+      <nav class="nav-menu" id="nav-menu">
+        <a href="index.html#hero" class="nav-link">Trang chủ</a>
+        <a href="index.html#services" class="nav-link">Dịch vụ</a>
+        <a href="index.html#projects" class="nav-link">Dự án</a>
+        <a href="index.html#skills" class="nav-link">Kỹ năng</a>
+        <a href="index.html#timeline" class="nav-link">Kinh nghiệm</a>
+        <a href="vinsmart-log.html" class="nav-link active">Nhật ký VinSmart</a>
+        <a href="index.html#contact" class="nav-link">Liên hệ</a>
+      </nav>
+
+      <div class="nav-toggle" id="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- REPORT SECTION -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="log-header" style="text-align: left; max-width: 900px; margin: 0 auto;">
+        <a href="vinsmart-log.html" class="btn-back">
+          <i class="fa-solid fa-arrow-left"></i> Quay lại Nhật ký
+        </a>
+        <span class="section-tag" style="margin-top: 15px;">Bản phân tích thực nghiệm</span>
+        <h1 class="section-title text-gradient" style="margin-bottom: 12px; font-size: clamp(30px, 4vw, 40px);">
+          Ngày 03: Agent Execution Harness (PAL & PAM)
+        </h1>
+        <p style="color: hsl(var(--text-muted)); font-size: 16px; margin-bottom: 40px; line-height: 1.6;">
+          Phân tích cơ chế thực thi Agent ngầm (under the hood): chu kỳ điều phối (orchestration loop), giao tiếp công cụ (tool interface), quản lý ngữ cảnh/bộ nhớ, hệ thống kiểm duyệt (guardrails) và điểm can thiệp của con người (HITL) dựa trên các bằng chứng quan sát thực nghiệm.
+        </p>
+
+        <!-- Main Card Wrapper -->
+        <div class="glass-card" style="padding: 40px; margin-bottom: 40px;">
+          
+          <!-- PART 1: THE AGENT EXECUTION HARNESS DIAGRAM -->
+          <div style="margin-bottom: 50px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">1</span>
+              PHẦN 1: AGENT EXECUTION HARNESS DIAGRAM (Sơ đồ Kiến trúc Vận hành)
+            </h2>
+            <p style="color: hsl(var(--text-muted)); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
+              Sơ đồ mô tả "bộ khung" thực thi (Harness) bao bọc quanh AI Agent. Nó điều hướng dòng chảy dữ liệu, tiêm tri thức (Context Injection), kích hoạt công cụ (Tools), và kiểm duyệt đầu ra (Evaluator Guardrail) trước khi phản hồi về Client.
+            </p>
+
+            <div class="harness-flow">
+              
+              <!-- Stage 1: Input & Gatekeeping -->
+              <div class="harness-stage">
+                <div class="stage-title" style="color: hsl(var(--color-primary));">
+                  <i class="fa-solid fa-sign-in-alt"></i> Giai đoạn 1: Input & Gatekeeping (PAM Client Gate)
+                </div>
+                <div class="stage-nodes">
+                  <div class="node-box">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">User Prompt / Brief</strong>
+                    Nhận đầu vào từ Marketer và các thẻ tệp đính kèm.
+                  </div>
+                  <div class="node-box" style="border-color: rgba(239, 68, 68, 0.4);">
+                    <strong style="color: #ef4444; display: block; margin-bottom: 4px;"><i class="fa-solid fa-shield-halved"></i> Input Guardrail</strong>
+                    Bộ lọc Regex/Classifier kiểm duyệt từ cấm ở Gateway (trả về lỗi &lt; 200ms).
+                  </div>
+                  <div class="node-box" style="border-color: rgba(139, 92, 246, 0.4);">
+                    <strong style="color: #8b5cf6; display: block; margin-bottom: 4px;"><i class="fa-solid fa-brain"></i> Context Resolver</strong>
+                    Truy xuất sliding window chat và tìm kiếm RAG từ thẻ `@logo`.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Connector 1 -->
+              <div class="flow-connector">
+                <span class="flow-badge">POST Request (Payload JSON)</span>
+              </div>
+
+              <!-- Stage 2: Handoff Gateway -->
+              <div class="harness-stage" style="border-color: rgba(251, 191, 36, 0.3);">
+                <div class="stage-title" style="color: hsl(var(--color-secondary));">
+                  <i class="fa-solid fa-arrows-spin"></i> Giai đoạn 2: Handoff & Dispatching (PAL Webhook Trigger)
+                </div>
+                <div class="stage-nodes">
+                  <div class="node-box">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">API Endpoint Resolver</strong>
+                    Tiếp nhận Payload từ PAM, phân tích token và phân quyền.
+                  </div>
+                  <div class="node-box">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">DAG Workflow Router</strong>
+                    Ánh xạ Brief và Playbook ID sang đồ thị xử lý AI (DAG) tương ứng.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Connector 2 -->
+              <div class="flow-connector">
+                <span class="flow-badge">DAG Execution Pipeline</span>
+              </div>
+
+              <!-- Stage 3: AI Orchestrator Core -->
+              <div class="harness-stage glow-line-active">
+                <div class="stage-title" style="color: hsl(var(--color-primary));">
+                  <i class="fa-solid fa-microchip"></i> Giai đoạn 3: AI Orchestrator & Tool Call Loop (PAL Core)
+                </div>
+                <div class="stage-nodes">
+                  <div class="node-box" style="grid-column: span 2;">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">LLM Agent Node (Generator)</strong>
+                    Nạp System Instructions, thực hiện vòng lặp suy luận (Reasoning loop) và tạo lệnh gọi Tool.
+                  </div>
+                  <div class="node-box" style="border-color: rgba(251, 191, 36, 0.4);">
+                    <strong style="color: hsl(var(--color-secondary)); display: block; margin-bottom: 4px;"><i class="fa-solid fa-cube"></i> Tool Sandbox Runner</strong>
+                    Phân rã tham số, chạy Tool ngoài (Midjourney, Web Scraping) trong môi trường an toàn (Sandbox) với Timeout nghiêm ngặt (30s).
+                  </div>
+                </div>
+                
+                <!-- Feedback loop animation indicator -->
+                <div style="margin-top: 15px; text-align: center; font-size: 11px; color: hsl(var(--text-dim)); font-family: monospace;">
+                  <i class="fa-solid fa-rotate-left"></i> [Self-Correction Loop] Vòng lặp tối ưu hóa quay lui nếu Evaluator phát hiện lỗi
+                </div>
+              </div>
+
+              <!-- Connector 3 -->
+              <div class="flow-connector">
+                <span class="flow-badge">Evaluation Check</span>
+              </div>
+
+              <!-- Stage 4: Output Guardrails & Human Gates -->
+              <div class="harness-stage">
+                <div class="stage-title" style="color: #10b981;">
+                  <i class="fa-solid fa-clipboard-check"></i> Giai đoạn 4: Quality Check & human-in-the-loop (PAL Out)
+                </div>
+                <div class="stage-nodes">
+                  <div class="node-box" style="border-color: rgba(239, 68, 68, 0.4);">
+                    <strong style="color: #ef4444; display: block; margin-bottom: 4px;">Evaluator Critic Node</strong>
+                    Chấm điểm nhận diện thương hiệu (Brand Score). Nếu &lt; 80%, kích hoạt tối ưu lại (Loop-back).
+                  </div>
+                  <div class="node-box" style="border-color: rgba(16, 185, 129, 0.4);">
+                    <strong style="color: #10b981; display: block; margin-bottom: 4px;"><i class="fa-solid fa-user-check"></i> Human Approval Gate</strong>
+                    Điểm dừng chờ con người phê duyệt (trạng thái Pending) trước khi giải phóng Payload.
+                  </div>
+                  <div class="node-box">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;">Execution Log Recorder</strong>
+                    Ghi lại thời gian phản hồi, chi phí token và trạng thái các node phục vụ kiểm toán.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- PART 2: THE 10 HYPOTHESES & OBSERVABLE EVIDENCE -->
+          <div style="margin-bottom: 50px; border-top: 1px solid var(--glass-border); padding-top: 40px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">2</span>
+              PHẦN 2: 10 GIẢ THUYẾT VỀ CƠ CHẾ CHẠY NGẦM & BẰNG CHỨNG THỰC NGHIỆM
+            </h2>
+            <p style="color: hsl(var(--text-muted)); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
+              Danh sách 10 giả thuyết kiến trúc ngầm được suy luận khoa học từ các chỉ số đo lường như độ trễ (latency), thông báo lỗi (errors), cấu trúc JSON phản hồi, và hành vi trên giao diện (UI affordances).
+            </p>
+
+            <div class="hypotheses-grid">
+              
+              <!-- H1: Orchestration Loop -->
+              <div class="hypothesis-card tag-orchestration">
+                <span class="card-badge badge-orchestration">Orchestration Loop (H1)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Bản chất xử lý tuần tự kết hợp bất đồng bộ (Sequential Dispatch)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Quá trình xử lý đầu vào diễn ra tuần tự qua các Node tiền xử lý trên gateway, nhưng việc thực thi tác vụ AI nặng (sinh ảnh, cào web) trên PAL được thực hiện bất đồng bộ (Asynchronous) để giải phóng tài nguyên mạng.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid hsl(var(--color-primary));">
+                  <strong>Bằng chứng (Evidence):</strong> Nhãn trạng thái (Status Labels) trên UI thay đổi liên tục theo trình tự thời gian: <code>"Tối ưu brief..."</code> (1-2s) &rarr; <code>"Đang sinh ảnh..."</code> (10-12s) &rarr; <code>"Đang thẩm định..."</code> (2s).
+                </div>
+              </div>
+
+              <!-- H2: Self-Correction Loop -->
+              <div class="hypothesis-card tag-orchestration">
+                <span class="card-badge badge-orchestration">Orchestration Loop (H2)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Vòng lặp tự sửa đổi của Evaluator (Self-Correction Loop)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> PAL Workflow hỗ trợ vòng lặp quay lui (Backtracking). Nếu Node Evaluator đánh giá chất lượng ảnh đầu ra không đạt chuẩn nhận diện, nó sẽ tự động kích hoạt chạy lại (Retry) Node Generator với prompt đã được tinh chỉnh.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid hsl(var(--color-primary));">
+                  <strong>Bằng chứng (Evidence):</strong> Trong một số phiên chat phức tạp, độ trễ sinh ảnh tăng đột biến lên 30s-35s (gấp đôi bình thường) và Execution Logs ghi nhận dòng trạng thái: <code>"Evaluator rejected - retrying generator node with revised prompt"</code>.
+                </div>
+              </div>
+
+              <!-- H3: Tool Interface -->
+              <div class="hypothesis-card tag-tool">
+                <span class="card-badge badge-tool">Tool Interface (H3)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Đóng gói tham số Sandbox độc lập (Isolated Executions)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Các Tool (Midjourney API, Web Scraper) chạy trong môi trường Sandbox cô lập. Agent phân tách tham số từ prompt, đóng gói thành đúng schema của Tool, chạy độc lập và trả kết quả thô về để Agent parse lại.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid hsl(var(--color-secondary));">
+                  <strong>Bằng chứng (Evidence):</strong> Khi cấu hình sai API Key của Tool trong PAL, lỗi xác thực <code>401 Unauthorized</code> của nhà cung cấp bên thứ ba được ném thẳng lên cửa sổ log của Node đó chứ không làm sập luồng điều phối chính.
+                </div>
+              </div>
+
+              <!-- H4: Tool Timeout Limit -->
+              <div class="hypothesis-card tag-tool">
+                <span class="card-badge badge-tool">Tool Interface (H4)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Ngưỡng ngắt độ trễ nghiêm ngặt (Strict Timeout Limit)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Để bảo vệ hệ thống khỏi bị treo do API bên ngoài phản hồi chậm, bộ điều phối PAL áp dụng giới hạn thời gian chờ (Timeout) tối đa là 30 giây cho mọi thao tác gọi Tool.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid hsl(var(--color-secondary));">
+                  <strong>Bằng chứng (Evidence):</strong> Khi gọi công cụ cào web trên một trang web bị chặn (lagging), Node Tool luôn trả về thông báo lỗi <code>"Timeout Error: Node execution exceeded 30000ms limit"</code> tại đúng mốc 30 giây.
+                </div>
+              </div>
+
+              <!-- H5: Context & Memory -->
+              <div class="hypothesis-card tag-context">
+                <span class="card-badge badge-context">Context & Memory (H5)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Bộ nhớ ngữ cảnh trượt phía Client (Client-Side Sliding Window)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> PAL là Stateless Engine nên không lưu trạng thái hội thoại. PAM đảm nhận việc lưu lịch sử chat và tự động đính kèm `N` tin nhắn gần nhất (Sliding Window) vào Payload gửi sang PAL để Agent hiểu ngữ cảnh.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid #8b5cf6;">
+                  <strong>Bằng chứng (Evidence):</strong> Khi chat trên PAM, các câu lệnh ngắn như *"làm tối nó đi"* hoạt động tốt, nhưng nếu người dùng bấm **New Session** (tạo phiên mới), Agent lập tức quên toàn bộ hình ảnh và lịch sử của phiên trước.
+                </div>
+              </div>
+
+              <!-- H6: Context & Memory -->
+              <div class="hypothesis-card tag-context">
+                <span class="card-badge badge-context">Context & Memory (H6)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Tiêm tri thức động qua RAG (Semantic RAG Injection)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Khi gõ các thẻ `@-mention`, hệ thống thực hiện tìm kiếm ngữ nghĩa (Semantic search) trên Vector DB của Brand, sau đó tiêm (Inject) đoạn văn bản guidelines đó trực tiếp vào phần System Instruction của LLM payload.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid #8b5cf6;">
+                  <strong>Bằng chứng (Evidence):</strong> Gõ prompt bình thường phản hồi rất nhanh (1-2s), nhưng khi gõ thêm thẻ `@logo_vertical`, độ trễ gửi tin tăng thêm ~200ms (cho truy xuất DB) và cấu trúc payload ghi nhận trường <code>"brand_context"</code> được điền đầy đủ.
+                </div>
+              </div>
+
+              <!-- H7: Guardrails -->
+              <div class="hypothesis-card tag-guardrails">
+                <span class="card-badge badge-guardrails">Guardrails (H7)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Kiểm duyệt an toàn ở lớp Gateway (Lightweight Input Filter)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Rào cản đầu vào không dùng LLM để tiết kiệm chi phí. PAM/PAL chạy bộ lọc từ khóa (Regex hoặc mô hình phân loại cực nhẹ) trực tiếp tại API Gateway để chặn nội dung nhạy cảm/độc hại từ sớm.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid #ef4444;">
+                  <strong>Bằng chứng (Evidence):</strong> Nếu nhập prompt chứa từ khóa cấm, lỗi <code>"Chính sách nội dung vi phạm"</code> trả về ngay lập tức (&lt; 150ms), nhanh hơn rất nhiều so với độ trễ tối thiểu của một lượt gọi LLM thông thường (~1000ms).
+                </div>
+              </div>
+
+              <!-- H8: Guardrails -->
+              <div class="hypothesis-card tag-guardrails">
+                <span class="card-badge badge-guardrails">Guardrails (H8)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Kiểm duyệt đầu ra bằng mô hình Vision (Output LLM Evaluator)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Để kiểm duyệt chất lượng hình ảnh, PAL chạy một mô hình đa phương thức (Vision LLM) riêng biệt ở cuối pipeline, phân tích metadata và pixel của ảnh để so sánh với Guideline đã nạp.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid #ef4444;">
+                  <strong>Bằng chứng (Evidence):</strong> Payload phản hồi thành công trả về cho PAM chứa một object có cấu trúc: <code>"evaluation": { "passed": true, "brand_score": 92.5 }</code> đi kèm lý do chấm điểm bằng ngôn ngữ tự nhiên.
+                </div>
+              </div>
+
+              <!-- H9: Human-in-the-loop -->
+              <div class="hypothesis-card tag-hitl">
+                <span class="card-badge badge-hitl">Human-in-the-loop (H9)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Cơ chế ngắt dừng trạng thái (State-Persisted Pause & Gate)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Khi gặp Node Human Input, PAL lưu lại toàn bộ trạng thái chạy hiện tại vào database, đóng phiên chạy tạm thời và mở một Webhook Listener chờ tín hiệu HTTP POST phê duyệt từ Admin để kích hoạt chạy tiếp đồ thị.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid #10b981;">
+                  <strong>Bằng chứng (Evidence):</strong> Workflow dừng lại ở trạng thái <code>"Pending approval"</code> vô thời hạn, không tiêu hao RAM/CPU chạy ngầm, và lập tức chuyển sang trạng thái <code>"Resumed"</code> ngay khi Admin bấm nút phê duyệt trên giao diện quản trị.
+                </div>
+              </div>
+
+              <!-- H10: Human-in-the-loop -->
+              <div class="hypothesis-card tag-hitl">
+                <span class="card-badge badge-hitl">Human-in-the-loop (H10)</span>
+                <h3 style="font-size: 15px; color: hsl(var(--text-primary)); margin-bottom: 8px; font-weight: 600;">
+                  Sự can thiệp thủ công độc lập ở Client (Post-Execution Manual Override)
+                </h3>
+                <p style="font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-bottom: 10px;">
+                  <strong>Giả thuyết:</strong> Các chỉnh sửa thủ công (như cắt ảnh, xoay ảnh, thêm bộ lọc màu có sẵn) của người dùng trên PAM không kích hoạt lại công cụ sinh hay gọi lại PAL, mà được xử lý thuần túy tại trình duyệt của client.
+                </p>
+                <div style="font-size: 12px; background: rgba(0,0,0,0.04); padding: 8px 12px; border-radius: 8px; border-left: 2px solid #10b981;">
+                  <strong>Bằng chứng (Evidence):</strong> Khi người dùng bấm cắt ảnh hoặc áp bộ lọc màu trên PAM, tác vụ hoàn thành ngay lập tức (&lt; 50ms), không có hiệu ứng xoay loading và không phát sinh bản ghi chạy mới trong Execution Logs của PAL.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- PART 3: WRITE-UP & TECHNICAL INFERENCES -->
+          <div style="border-top: 1px solid var(--glass-border); padding-top: 40px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">3</span>
+              PHẦN 3: WRITE-UP & TECHNICAL INFERENCES (Phân tích chuyên sâu)
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 30px; line-height: 1.6; font-size: 14px; color: hsl(var(--text-muted));">
+              
+              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 25px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 15px; font-weight: 600;">
+                  Phân tích Kiến trúc Harness & Các Quyết định Đánh đổi (Technical Trade-offs)
+                </h3>
+                <p>
+                  Thiết kế bộ khung thực thi (Harness) của PAM và PAL thể hiện một tư duy tối ưu hóa hạ tầng và trải nghiệm người dùng rất rõ rệt:
+                </p>
+                <ul style="padding-left: 20px; margin-top: 10px; display: flex; flex-direction: column; gap: 12px;">
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Đánh đổi giữa Stateless Engine & Stateful Client:</strong>
+                    Việc giữ PAL hoàn toàn không lưu trạng thái (Stateless) giúp hệ thống mở rộng (Scale-out) cực tốt. Khi hàng nghìn người dùng PAM chat đồng thời, PAL chỉ cần nhận JSON payload độc lập, xử lý DAG rồi trả kết quả về. Điểm đánh đổi là PAM phải chịu trách nhiệm đóng gói toàn bộ ngữ cảnh lịch sử chat gửi đi ở mỗi lượt. Điều này làm tăng kích thước payload truyền qua mạng nhưng bảo vệ tài nguyên RAM/Database của Backend PAL khỏi bị nghẽn.
+                  </li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Cơ chế Tự sửa lỗi (Self-Correction Loop) vs Chi phí API:</strong>
+                    Tích hợp Node Evaluator tự động kiểm duyệt hình ảnh và kích hoạt tối ưu hóa lại giúp cải thiện tỷ lệ thành công của tác vụ ngay từ lần chạy đầu tiên (First-time-right). Tuy nhiên, cái giá phải trả là chi phí gọi API (Midjourney, LLMs) sẽ tăng gấp đôi hoặc gấp ba khi vòng lặp quay lui được kích hoạt, đồng thời đẩy độ trễ phản hồi phía người dùng lên cao. Đây là sự đánh đổi giữa chất lượng sản phẩm đầu ra và chi phí vận hành/độ trễ.
+                  </li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Rào chắn an toàn Đa lớp (Multi-layer Guardrails):</strong>
+                    Hệ thống kết hợp bộ lọc Regex cực nhanh ở Gateway đầu vào và mô hình Vision LLM nặng ở đầu ra. Thiết kế này giải quyết bài toán hiệu năng: lọc bỏ nhanh các prompt vi phạm chính sách hiển nhiên mà không tốn chi phí gọi LLM, đồng thời vẫn đảm làm việc được chất lượng ngữ nghĩa và nhận diện thương hiệu phức tạp của hình ảnh đầu ra.
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">
+        &copy; 2026 Hoàng Thanh Chiến. All rights reserved. Designed with premium AI Developer aesthetics.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
