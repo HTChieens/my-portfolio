@@ -141,4 +141,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ==========================================================================
+     THEME TOGGLE (LIGHT / DARK MODE)
+     ========================================================================== */
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  
+  if (themeToggleBtn) {
+    const themeIcon = themeToggleBtn.querySelector('i');
+    
+    // Function to update toggle button icon
+    const updateThemeIcon = (theme) => {
+      if (theme === 'dark') {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    };
+
+    // Get current theme from documentElement (set by inline script in head)
+    let currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    updateThemeIcon(currentTheme);
+
+    // Event listener for click
+    themeToggleBtn.addEventListener('click', () => {
+      currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      
+      // Update attribute on html element
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      
+      // Save choice to localStorage
+      localStorage.setItem('theme', currentTheme);
+      
+      // Update toggle icon
+      updateThemeIcon(currentTheme);
+    });
+  }
+
 });

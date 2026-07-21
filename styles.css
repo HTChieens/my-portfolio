@@ -4,6 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
+  color-scheme: light dark;
   /* HSL Colors - Sunflower Yellow & Steel Blue Theme */
   --bg-base: 43, 100%, 66%;        /* #FFCE54 Sunflower Yellow */
   --bg-surface: 43, 100%, 60%;     /* Deeper Yellow #f5c23d */
@@ -39,6 +40,69 @@
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   DARK THEME VARIABLES
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-base: 217, 45%, 10%;        /* Deep Dark Space Blue */
+    --bg-surface: 217, 40%, 14%;     /* Dark Steel Blue Surface */
+    --bg-card: 217, 30%, 18%;        /* Slate Blue Card */
+    --bg-card-hover: 217, 30%, 23%;   /* Hover Card */
+    
+    --text-primary: 217, 30%, 96%;    /* Very Bright Blue-White */
+    --text-secondary: 217, 20%, 85%;  /* Soft Light Gray-Blue */
+    --text-muted: 217, 15%, 68%;     /* Muted Gray-Blue */
+    --text-dim: 217, 12%, 52%;       /* Dim Gray-Blue */
+    
+    --color-primary: 43, 100%, 62%;    /* Sunflower Yellow */
+    --color-secondary: 28, 100%, 55%;  /* Tech Orange */
+    --color-success: 142, 70%, 45%;   /* Emerald Green */
+    
+    --glow-primary: rgba(251, 191, 36, 0.15);
+    --glow-secondary: rgba(32, 65, 119, 0.3);
+    
+    --glass-bg: rgba(30, 41, 59, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-glow: rgba(251, 191, 36, 0.25);
+  }
+  
+  :root:not([data-theme="light"]) .bg-grid {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-base: 217, 45%, 10%;        /* Deep Dark Space Blue */
+  --bg-surface: 217, 40%, 14%;     /* Dark Steel Blue Surface */
+  --bg-card: 217, 30%, 18%;        /* Slate Blue Card */
+  --bg-card-hover: 217, 30%, 23%;   /* Hover Card */
+  
+  --text-primary: 217, 30%, 96%;    /* Very Bright Blue-White */
+  --text-secondary: 217, 20%, 85%;  /* Soft Light Gray-Blue */
+  --text-muted: 217, 15%, 68%;     /* Muted Gray-Blue */
+  --text-dim: 217, 12%, 52%;       /* Dim Gray-Blue */
+  
+  --color-primary: 43, 100%, 62%;    /* Sunflower Yellow */
+  --color-secondary: 28, 100%, 55%;  /* Tech Orange */
+  --color-success: 142, 70%, 45%;   /* Emerald Green */
+  
+  --glow-primary: rgba(251, 191, 36, 0.15);
+  --glow-secondary: rgba(32, 65, 119, 0.3);
+  
+  --glass-bg: rgba(30, 41, 59, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-glow: rgba(251, 191, 36, 0.25);
+}
+
+:root[data-theme="dark"] .bg-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
 /* ==========================================================================
@@ -389,6 +453,44 @@ ul {
 
 .nav-link.active::after, .nav-link:hover::after {
   width: 100%;
+}
+
+/* Header Actions & Theme Toggle */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 110;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: hsl(var(--text-primary));
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.theme-toggle:hover {
+  background: var(--bg-card);
+  border-color: var(--glass-border-glow);
+  color: hsl(var(--text-secondary));
+  transform: scale(1.08);
+}
+
+.theme-toggle i {
+  transition: transform var(--transition-normal);
+}
+
+.theme-toggle:active i {
+  transform: rotate(30deg);
 }
 
 /* Mobile Nav Toggle */
@@ -1053,7 +1155,7 @@ textarea.form-input {
   border-top: 1px solid var(--glass-border);
   padding: 40px 0;
   text-align: center;
-  background: rgba(6, 7, 10, 0.9);
+  background: hsla(var(--bg-surface), 0.95);
 }
 
 .footer-text {
@@ -1158,7 +1260,7 @@ textarea.form-input {
     left: 0;
     width: 100%;
     height: calc(100vh - var(--header-height));
-    background: rgba(6, 7, 10, 0.98);
+    background: hsla(var(--bg-surface), 0.98);
     backdrop-filter: blur(20px);
     flex-direction: column;
     padding: 60px 24px;
@@ -1310,6 +1412,31 @@ textarea.form-input {
   background: rgba(6, 95, 70, 0.08);
   color: hsl(142, 70%, 20%);
   border: 1px solid rgba(6, 95, 70, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .status-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: hsl(38, 92%, 65%);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+  :root:not([data-theme="light"]) .status-done {
+    background: rgba(16, 185, 129, 0.15);
+    color: hsl(142, 70%, 60%);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+}
+
+:root[data-theme="dark"] .status-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: hsl(38, 92%, 65%);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+:root[data-theme="dark"] .status-done {
+  background: rgba(16, 185, 129, 0.15);
+  color: hsl(142, 70%, 60%);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .log-desc {
