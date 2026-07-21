@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Ngày 04 | Nhật Ký VinSmart Future</title>
+  <meta name="description" content="Chi tiết báo cáo Ngày 04 - Thiết kế hệ thống đánh giá chất lượng (Eval Harness) độc lập cho AI Agent trên MindPal của Hoàng Thanh Chiến tại VinSmart Future.">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <style>
+    /* Custom styles for Eval report */
+    .eval-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      margin: 30px 0;
+    }
+    
+    .eval-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .eval-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .badge-metric { background: rgba(32, 65, 119, 0.1); color: hsl(var(--color-primary)); }
+    .badge-grader { background: rgba(251, 191, 36, 0.15); color: hsl(var(--color-secondary)); }
+    .badge-regression { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+    /* Styled Tables */
+    .table-responsive {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+    }
+    
+    .scorecard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+      background: var(--glass-bg);
+    }
+    
+    .scorecard-table th {
+      background: rgba(251, 191, 36, 0.08);
+      color: hsl(var(--text-primary));
+      padding: 12px 16px;
+      font-weight: 700;
+      border-bottom: 2px solid var(--glass-border);
+    }
+    
+    .scorecard-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--glass-border);
+      color: hsl(var(--text-muted));
+      line-height: 1.4;
+    }
+    
+    .scorecard-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: monospace;
+    }
+    .status-pass { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .status-fail { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    .delta-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .delta-stable { background: rgba(0, 0, 0, 0.06); color: hsl(var(--text-muted)); }
+    .delta-improved { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .delta-regression { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    .grader-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: hsl(var(--text-primary));
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Decorative Canvas & Patterns -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        Chiến<span class="logo-dot"></span>
+      </a>
+      
+      <nav class="nav-menu" id="nav-menu">
+        <a href="index.html#hero" class="nav-link">Trang chủ</a>
+        <a href="index.html#services" class="nav-link">Dịch vụ</a>
+        <a href="index.html#projects" class="nav-link">Dự án</a>
+        <a href="index.html#skills" class="nav-link">Kỹ năng</a>
+        <a href="index.html#timeline" class="nav-link">Kinh nghiệm</a>
+        <a href="vinsmart-log.html" class="nav-link active">Nhật ký VinSmart</a>
+        <a href="index.html#contact" class="nav-link">Liên hệ</a>
+      </nav>
+
+      <div class="nav-toggle" id="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- REPORT SECTION -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="log-header" style="text-align: left; max-width: 900px; margin: 0 auto;">
+        <a href="vinsmart-log.html" class="btn-back">
+          <i class="fa-solid fa-arrow-left"></i> Quay lại Nhật ký
+        </a>
+        <span class="section-tag" style="margin-top: 15px;">Hệ thống Đánh giá AI</span>
+        <h1 class="section-title text-gradient" style="margin-bottom: 12px; font-size: clamp(30px, 4vw, 40px);">
+          Ngày 04: Standalone AI Agent Evaluation System
+        </h1>
+        <p style="color: hsl(var(--text-muted)); font-size: 16px; margin-bottom: 40px; line-height: 1.6;">
+          Thiết kế bộ khung đánh giá chất lượng (Eval Harness) độc lập cho AI Agent trên MindPal. Định nghĩa rõ ràng bộ đề bài kiểm thử, hệ chỉ số đo lường, cấu trúc giám khảo và chính sách phát hiện sụt giảm hiệu năng (regression checking).
+        </p>
+
+        <!-- Main Card Wrapper -->
+        <div class="glass-card" style="padding: 40px; margin-bottom: 40px;">
+          
+          <!-- PART 1: MINDPAL EVALUATION SPECIFICATION (EVAL SPEC) -->
+          <div style="margin-bottom: 50px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">1</span>
+              PHẦN 1: MINDPAL EVALUATION SPECIFICATION (Đặc tả Hệ thống Đánh giá)
+            </h2>
+            
+            <div class="eval-container">
+              
+              <!-- 1. The Core Metrics Framework -->
+              <div class="eval-card">
+                <span class="eval-badge badge-metric">Hệ Chỉ số Đo lường (Metrics Framework)</span>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 15px;">
+                  Hệ thống sử dụng 5 chỉ số đa chiều để đánh giá toàn diện hành vi và hiệu năng của Agent:
+                </p>
+                <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 8px;">
+                  <li><strong>Success Rate (Tỷ lệ Thành công - Binary):</strong> Xác định xem luồng workflow chạy có bị lỗi (crash) giữa chừng không, và cấu trúc kết quả trả về có hợp lệ (khớp schema JSON) không.</li>
+                  <li><strong>Quality (Chất lượng nội dung - 0-100%):</strong> Đánh giá độ chính xác thông tin dựa trên hai thước đo phụ: <em>Faithfulness</em> (độ trung thực - không bịa đặt so với tri thức nguồn) và <em>Rubric Compliance</em> (mức độ tuân thủ chỉ dẫn prompt).</li>
+                  <li><strong>Cost (Chi phí - Dollar per Run):</strong> Tính toán số lượng token đầu vào (Input Tokens), token đầu ra (Output Tokens) dựa trên giá API thực tế của OpenAI/Anthropic/Google và chi phí gọi Custom Tools.</li>
+                  <li><strong>Latency (Độ trễ - Seconds):</strong> Thời gian xử lý từ lúc kích hoạt Trigger đến khi trả về kết quả cuối cùng.</li>
+                  <li><strong>Safety (An toàn - Safe/Unsafe):</strong> Kiểm tra xem đầu ra có chứa thông tin nhạy cảm, mã độc, lọt PII (thông tin cá nhân) hoặc bị ảnh hưởng bởi tấn công Prompt Injection không.</li>
+                </ul>
+              </div>
+
+              <!-- 2. The Grading Hierarchy -->
+              <div class="eval-card">
+                <span class="eval-badge badge-grader">Lớp Giám khảo Đa tầng (Graders Hierarchy)</span>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 15px;">
+                  Chấm điểm cho Agent là tác vụ phức tạp, do đó hệ thống phân cấp giám khảo thành 3 lớp riêng biệt:
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; font-size: 13px;">
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 15px; border-radius: 10px;">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 6px;"><i class="fa-solid fa-code"></i> 1. Rule-based Grader</strong>
+                    Sử dụng mã nguồn tĩnh (Python/Regex) để kiểm tra các luật cứng: Định dạng JSON hợp lệ, mã HTTP Status 200, sự tồn tại của các trường bắt buộc, hoặc tìm kiếm khớp chính xác các từ khóa cần có.
+                  </div>
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 15px; border-radius: 10px;">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 6px;"><i class="fa-solid fa-robot"></i> 2. Model-based Grader (AI Judge)</strong>
+                    Sử dụng các mô hình LLM cao cấp (như Claude 3.5 Sonnet) đóng vai trò giám khảo độc lập. AI Judge sẽ nhận Rubrics chấm điểm chi tiết và so sánh kết quả đầu ra của Agent để chấm thang điểm 1-5.
+                  </div>
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 15px; border-radius: 10px;">
+                    <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 6px;"><i class="fa-solid fa-user-check"></i> 3. Human Grader</strong>
+                    Dành cho các đánh giá mang tính chủ quan cao hoặc khi cần thẩm định lại các kết quả mà AI Judge nghi ngờ. Giao diện quản trị của MindPal cung cấp bảng chọn A/B testing để đánh giá chéo.
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Regression Detection Policy -->
+              <div class="eval-card">
+                <span class="eval-badge badge-regression">Chính sách Kiểm soát Sụt giảm Hiệu năng (Regression Policy)</span>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 10px;">
+                  Để ngăn chặn việc nâng cấp Prompt hoặc thay đổi Model nền tảng làm hỏng các tính năng cũ (Regression), MindPal áp dụng quy trình kiểm định CI/CD tự động:
+                </p>
+                <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 8px;">
+                  <li><strong>Golden Test Suite:</strong> Duy trì bộ test case chuẩn gồm 100 tác vụ tiêu biểu đã được dán nhãn kết quả mong đợi (Ground Truth).</li>
+                  <li><strong>CI/CD Integration:</strong> Mỗi khi thay đổi code, workflow, hoặc prompt trong repo của MindPal, hệ thống tự động chạy eval bộ test case này trên môi trường staging.</li>
+                  <li><strong>Alert Threshold (Ngưỡng cảnh báo):</strong> Nếu điểm chất lượng trung bình (Average Quality Score) sụt giảm quá <strong>3%</strong>, hoặc tỷ lệ thành công (Success Rate) giảm quá <strong>1%</strong> so với phiên bản Baseline, pipeline CI/CD sẽ tự động cảnh báo lỗi (Fail build) và ngăn chặn deploy lên Production.</li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- PART 2: SAMPLE SCORECARD RUN -->
+          <div style="margin-bottom: 50px; border-top: 1px solid var(--glass-border); padding-top: 40px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">2</span>
+              PHẦN 2: SAMPLE SCORECARD RUN (Bảng điểm Chạy thử Mẫu)
+            </h2>
+            <p style="color: hsl(var(--text-muted)); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
+              Bảng điểm dưới đây mô phỏng một đợt chạy thử nghiệm (Evaluation Run) trên **7 tác vụ đại diện** cho các tính năng của AI Agent trên nền tảng MindPal.
+            </p>
+
+            <div class="table-responsive">
+              <table class="scorecard-table">
+                <thead>
+                  <tr>
+                    <th>ID & Tên Tác vụ</th>
+                    <th>Ý định & Input</th>
+                    <th>Cấu hình Agent</th>
+                    <th>Success</th>
+                    <th>Quality</th>
+                    <th>Cost</th>
+                    <th>Latency</th>
+                    <th>Safety</th>
+                    <th>Grader</th>
+                    <th>Status</th>
+                    <th>Baseline Delta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Task 1 -->
+                  <tr>
+                    <td><strong>T1. PDF Manual RAG</strong></td>
+                    <td>Truy tìm thông tin lỗi E2 trong tài liệu PDF 500 trang.</td>
+                    <td>GPT-4o, Temp 0.0, RAG (Vector store)</td>
+                    <td><i class="fa-solid fa-check" style="color: #10b981;"></i></td>
+                    <td>95%</td>
+                    <td>$0.008</td>
+                    <td>3.2s</td>
+                    <td>Safe</td>
+                    <td><span class="grader-pill">Model (Faithfulness)</span></td>
+                    <td><span class="status-badge status-pass">Pass</span></td>
+                    <td><span class="delta-badge delta-stable">Stable (0.0)</span></td>
+                  </tr>
+                  
+                  <!-- Task 2 -->
+                  <tr>
+                    <td><strong>T2. Competitor Scraper</strong></td>
+                    <td>Cào web thương mại điện tử, so sánh giá 5 sản phẩm.</td>
+                    <td>Claude 3.5 Sonnet, Web Browser Tool</td>
+                    <td><i class="fa-solid fa-check" style="color: #10b981;"></i></td>
+                    <td>90%</td>
+                    <td>$0.025</td>
+                    <td>24.5s</td>
+                    <td>Safe</td>
+                    <td><span class="grader-pill">Rule + Human</span></td>
+                    <td><span class="status-badge status-pass">Pass</span></td>
+                    <td><span class="delta-badge delta-improved">Improved (+5%)</span></td>
+                  </tr>
+
+                  <!-- Task 3 -->
+                  <tr>
+                    <td><strong>T3. Email JSON Extraction</strong></td>
+                    <td>Trích xuất đơn hàng từ email thô thành cấu trúc JSON.</td>
+                    <td>Llama 3 8B, Strict JSON Schema</td>
+                    <td><i class="fa-solid fa-check" style="color: #10b981;"></i></td>
+                    <td>100%</td>
+                    <td>$0.001</td>
+                    <td>1.2s</td>
+                    <td>Safe</td>
+                    <td><span class="grader-pill">Rule (JSON Lint)</span></td>
+                    <td><span class="status-badge status-pass">Pass</span></td>
+                    <td><span class="delta-badge delta-stable">Stable (0.0)</span></td>
+                  </tr>
+
+                  <!-- Task 4 -->
+                  <tr>
+                    <td><strong>T4. HubSpot CRM Action</strong></td>
+                    <td>Tạo lead khách hàng mới từ thông tin chat.</td>
+                    <td>GPT-4o Mini, Custom HubSpot Tool Node</td>
+                    <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i></td>
+                    <td>0%</td>
+                    <td>$0.002</td>
+                    <td>1.8s</td>
+                    <td>Safe</td>
+                    <td><span class="grader-pill">Rule (Status Code)</span></td>
+                    <td><span class="status-badge status-fail">Fail</span></td>
+                    <td><span class="delta-badge delta-regression">Regression (-100%)</span></td>
+                  </tr>
+
+                  <!-- Task 5 -->
+                  <tr>
+                    <td><strong>T5. SQL Query Generator</strong></td>
+                    <td>"Cho biết doanh thu của tháng 6 theo từng khu vực".</td>
+                    <td>Claude 3.5 Sonnet, SQL Tool Node</td>
+                    <td><i class="fa-solid fa-check" style="color: #10b981;"></i></td>
+                    <td>85%</td>
+                    <td>$0.015</td>
+                    <td>4.5s</td>
+                    <td>Safe</td>
+                    <td><span class="grader-pill">Rule + Model</span></td>
+                    <td><span class="status-badge status-pass">Pass</span></td>
+                    <td><span class="delta-badge delta-improved">Improved (+2%)</span></td>
+                  </tr>
+
+                  <!-- Task 6 -->
+                  <tr>
+                    <td><strong>T6. Multi-Agent Writer</strong></td>
+                    <td>Viết bài SEO dài. Writer nháp, Editor sửa lỗi ngữ pháp.</td>
+                    <td>Double-Agent Loop (Writer + Editor)</td>
+                    <td><i class="fa-solid fa-check" style="color: #10b981;"></i></td>
+                    <td>88%</td>
+                    <td>$0.045</td>
+                    <td>18.2s</td>
+                    <td>Safe</td>
+                    <td><span class="grader-pill">Model (Rubric)</span></td>
+                    <td><span class="status-badge status-pass">Pass</span></td>
+                    <td><span class="delta-badge delta-stable">Stable (0.0)</span></td>
+                  </tr>
+
+                  <!-- Task 7 -->
+                  <tr>
+                    <td><strong>T7. Support Intent Router</strong></td>
+                    <td>Phân loại email khách hàng để định tuyến luồng.</td>
+                    <td>Llama 3 70B, Custom Router Node</td>
+                    <td><i class="fa-solid fa-check" style="color: #10b981;"></i></td>
+                    <td>97%</td>
+                    <td>$0.003</td>
+                    <td>0.8s</td>
+                    <td>Safe</td>
+                    <td><span class="grader-pill">Rule (Accuracy)</span></td>
+                    <td><span class="status-badge status-pass">Pass</span></td>
+                    <td><span class="delta-badge delta-stable">Stable (0.0)</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 15px; border-radius: 10px; font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-top: 20px;">
+              <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;"><i class="fa-solid fa-triangle-exclamation"></i> Phân tích thất bại tại Tác vụ T4 (HubSpot CRM Action):</strong>
+              Tác vụ T4 ghi nhận trạng thái <strong>Fail</strong> và sụt giảm hiệu năng 100% so với baseline do lỗi gọi API (HTTP status 400 Bad Request). Phân tích logs cho thấy Agent trích xuất số điện thoại khách hàng sai định dạng yêu cầu của HubSpot API, dẫn tới bị từ chối ở bước thực thi Tool Node. Đây là cơ sở để workflow designer sửa prompt của Agent bắt buộc validate định dạng số điện thoại trước khi gọi tool.
+            </div>
+          </div>
+
+          <!-- PART 3: WRITE-UP & TECHNICAL INFERENCES -->
+          <div style="border-top: 1px solid var(--glass-border); padding-top: 40px;">
+            <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+              <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">3</span>
+              PHẦN 3: WRITE-UP & TECHNICAL INFERENCES (Phân tích các Quyết định Thiết kế)
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 30px; line-height: 1.6; font-size: 14px; color: hsl(var(--text-muted));">
+              
+              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 25px; border-radius: 12px;">
+                <h3 style="font-size: 16px; color: hsl(var(--text-primary)); margin-bottom: 15px; font-weight: 600;">
+                  Thiết kế Hệ thống Đánh giá AI và Các Đánh đổi kỹ thuật (Engineering Trade-offs)
+                </h3>
+                <p>
+                  Khi xây dựng một hệ thống đánh giá chất lượng (Eval Harness) độc lập cho một nền tảng Agent đa dạng như MindPal, nhóm phát triển phải đối mặt với nhiều quyết định đánh đổi về kiến trúc:
+                </p>
+                <ul style="padding-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Chi phí Đánh giá (Eval Tokens Cost) so với Độ chính xác:</strong>
+                    Sử dụng giám khảo AI (LLM-as-a-Judge) là cách hiệu quả nhất để đánh giá các tác vụ tạo văn bản/code phức tạp theo quy mô lớn. Tuy nhiên, việc sử dụng các mô hình cao cấp (như Claude 3.5 Sonnet) để chấm điểm cho các mô hình nhỏ hơn (như Llama 3) tiêu tốn một lượng token khổng lồ. Chi phí chạy eval có thể chiếm tới 10-15% tổng ngân sách LLM API của nền tảng. Giải pháp đánh đổi là chỉ chạy Model-based Grader cho các test cases cực kỳ quan trọng hoặc chạy định kỳ theo tuần thay vì trên mỗi commit git push.
+                  </li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Giám khảo Con người (Human) vs Giám khảo AI (Model Grader):</strong>
+                    Con người chấm điểm mang lại độ tin cậy cao nhất về mặt thẩm mỹ và độ hữu dụng thực tế, nhưng độ trễ cực kỳ lớn (hàng giờ đến hàng ngày) và không thể mở rộng. AI Judge giúp trả kết quả đánh giá trong vài giây, tích hợp được vào CI/CD để tự động khóa build lỗi ngay lập tức. Quyết định thiết kế ở đây là sử dụng AI Judge làm chốt chặn tự động đầu tiên, và chỉ đẩy sang Human Grader khi điểm số do AI chấm có độ lệch chuẩn lớn hoặc nằm ở vùng ranh giới (ví dụ: điểm chất lượng dao động từ 75% - 83%).
+                  </li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Bộ dữ liệu kiểm thử vàng (Golden Dataset) vs Dữ liệu thực tế (Telemetry):</strong>
+                    Đánh giá trên bộ dữ liệu kiểm thử vàng (curated offline benchmark) giúp giữ vững sự ổn định của phiên bản và dễ so sánh điểm số trực tiếp. Tuy nhiên, dữ liệu này có thể bị lỗi thời và không phản ánh đúng các câu lệnh thực tế mà người dùng nhập vào. MindPal giải quyết bằng cách định kỳ trích xuất 5% dữ liệu chat thực tế từ Production (đã được lọc bỏ thông tin nhạy cảm), gán nhãn thủ công rồi cập nhật ngược lại vào bộ Golden Dataset để bộ test case luôn cập nhật và thực tế.
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">
+        &copy; 2026 Hoàng Thanh Chiến. All rights reserved. Designed with premium AI Developer aesthetics.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
