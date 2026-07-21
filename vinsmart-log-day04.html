@@ -110,6 +110,17 @@
       color: hsl(var(--text-primary));
     }
   </style>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -135,10 +146,15 @@
         <a href="index.html#contact" class="nav-link">Liên hệ</a>
       </nav>
 
-      <div class="nav-toggle" id="nav-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
+      <div class="header-actions">
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <div class="nav-toggle" id="nav-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
     </div>
   </header>
@@ -204,6 +220,28 @@
                 </ul>
               </div>
 
+              <!-- 1.2 Task Suite Taxonomy -->
+              <div class="eval-card">
+                <span class="eval-badge badge-metric" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">Phân loại Bộ Đề bài Đánh giá (Task Suite Taxonomy)</span>
+                <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 15px;">
+                  Để đo lường chuẩn xác, bộ đề bài kiểm thử được cấu trúc thành 3 phân nhóm rõ rệt dựa trên tính chất và độ phức tạp:
+                </p>
+                <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 8px;">
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Deterministic Tasks (Đơn bước, Đầu ra xác định):</strong>
+                    Các tác vụ như trích xuất email (T3) hoặc phân loại ý định (T7). Phù hợp đánh giá nhanh bằng Rule-based Grader (regex, JSON Schema) để giảm thiểu chi phí và tăng tốc độ kiểm thử.
+                  </li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Tool-Using & Side-Effects (Tác vụ gọi công cụ):</strong>
+                    Các tác vụ như gọi API CRM (T4) hay chạy câu lệnh SQL trên database (T5). Cần chạy trong Sandbox cô lập và thực hiện kiểm tra thay đổi trạng thái (State-change Verification) thay vì chỉ so khớp text đầu ra.
+                  </li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Semantic & Open-Ended (Tác vụ sinh văn bản tự do):</strong>
+                    Các tác vụ như trả lời tài liệu RAG (T1) hay viết bài SEO (T6). Đòi hỏi Model-based Grader chấm theo Barem điểm chi tiết (Rubrics) để đánh giá độ trôi chảy, tính mạch lạc và độ trung thực.
+                  </li>
+                </ul>
+              </div>
+
               <!-- 2. Grader Calibration & Sandbox Mocking -->
               <div class="eval-card">
                 <span class="eval-badge badge-grader">Lớp Giám khảo, Hiệu chuẩn Bias & Thiết lập Mocking Sandbox</span>
@@ -212,10 +250,20 @@
                 </p>
                 <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 10px;">
                   <li>
-                    <strong style="color: hsl(var(--text-primary));">Giảm thiểu Bias của Model-based Grader (AI Judge):</strong>
+                    <strong style="color: hsl(var(--text-primary));">Giảm thiểu Bias & Kỹ thuật Thiết kế Model-based Grader (AI Judge):</strong>
                     Để kiểm soát các thiên lệch cố hữu như <em>Self-enhancement bias</em> (chuộng mô hình cùng họ), <em>Verbosity bias</em> (chuộng câu trả lời dài) và <em>Position bias</em> (ảnh hưởng bởi thứ tự dữ liệu):
                     <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
                       <li>Định kỳ đo chỉ số <strong>Grader Alignment</strong> bằng hệ số tương quan <strong>Cohen’s Kappa</strong> hoặc <strong>Pearson Correlation</strong> giữa AI Judge và Human Judge trên 50 mẫu ngẫu nhiên. Nếu hệ số \(Kappa < 0.70\), lập tức tinh chỉnh lại Prompt chấm điểm và áp dụng kỹ thuật hoán đổi vị trí câu trả lời (Position Swapping).</li>
+                      <li>Áp dụng kỹ thuật <strong>Chain-of-Thought (CoT) Grading</strong>: Thiết kế Prompt buộc AI Judge phải viết phần giải thích và đưa ra lý do khách quan dựa trên Barem điểm (Rubric) trước khi kết xuất điểm số cuối cùng.</li>
+                      <li>Tích hợp <strong>Few-shot Calibration</strong>: Cung cấp sẵn các mẫu câu trả lời chuẩn (tốt, trung bình, kém) kèm lời phê chi tiết trong prompt để Grader có hệ quy chiếu rõ ràng.</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Phương pháp Đánh giá Safety (An toàn hệ thống):</strong>
+                    Để phát hiện rò rỉ dữ liệu nhạy cảm hoặc tấn công Prompt Injection:
+                    <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
+                      <li>Sử dụng mô hình phân loại chuyên biệt (như <strong>Llama Guard</strong>) để quét đầu vào và đầu ra nhằm tối ưu chi phí và tăng tốc độ xử lý so với LLM Judge đa năng.</li>
+                      <li>Xây dựng bộ test-set Red-Teaming với các câu hỏi bẫy để đánh giá độ chống chịu Prompt Injection của Agent trước mỗi lần release.</li>
                     </ul>
                   </li>
                   <li>
@@ -233,12 +281,19 @@
               <div class="eval-card">
                 <span class="eval-badge badge-regression">Kiểm soát Sụt giảm Thống kê chống Nhiễu Bất định (Regression Policy)</span>
                 <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 10px;">
-                  Mô hình ngôn ngữ lớn (LLM) mang tính bất định cao. Để tránh các cảnh báo giả (False Alarms) do sai số ngẫu nhiên khi kiểm thử, quy trình CI/CD của MindPal áp dụng cơ chế đánh giá thống kê:
+                  Mô hình ngôn ngữ lớn (LLM) mang tính bất định cao. Để tránh các cảnh báo giả (False Alarms) do sai số ngẫu nhiên khi kiểm thử, quy trình CI/CD của MindPal áp dụng cơ chế đánh giá thống kê chuyên biệt:
                 </p>
                 <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 8px;">
                   <li><strong>Multiple Runs (\(N=3\) hoặc \(N=5\)):</strong> Mỗi tác vụ trong bộ Golden Test Suite được chạy lặp lại nhiều lần để đo đạc sai số phân bổ của mô hình.</li>
-                  <li><strong>Kiểm định Thống kê (Statistical Significance Testing):</strong> Sử dụng phương pháp **Bootstrap Confidence Intervals** hoặc **Student's t-test** (với mức ý nghĩa \(\alpha = 0.05\)) để so sánh điểm số của bản build mới với bản Baseline.</li>
-                  <li><strong>Quyết định Khóa Build:</strong> Pipeline CI/CD chỉ báo lỗi (Fail build) khi và chỉ khi điểm trung bình sụt giảm có **ý nghĩa thống kê** (\(p\text{-value} < 0.05\)), loại bỏ hoàn toàn các biến động ngẫu nhiên do LLM thay đổi cách viết.</li>
+                  <li>
+                    <strong style="color: hsl(var(--text-primary));">Kiểm định Thống kê chuyên biệt cho dạng dữ liệu nhị phân (Binary Success Rate):</strong>
+                    Đối với chỉ số `Task Accomplishment` (kết quả 0 hoặc 1), dữ liệu tuân theo phân phối Bernoulli chứ không phải phân phối chuẩn. Do đó, thay vì dùng Student's t-test (vốn giả định phân phối chuẩn và không chính xác cho cỡ mẫu nhỏ), hệ thống áp dụng:
+                    <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
+                      <li>Sử dụng <strong>Fisher's Exact Test</strong> hoặc <strong>Chi-Square Test với Hiệu chỉnh Yates</strong> khi so sánh tỷ lệ thành công của bản build mới với Baseline nhằm đảm bảo tính toán chính xác tuyệt đối ở cỡ mẫu nhỏ.</li>
+                      <li>Tính toán khoảng tin cậy của tỷ lệ thành công bằng phương pháp <strong>Wilson Score Interval</strong> thay vì Wald Interval, tránh lỗi sai số biên ở cận \(p \approx 0\) hoặc \(p \approx 1\).</li>
+                    </ul>
+                  </li>
+                  <li><strong>Quyết định Khóa Build:</strong> Pipeline CI/CD chỉ báo lỗi (Fail build) khi và chỉ khi điểm trung bình sụt giảm có **ý nghĩa thống kê** thực sự (\(p\text{-value} < 0.05\) từ kiểm định Fisher), loại bỏ hoàn toàn các biến động ngẫu nhiên do LLM thay đổi cách diễn đạt.</li>
                 </ul>
               </div>
 
