@@ -155,7 +155,7 @@
           Ngày 04: Standalone AI Agent Evaluation System
         </h1>
         <p style="color: hsl(var(--text-muted)); font-size: 16px; margin-bottom: 40px; line-height: 1.6;">
-          Đặc tả hệ thống đánh giá chất lượng (Eval Harness) độc lập cho AI Agent trên MindPal. Khắc phục triệt để các lỗ hổng về tính bất định (non-determinism), lỗi đánh tráo khái niệm success, calibration cho AI Judge, mocking ngoại vi, và chi tiết hóa các chỉ số đo lường.
+          Đặc tả hệ thống đánh giá chất lượng (Eval Harness) độc lập cho AI Agent trên MindPal. Hệ thống tích hợp các cơ chế kiểm thử đa chiều, xử lý tính bất định (non-determinism), hiệu chuẩn giám khảo (grader calibration) và thiết lập môi trường kiểm thử hộp cát (sandboxing).
         </p>
 
         <!-- Main Card Wrapper -->
@@ -165,7 +165,7 @@
           <div style="margin-bottom: 50px;">
             <h2 style="font-size: 20px; color: hsl(var(--text-primary)); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
               <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--color-primary)); color: #fff; font-size: 13px; font-weight: bold;">1</span>
-              PHẦN 1: MINDPAL EVALUATION SPECIFICATION (Đặc tả Hệ thống Đánh giá Nghiêm ngặt)
+              PHẦN 1: MINDPAL EVALUATION SPECIFICATION (Đặc tả Hệ thống Đánh giá)
             </h2>
             
             <div class="eval-container">
@@ -174,33 +174,33 @@
               <div class="eval-card">
                 <span class="eval-badge badge-metric">Hệ Chỉ số Đo lường & Tách biệt Rõ ràng (Metrics Framework)</span>
                 <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 15px;">
-                  Hệ thống phân rã và tách biệt hoàn toàn các chỉ số đo lường để tránh hiện tượng đánh tráo khái niệm giữa chạy thông luồng và giải quyết đúng bài toán:
+                  Hệ thống phân rã và tách biệt rõ ràng các chỉ số đo lường nhằm đảm bảo tính chính xác giữa khả năng vận hành kỹ thuật và hiệu quả xử lý nghiệp vụ thực tế của Agent (Execution vs. Accomplishment):
                 </p>
                 <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 8px;">
                   <li>
-                    <strong style="color: hsl(var(--text-primary));">Phân tách Success thành hai chỉ số:</strong>
+                    <strong style="color: hsl(var(--text-primary));">Phân tách Success thành hai chỉ số độc lập:</strong>
                     <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
-                      <li><em>Execution Success (Chạy kỹ thuật - Binary):</em> Workflow hoàn thành mà không crash, không trả về lỗi HTTP 5xx/4xx, và trả ra đúng định dạng schema yêu cầu.</li>
-                      <li><em>Task Accomplishment (Hoàn thành tác vụ - 0 hoặc 1):</em> Kết quả đầu ra thực sự đáp ứng đúng đề bài (ví dụ: DB sandbox thay đổi đúng dữ liệu sau khi chạy câu SQL, hoặc bảng đáp án thực thi trùng khớp hoàn toàn với Ground Truth).</li>
+                      <li><em>Execution Success (Hiệu năng Kỹ thuật - Binary):</em> Workflow hoàn thành thông suốt mà không crash, không trả về lỗi HTTP 5xx/4xx, và kết xuất dữ liệu đúng định dạng schema yêu cầu.</li>
+                      <li><em>Task Accomplishment (Hiệu quả Nghiệp vụ - 0 hoặc 1):</em> Kết quả đầu ra thực tế đáp ứng đúng yêu cầu đề bài (ví dụ: DB sandbox cập nhật chính xác dữ liệu sau khi chạy câu SQL, hoặc bảng đáp án thực thi trùng khớp hoàn toàn với Ground Truth).</li>
                     </ul>
                   </li>
                   <li>
-                    <strong style="color: hsl(var(--text-primary));">Quality (Chất lượng nội dung):</strong> Đo lường các chỉ số phụ tùy theo dạng tác vụ:
+                    <strong style="color: hsl(var(--text-primary));">Quality (Chất lượng nội dung):</strong> Đo lường các chỉ số phụ theo từng nhóm tác vụ đặc thù:
                     <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
                       <li>Đối với RAG: Đo <em>Context Recall</em> (độ phủ tri thức được tìm thấy) và <em>Context Precision</em> (độ chính xác của tri thức được trích xuất để tránh nhiễu).</li>
-                      <li>Đối với sinh nội dung: Đo <em>Faithfulness</em> (không bịa đặt) và <em>Answer Relevance</em> (đúng trọng tâm câu hỏi).</li>
+                      <li>Đối với sinh nội dung: Đo <em>Faithfulness</em> (độ trung thực thông tin) và <em>Answer Relevance</em> (độ tập trung vào chủ đề).</li>
                     </ul>
                   </li>
-                  <li><strong>Cost (Chi phí - Dollar per Run):</strong> Tính toán số lượng token đầu vào/đầu ra dựa trên giá API thực tế của các LLM và chi phí hạ tầng gọi các Tool ngoại vi.</li>
+                  <li><strong>Cost (Chi phí - Dollar per Run):</strong> Tính toán số lượng token đầu vào/đầu ra dựa trên đơn giá API thực tế của các LLM và chi phí hạ tầng gọi các Tool ngoại vi.</li>
                   <li>
-                    <strong style="color: hsl(var(--text-primary));">Latency Breakdown (Phân tích chi tiết độ trễ):</strong> Không chỉ đo tổng thời gian, hệ thống bóc tách thành:
+                    <strong style="color: hsl(var(--text-primary));">Latency Breakdown (Phân tích chi tiết độ trễ):</strong> Bóc tách tổng thời gian phản hồi thành các giai đoạn để tối ưu hóa nút thắt cổ chai:
                     <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
                       <li><em>TTFT (Time to First Token):</em> Tốc độ phản ứng ban đầu của LLM.</li>
-                      <li><em>Tool Execution Time:</em> Thời gian chạy các tác vụ cào web, API hoặc truy vấn DB.</li>
+                      <li><em>Tool Execution Time:</em> Thời gian thực thi các tác vụ cào web, gọi API hoặc truy vấn DB.</li>
                       <li><em>LLM Generation Time:</em> Thời gian Agent suy luận và kết xuất token cuối cùng.</li>
                     </ul>
                   </li>
-                  <li><strong>Safety (An toàn):</strong> Kiểm duyệt PII leak (lọt thông tin nhạy cảm), Toxicity (độc hại) và Prompt Injection ở cả đầu vào và đầu ra.</li>
+                  <li><strong>Safety (An toàn):</strong> Kiểm duyệt PII leak (lọt thông tin cá nhân), Toxicity (độc hại) và Prompt Injection ở cả đầu vào và đầu ra.</li>
                 </ul>
               </div>
 
@@ -208,19 +208,19 @@
               <div class="eval-card">
                 <span class="eval-badge badge-grader">Lớp Giám khảo, Hiệu chuẩn Bias & Thiết lập Mocking Sandbox</span>
                 <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 15px;">
-                  Giải quyết triệt để vấn đề định kiến (bias) của AI Judge và lỗi ngẫu nhiên khi gọi các Tool ngoại vi thật:
+                  Giải quyết bài toán tối ưu hóa độ tin cậy của Giám khảo AI (AI Judge) và cách cô lập môi trường khi gọi công cụ bên ngoài:
                 </p>
                 <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 10px;">
                   <li>
                     <strong style="color: hsl(var(--text-primary));">Giảm thiểu Bias của Model-based Grader (AI Judge):</strong>
-                    Để tránh <em>Self-enhancement bias</em> (chuộng mô hình của mình), <em>Verbosity bias</em> (chuộng viết dài) và <em>Position bias</em> (ảnh hưởng thứ tự):
+                    Để kiểm soát các thiên lệch cố hữu như <em>Self-enhancement bias</em> (chuộng mô hình cùng họ), <em>Verbosity bias</em> (chuộng câu trả lời dài) và <em>Position bias</em> (ảnh hưởng bởi thứ tự dữ liệu):
                     <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
                       <li>Định kỳ đo chỉ số <strong>Grader Alignment</strong> bằng hệ số tương quan <strong>Cohen’s Kappa</strong> hoặc <strong>Pearson Correlation</strong> giữa AI Judge và Human Judge trên 50 mẫu ngẫu nhiên. Nếu hệ số \(Kappa < 0.70\), lập tức tinh chỉnh lại Prompt chấm điểm và áp dụng kỹ thuật hoán đổi vị trí câu trả lời (Position Swapping).</li>
                     </ul>
                   </li>
                   <li>
                     <strong style="color: hsl(var(--text-primary));">Cơ chế API Sandbox & Mocking cho Tool Node:</strong>
-                    Để ngăn ngừa việc chạy CI/CD làm bẩn dữ liệu sản xuất hoặc bị trang web đối thủ chặn IP (Rate limit/Bot detection):
+                    Để tránh việc chạy kiểm thử làm ảnh hưởng dữ liệu sản xuất hoặc bị trang web đối thủ chặn IP do tần suất gọi lớn:
                     <ul style="padding-left: 15px; margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
                       <li>Toàn bộ lượt chạy kiểm thử tự động trong CI/CD bắt buộc phải trỏ qua các **Mock API Servers** (chứa snapshot HTTP responses tĩnh được ghi lại từ trước) thay vì gọi Live API đến HubSpot hay thực hiện cào web thật.</li>
                       <li>Riêng các tác vụ database SQL phải được thực thi trong một **Database Sandbox** chứa dữ liệu mẫu dùng một lần (Ephemeral DB) và tự động dọn dẹp (teardown) sau khi chạy xong.</li>
@@ -233,12 +233,12 @@
               <div class="eval-card">
                 <span class="eval-badge badge-regression">Kiểm soát Sụt giảm Thống kê chống Nhiễu Bất định (Regression Policy)</span>
                 <p style="font-size: 14px; color: hsl(var(--text-muted)); line-height: 1.6; margin-bottom: 10px;">
-                  Mô hình LLM có tính bất định (stochastic), do đó việc so sánh điểm số đơn lẻ (Single-run comparison) sẽ dẫn đến lỗi báo động giả (False Alarms) liên tục. Quy trình CI/CD mới của MindPal áp dụng:
+                  Mô hình ngôn ngữ lớn (LLM) mang tính bất định cao. Để tránh các cảnh báo giả (False Alarms) do sai số ngẫu nhiên khi kiểm thử, quy trình CI/CD của MindPal áp dụng cơ chế đánh giá thống kê:
                 </p>
                 <ul style="padding-left: 20px; font-size: 13.5px; color: hsl(var(--text-muted)); display: flex; flex-direction: column; gap: 8px;">
-                  <li><strong>Multiple Runs (\(N=3\) hoặc \(N=5\)):</strong> Mỗi tác vụ trong bộ Golden Test Suite được chạy lặp lại nhiều lần để đo đạc sai số phân phối.</li>
+                  <li><strong>Multiple Runs (\(N=3\) hoặc \(N=5\)):</strong> Mỗi tác vụ trong bộ Golden Test Suite được chạy lặp lại nhiều lần để đo đạc sai số phân bổ của mô hình.</li>
                   <li><strong>Kiểm định Thống kê (Statistical Significance Testing):</strong> Sử dụng phương pháp **Bootstrap Confidence Intervals** hoặc **Student's t-test** (với mức ý nghĩa \(\alpha = 0.05\)) để so sánh điểm số của bản build mới với bản Baseline.</li>
-                  <li><strong>Quyết định Fail Build:</strong> Pipeline CI/CD chỉ báo lỗi (Fail build) khi và chỉ khi điểm trung bình sụt giảm có **ý nghĩa thống kê** (\(p\text{-value} < 0.05\)), loại bỏ hoàn toàn các lỗi ngẫu nhiên do LLM thay đổi từ ngữ.</li>
+                  <li><strong>Quyết định Khóa Build:</strong> Pipeline CI/CD chỉ báo lỗi (Fail build) khi và chỉ khi điểm trung bình sụt giảm có **ý nghĩa thống kê** (\(p\text{-value} < 0.05\)), loại bỏ hoàn toàn các biến động ngẫu nhiên do LLM thay đổi cách viết.</li>
                 </ul>
               </div>
 
@@ -252,7 +252,7 @@
               PHẦN 2: SAMPLE SCORECARD RUN (Bảng điểm Chạy thử Thực tế trên 7 Tác vụ)
             </h2>
             <p style="color: hsl(var(--text-muted)); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
-              Bảng điểm dưới đây mô tả chi tiết kết quả chạy thử nghiệm kiểm thử tự động, phân tích rõ độ trễ từng phần (Latency Breakdown) và phương pháp xác thực kết quả (Assertion Criteria).
+              Bảng điểm dưới đây mô phỏng một đợt chạy đánh giá tự động (Evaluation Run) trên 7 tác vụ đại diện cho các nhóm chức năng cốt lõi của MindPal.
             </p>
 
             <div class="table-responsive">
@@ -382,8 +382,8 @@
             </div>
 
             <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 15px; border-radius: 10px; font-size: 13px; color: hsl(var(--text-muted)); line-height: 1.5; margin-top: 20px;">
-              <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;"><i class="fa-solid fa-code-branch"></i> Cơ chế Assertion cho Tác vụ SQL (T5):</strong>
-              Hệ thống không chỉ kiểm tra câu lệnh SQL được tạo ra có hợp lệ hay không. Grader sẽ chạy câu lệnh đó trong một **Database Sandbox** chứa dữ liệu giả lập sẵn (Seed data), lấy kết quả đầu ra (Query Result) chuyển đổi thành một bảng mã băm (hash) và so sánh trực tiếp với mã băm của bảng đáp án chuẩn (Ground Truth). Điều này đảm bảo tính chính xác tuyệt đối về mặt dữ liệu, loại bỏ khả năng Agent xuất mã SQL đúng cú pháp nhưng sai logic nghiệp vụ.
+              <strong style="color: hsl(var(--text-primary)); display: block; margin-bottom: 4px;"><i class="fa-solid fa-code-branch"></i> Cơ chế Xác thực cho Tác vụ SQL (T5):</strong>
+              Hệ thống không chỉ kiểm tra câu lệnh SQL được tạo ra có hợp lệ hay không. Grader sẽ thực thi câu lệnh đó trong một **Database Sandbox** chứa dữ liệu giả lập sẵn (Seed data), lấy kết quả đầu ra (Query Result) chuyển đổi thành một bảng mã băm (hash) và so sánh trực tiếp với mã băm của bảng đáp án chuẩn (Ground Truth). Điều này đảm bảo tính chính xác tuyệt đối về mặt dữ liệu, loại bỏ khả năng Agent xuất mã SQL đúng cú pháp nhưng sai logic nghiệp vụ.
             </div>
           </div>
 
