@@ -807,12 +807,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const initialTheme = document.documentElement.getAttribute('data-theme') || 'light';
   updateThemeUI(initialTheme);
 
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
-      const activeTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const activeTheme = document.documentElement.getAttribute('data-theme') || 'light';
       const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
       updateThemeUI(newTheme);
       showToast(`Switched to ${newTheme.toUpperCase()} Mode`, 'info', newTheme === 'dark' ? 'ph-moon' : 'ph-sun');
