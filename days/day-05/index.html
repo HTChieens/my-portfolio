@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindPal Studio - AI Agents & Multi-Agent Workflow Workspace</title>
+  <meta name="description" content="Next-Gen No-Code AI Agent and Multi-Agent Workflow Studio Dashboard. Reimagined with modern dark glassmorphism.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="mindpal-styles.css">
+
+  <!-- Theme Initializer Script -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('mindpal-theme') || localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top-wrapper">
+        <div class="sidebar-header">
+          <div class="brand-logo" id="brandLogoBtn" title="Click logo to expand sidebar when collapsed">
+            <i class="ph-bold ph-brain"></i>
+          </div>
+          <div class="brand-title">
+            <span class="brand-name">MindPal</span>
+          </div>
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Collapse Sidebar">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-item active" data-tab="overview">
+            <i class="ph-bold ph-squares-four"></i>
+            <span>Overview</span>
+          </a>
+          <a class="nav-item" data-tab="agents">
+            <i class="ph-bold ph-robot"></i>
+            <span>AI Agents</span>
+            <span class="badge">6</span>
+          </a>
+          <a class="nav-item" data-tab="workflows">
+            <i class="ph-bold ph-tree-structure"></i>
+            <span>Workflows</span>
+            <span class="badge">Active</span>
+          </a>
+          <a class="nav-item" data-tab="knowledge">
+            <i class="ph-bold ph-database"></i>
+            <span>Knowledge Base</span>
+          </a>
+
+          <div class="nav-divider"></div>
+          <div class="nav-section-label">Recent Chats</div>
+
+          <!-- RECENT CHATS BY PROJECT GROUP -->
+          <div class="chat-history-container" id="chatHistoryContainer">
+            
+            <!-- Group 1: Market Intelligence -->
+            <div class="chat-proj-group" data-project="market">
+              <div class="chat-proj-header">
+                <i class="ph-bold ph-chart-pie" style="color: var(--accent-violet);"></i>
+                <span>Market Intelligence</span>
+                <span class="chat-proj-count">2</span>
+                <i class="ph-bold ph-caret-down chat-proj-caret"></i>
+              </div>
+              <div class="chat-proj-items-list violet">
+                <a class="chat-item" data-chat-id="chat-1" title="VinSmart Market Analysis 2026">
+                  <i class="ph-bold ph-chat-circle-text"></i>
+                  <span class="chat-title">VinSmart Market Analysis 2026</span>
+                </a>
+                <a class="chat-item" data-chat-id="chat-2" title="Competitor Revenue Benchmark">
+                  <i class="ph-bold ph-chat-circle-text"></i>
+                  <span class="chat-title">Competitor Revenue Benchmark</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Group 2: Content & Brand -->
+            <div class="chat-proj-group" data-project="content">
+              <div class="chat-proj-header">
+                <i class="ph-bold ph-pen-nib" style="color: var(--accent-cyan);"></i>
+                <span>Content & Brand</span>
+                <span class="chat-proj-count">1</span>
+                <i class="ph-bold ph-caret-down chat-proj-caret"></i>
+              </div>
+              <div class="chat-proj-items-list cyan">
+                <a class="chat-item" data-chat-id="chat-3" title="Brand Voice Guidelines Draft">
+                  <i class="ph-bold ph-chat-circle-text"></i>
+                  <span class="chat-title">Brand Voice Guidelines Draft</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Group 3: Engineering & Code -->
+            <div class="chat-proj-group" data-project="engineering">
+              <div class="chat-proj-header">
+                <i class="ph-bold ph-code" style="color: var(--accent-emerald);"></i>
+                <span>Engineering & Code</span>
+                <span class="chat-proj-count">1</span>
+                <i class="ph-bold ph-caret-down chat-proj-caret"></i>
+              </div>
+              <div class="chat-proj-items-list emerald">
+                <a class="chat-item" data-chat-id="chat-4" title="Composio MCP Tool Integration">
+                  <i class="ph-bold ph-chat-circle-text"></i>
+                  <span class="chat-title">Composio MCP Tool Integration</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </nav>
+      </div>
+
+      <!-- SIDEBAR FOOTER -->
+      <div class="sidebar-footer">
+
+        <div class="user-profile" id="userProfileBtn">
+          <div class="avatar">AL</div>
+          <div class="user-info">
+            <span class="user-name">Alex Lumina</span>
+            <div class="user-plan-row">
+              <span class="user-plan-badge" id="userCurrentPlanTag">Pro Plan</span>
+              <button class="user-upgrade-btn" id="sidebarUpgradeBtn" type="button" title="Upgrade Plan">
+                <i class="ph-bold ph-arrow-up-right"></i> Upgrade
+              </button>
+            </div>
+          </div>
+          <button class="theme-mini-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+            <i class="ph-bold ph-sun" id="themeToggleIcon"></i>
+          </button>
+
+          <!-- USER MENU DROPDOWN -->
+          <div class="user-menu-dropdown" id="userMenuDropdown">
+            <div class="user-menu-header">
+              <div class="user-menu-avatar">AL</div>
+              <div class="user-menu-details">
+                <span class="user-menu-name">Alex Lumina</span>
+                <span class="user-menu-email">alex.lumina@acme.ai</span>
+              </div>
+            </div>
+            <div class="user-menu-divider"></div>
+            <a class="user-menu-item upgrade-item" id="userMenuUpgrade">
+              <i class="ph-bold ph-rocket-launch" style="color: var(--accent-violet);"></i>
+              <span>Upgrade Plan</span>
+              <span class="badge-pro">PRO v2</span>
+            </a>
+            <a class="user-menu-item" id="userMenuSettings">
+              <i class="ph-bold ph-gear"></i>
+              <span>Account Settings</span>
+            </a>
+            <a class="user-menu-item" id="userMenuBilling">
+              <i class="ph-bold ph-credit-card"></i>
+              <span>Billing & Tokens</span>
+            </a>
+            <a class="user-menu-item" id="userMenuTeam">
+              <i class="ph-bold ph-users"></i>
+              <span>Team Members</span>
+            </a>
+            <div class="user-menu-divider"></div>
+            <a class="user-menu-item logout-item" id="userMenuLogout">
+              <i class="ph-bold ph-sign-out" style="color: var(--accent-rose);"></i>
+              <span>Log Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <main class="main-wrapper">
+
+      <!-- WORKSPACE CONTEXT ENCLOSING BAR -->
+      <div class="workspace-context-bar">
+        <div class="ws-context-info">
+          <!-- HEADER WORKSPACE CARD & DROPDOWN -->
+          <div class="header-ws-card" id="sidebarWsCard" title="Click to switch workspace">
+            <div class="ws-avatar" id="currentWsAvatar"><i class="ph-bold ph-buildings"></i></div>
+            <div class="ws-meta">
+              <div class="ws-context-title-row">
+                <span class="ws-context-label">CURRENT WORKSPACE SCOPE</span>
+                <span class="ws-context-badge">Active Environment</span>
+              </div>
+              <div class="ws-name-row">
+                <h2 class="ws-context-name" id="currentWsName">Acme Global AI Lab</h2>
+                <i class="ph-bold ph-caret-down ws-caret"></i>
+              </div>
+            </div>
+
+            <!-- WORKSPACE DROPDOWN POPUP MENU -->
+            <div class="ws-dropdown-menu header-menu" id="wsDropdownMenu">
+              <div class="ws-dropdown-header">
+                <span class="ws-dropdown-title">SWITCH WORKSPACE</span>
+                <button class="ws-create-mini-btn" id="btnCreateWsMini" type="button" title="Create New Workspace">
+                  <i class="ph-bold ph-plus"></i> New
+                </button>
+              </div>
+
+              <div class="ws-list-container" id="wsListContainer">
+                <div class="ws-item active" data-name="Acme Global AI Lab" data-desc="Enterprise • 12 Agents" data-icon="ph-buildings">
+                  <div class="ws-item-icon acme"><i class="ph-bold ph-buildings"></i></div>
+                  <div class="ws-item-info">
+                    <span class="ws-item-title">Acme Global AI Lab</span>
+                    <span class="ws-item-sub">Default Enterprise Lab</span>
+                  </div>
+                  <i class="ph-bold ph-check ws-check-icon"></i>
+                </div>
+
+                <div class="ws-item" data-name="MindPal Internal R&D" data-desc="Pro • 4 Agents" data-icon="ph-flask">
+                  <div class="ws-item-icon rd"><i class="ph-bold ph-flask"></i></div>
+                  <div class="ws-item-info">
+                    <span class="ws-item-title">MindPal Internal R&D</span>
+                    <span class="ws-item-sub">Multi-Agent Sandbox</span>
+                  </div>
+                  <i class="ph-bold ph-check ws-check-icon"></i>
+                </div>
+
+                <div class="ws-item" data-name="VinSmart Production" data-desc="Enterprise • 8 Agents" data-icon="ph-cpu">
+                  <div class="ws-item-icon vin"><i class="ph-bold ph-cpu"></i></div>
+                  <div class="ws-item-info">
+                    <span class="ws-item-title">VinSmart Production</span>
+                    <span class="ws-item-sub">Factory Automation</span>
+                  </div>
+                  <i class="ph-bold ph-check ws-check-icon"></i>
+                </div>
+              </div>
+
+              <div class="ws-dropdown-footer">
+                <button class="btn-create-ws-full" id="btnOpenCreateWsModal" type="button">
+                  <i class="ph-bold ph-plus-circle" style="color: var(--accent-violet);"></i>
+                  <span>Create New Workspace</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ws-context-meta">
+          <div class="ws-meta-item">
+            <i class="ph-bold ph-shield-check" style="color: var(--accent-emerald);"></i>
+            <span>Enterprise SLA 99.9%</span>
+          </div>
+          <div class="ws-meta-item">
+            <i class="ph-bold ph-users" style="color: var(--accent-cyan);"></i>
+            <span>4 Active Members</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCROLLABLE PAGE CONTENT -->
+      <div class="content-scrollable">
+
+        <!-- TAB VIEW 1: OVERVIEW -->
+        <div class="tab-view" id="view-overview">
+
+        <!-- HERO BANNER -->
+        <section class="hero-banner">
+          <div class="hero-content">
+            <h1>Welcome back, Alex</h1>
+            <p>Your multi-agent network is executing smoothly. 3 workflows running in background with zero human intervention required.</p>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-value" id="statAgentsCount">12</span>
+              <span class="stat-label">Active Agents</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" style="color: var(--accent-violet);">3</span>
+              <span class="stat-label">Active Workflows</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">4,820</span>
+              <span class="stat-label">Executions Today</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">1.18s</span>
+              <span class="stat-label">Avg Latency</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- FEATURED COMPONENT 1: DEPLOYED WORKFLOWS -->
+        <section class="section-card">
+          <div class="section-header">
+            <div class="section-title-group">
+              <div class="section-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--accent-violet);">
+                <i class="ph-bold ph-tree-structure"></i>
+              </div>
+              <div>
+                <h2 class="section-title">Recent Deployed Workflows</h2>
+                <p class="section-subtitle">Active multi-agent pipelines & automated orchestrations running in this workspace</p>
+              </div>
+            </div>
+            <button class="btn-primary" id="btnDeployNewWf" type="button">
+              <i class="ph-bold ph-plus-circle"></i>
+              <span>Deploy New Workflow</span>
+            </button>
+          </div>
+
+          <!-- DEPLOYED WORKFLOWS LIST / CARDS GRID -->
+          <div class="deployed-wf-grid">
+            
+            <!-- Workflow Item 1 -->
+            <div class="deployed-wf-card">
+              <div class="wf-card-top">
+                <div class="wf-title-row">
+                  <div class="wf-icon-badge violet">
+                    <i class="ph-bold ph-chart-pie"></i>
+                  </div>
+                  <div>
+                    <h3 class="wf-name">Autonomous Deep Market Research & Publishing</h3>
+                    <span class="wf-id">#WF-8890 • Project: Market Intelligence</span>
+                  </div>
+                </div>
+                <div class="wf-status-tag live">
+                  <span class="pulse-dot"></span> Active Live
+                </div>
+              </div>
+
+              <div class="wf-card-body">
+                <div class="wf-meta-pill">
+                  <i class="ph-bold ph-robot"></i>
+                  <span>3 Agents: Deep Researcher, Content Classifier, QA Evaluator</span>
+                </div>
+                <div class="wf-meta-pill">
+                  <i class="ph-bold ph-clock"></i>
+                  <span>Trigger: Daily at 08:00 AM & Webhook Event</span>
+                </div>
+              </div>
+
+              <div class="wf-card-footer">
+                <div class="wf-metrics">
+                  <span class="wf-metric"><strong>14.2</strong> ops/sec</span>
+                  <span class="wf-metric-divider">•</span>
+                  <span class="wf-metric" style="color: var(--accent-emerald);"><strong>99.8%</strong> Success Rate</span>
+                </div>
+                <div class="wf-actions">
+                  <button class="btn-icon-text btn-run-wf" data-wf-id="WF-8890" title="Run Live Now">
+                    <i class="ph-bold ph-play"></i> Run Now
+                  </button>
+                  <button class="btn-icon-text btn-pause-wf" data-wf-id="WF-8890" title="Pause Workflow">
+                    <i class="ph-bold ph-pause"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Workflow Item 2 -->
+            <div class="deployed-wf-card">
+              <div class="wf-card-top">
+                <div class="wf-title-row">
+                  <div class="wf-icon-badge emerald">
+                    <i class="ph-bold ph-code"></i>
+                  </div>
+                  <div>
+                    <h3 class="wf-name">Automated Code Review & PR Security Inspection</h3>
+                    <span class="wf-id">#WF-4102 • Project: Engineering & Code</span>
+                  </div>
+                </div>
+                <div class="wf-status-tag live">
+                  <span class="pulse-dot"></span> Active Live
+                </div>
+              </div>
+
+              <div class="wf-card-body">
+                <div class="wf-meta-pill">
+                  <i class="ph-bold ph-robot"></i>
+                  <span>2 Agents: Code Auditor, Security Scanner</span>
+                </div>
+                <div class="wf-meta-pill">
+                  <i class="ph-bold ph-git-pull-request"></i>
+                  <span>Trigger: GitHub Pull Request Webhook</span>
+                </div>
+              </div>
+
+              <div class="wf-card-footer">
+                <div class="wf-metrics">
+                  <span class="wf-metric"><strong>2.4s</strong> avg duration</span>
+                  <span class="wf-metric-divider">•</span>
+                  <span class="wf-metric" style="color: var(--accent-emerald);"><strong>100%</strong> Success Rate</span>
+                </div>
+                <div class="wf-actions">
+                  <button class="btn-icon-text btn-run-wf" data-wf-id="WF-4102" title="Run Live Now">
+                    <i class="ph-bold ph-play"></i> Run Now
+                  </button>
+                  <button class="btn-icon-text btn-pause-wf" data-wf-id="WF-4102" title="Pause Workflow">
+                    <i class="ph-bold ph-pause"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Workflow Item 3 -->
+            <div class="deployed-wf-card">
+              <div class="wf-card-top">
+                <div class="wf-title-row">
+                  <div class="wf-icon-badge cyan">
+                    <i class="ph-bold ph-pen-nib"></i>
+                  </div>
+                  <div>
+                    <h3 class="wf-name">Brand Voice Guidelines & Content Auto-Sync</h3>
+                    <span class="wf-id">#WF-3091 • Project: Content & Brand</span>
+                  </div>
+                </div>
+                <div class="wf-status-tag paused">
+                  <i class="ph-bold ph-pause-circle"></i> Paused
+                </div>
+              </div>
+
+              <div class="wf-card-body">
+                <div class="wf-meta-pill">
+                  <i class="ph-bold ph-robot"></i>
+                  <span>2 Agents: Ghostwriter AI, Notion Publisher</span>
+                </div>
+                <div class="wf-meta-pill">
+                  <i class="ph-bold ph-clock"></i>
+                  <span>Trigger: Hourly Scheduled Pipeline</span>
+                </div>
+              </div>
+
+              <div class="wf-card-footer">
+                <div class="wf-metrics">
+                  <span class="wf-metric"><strong>1,240</strong> records/hr</span>
+                  <span class="wf-metric-divider">•</span>
+                  <span class="wf-metric" style="color: var(--text-muted);">Paused</span>
+                </div>
+                <div class="wf-actions">
+                  <button class="btn-icon-text btn-run-wf" data-wf-id="WF-3091" title="Resume & Run">
+                    <i class="ph-bold ph-play"></i> Resume
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+            <!-- FEATURED COMPONENT 2: DEPLOYED AI AGENTS -->
+        <section class="section-card">
+          <div class="section-header">
+            <div class="section-title-group">
+              <div class="section-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);">
+                <i class="ph-bold ph-robot"></i>
+              </div>
+              <div>
+                <h2 class="section-title">Recent Deployed AI Agents</h2>
+                <p class="section-subtitle">Autonomous agents deployed & active in this workspace</p>
+              </div>
+            </div>
+            <button class="btn-primary" id="btnDeployNewAgent" type="button">
+              <i class="ph-bold ph-plus-circle"></i>
+              <span>Deploy New Agent</span>
+            </button>
+          </div>
+
+          <div class="agents-cards-grid">
+            
+            <!-- Agent 1 -->
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <div class="agent-avatar research">
+                  <i class="ph-bold ph-magnifying-glass"></i>
+                </div>
+                <div class="agent-meta">
+                  <span class="agent-name">Deep Research Agent</span>
+                  <span class="agent-role">Autonomous Web & Market Analysis</span>
+                </div>
+              </div>
+              <div class="agent-tags">
+                <span class="tag model-tag">GPT-4o</span>
+                <span class="tag composio-tag">Composio Tools</span>
+                <span class="tag">RAG Search</span>
+              </div>
+              <div class="agent-footer">
+                <div class="agent-status-toggle">
+                  <span class="toggle-dot"></span>
+                  <span>Active</span>
+                </div>
+                <button class="btn-sm-text test-agent-btn" data-agent="Deep Research Agent">Test Chat &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Agent 2 -->
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <div class="agent-avatar writer">
+                  <i class="ph-bold ph-pen-nib"></i>
+                </div>
+                <div class="agent-meta">
+                  <span class="agent-name">Ghostwriter AI</span>
+                  <span class="agent-role">Content Creation & Editorial</span>
+                </div>
+              </div>
+              <div class="agent-tags">
+                <span class="tag model-tag">Claude 3.5 Sonnet</span>
+                <span class="tag brand-tag">Brand Voice v2</span>
+                <span class="tag">Sub-agent Enabled</span>
+              </div>
+              <div class="agent-footer">
+                <div class="agent-status-toggle">
+                  <span class="toggle-dot"></span>
+                  <span>Active</span>
+                </div>
+                <button class="btn-sm-text test-agent-btn" data-agent="Ghostwriter AI">Test Chat &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Agent 3 -->
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <div class="agent-avatar coder">
+                  <i class="ph-bold ph-code"></i>
+                </div>
+                <div class="agent-meta">
+                  <span class="agent-name">Code Reviewer</span>
+                  <span class="agent-role">Security & Refactoring</span>
+                </div>
+              </div>
+              <div class="agent-tags">
+                <span class="tag model-tag">Gemini 1.5 Pro</span>
+                <span class="tag mcp-tag">GitHub MCP</span>
+                <span class="tag composio-tag">Code Tools</span>
+              </div>
+              <div class="agent-footer">
+                <div class="agent-status-toggle">
+                  <span class="toggle-dot"></span>
+                  <span>Active</span>
+                </div>
+                <button class="btn-sm-text test-agent-btn" data-agent="Code Reviewer">Test Chat &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Agent 4 -->
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <div class="agent-avatar analyst">
+                  <i class="ph-bold ph-chart-pie"></i>
+                </div>
+                <div class="agent-meta">
+                  <span class="agent-name">Financial Analyst</span>
+                  <span class="agent-role">Metrics & Revenue Forecast</span>
+                </div>
+              </div>
+              <div class="agent-tags">
+                <span class="tag model-tag">GPT-4o</span>
+                <span class="tag composio-tag">Stripe Sync</span>
+                <span class="tag brand-tag">Corporate Tone</span>
+              </div>
+              <div class="agent-footer">
+                <div class="agent-status-toggle">
+                  <span class="toggle-dot"></span>
+                  <span>Active</span>
+                </div>
+                <button class="btn-sm-text test-agent-btn" data-agent="Financial Analyst">Test Chat &rarr;</button>
+              </div>
+            </div>
+
+        </section>
+        </div> <!-- /#view-overview -->
+
+        <!-- TAB VIEW 2: AI AGENTS STUDIO -->
+        <div class="tab-view hidden" id="view-agents">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title-group">
+                <div class="section-icon"><i class="ph-bold ph-robot"></i></div>
+                <div>
+                  <h2 class="section-title">AI Agents Studio</h2>
+                  <p class="section-subtitle">Manage system prompts, model parameters, knowledge sources & project groups</p>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <!-- COMPACT PROJECT SELECTOR DROPDOWN -->
+                <div class="project-select-card" id="projectSelectBtn" title="Select Project Filter">
+                  <i class="ph-bold ph-folder" style="color: var(--accent-violet);"></i>
+                  <span id="selectedProjectLabel">All Projects (4)</span>
+                  <i class="ph-bold ph-caret-down" style="font-size: 0.75rem;"></i>
+
+                  <!-- DROPDOWN MENU -->
+                  <div class="project-dropdown-menu" id="projectDropdownMenu">
+                    <div class="proj-dropdown-title">SELECT PROJECT GROUP</div>
+                    <div class="proj-item active" data-project="all" data-label="All Projects (4)">
+                      <i class="ph-bold ph-squares-four"></i>
+                      <span>All Projects</span>
+                      <span class="proj-count">4</span>
+                    </div>
+                    <div class="proj-item" data-project="market" data-label="Market Intelligence (2)">
+                      <i class="ph-bold ph-chart-pie" style="color: var(--accent-violet);"></i>
+                      <span>Market Intelligence</span>
+                      <span class="proj-count">2</span>
+                    </div>
+                    <div class="proj-item" data-project="content" data-label="Content & Brand (1)">
+                      <i class="ph-bold ph-pen-nib" style="color: var(--accent-cyan);"></i>
+                      <span>Content & Brand</span>
+                      <span class="proj-count">1</span>
+                    </div>
+                    <div class="proj-item" data-project="engineering" data-label="Engineering & Code (1)">
+                      <i class="ph-bold ph-code" style="color: var(--accent-emerald);"></i>
+                      <span>Engineering & Code</span>
+                      <span class="proj-count">1</span>
+                    </div>
+                    <div class="proj-dropdown-divider"></div>
+                    <button class="proj-create-btn" id="btnOpenNewProjectModal" type="button">
+                      <i class="ph-bold ph-folder-plus"></i> + New Project Group
+                    </button>
+                  </div>
+                </div>
+
+                <button class="btn-primary" onclick="document.getElementById('btnNewAgent').click()">
+                  <i class="ph-bold ph-plus"></i> Create Agent
+                </button>
+              </div>
+            </div>
+
+            <div style="margin-top: 1rem;">
+              <div class="agents-cards-grid" id="agentsCardsGrid">
+                
+                <!-- Agent 1 -->
+                <div class="agent-card" data-project="market">
+                  <div class="agent-card-header">
+                    <div class="agent-avatar research"><i class="ph-bold ph-magnifying-glass-plus"></i></div>
+                    <div class="agent-meta">
+                      <span class="agent-name">Deep Research Agent</span>
+                      <span class="agent-role">Data Extraction & Web Crawling</span>
+                    </div>
+                  </div>
+                  <div class="agent-tags">
+                    <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Market Intelligence</span>
+                    <span class="tag model-tag">GPT-4o</span>
+                    <span class="tag composio-tag">Composio Web</span>
+                  </div>
+                  <div class="agent-footer">
+                    <span class="agent-status-toggle"><span class="toggle-dot"></span> Active</span>
+                    <button class="btn-sm-text test-agent-btn" data-agent="Deep Research Agent">Test Chat &rarr;</button>
+                  </div>
+                </div>
+                
+                <!-- Agent 2 -->
+                <div class="agent-card" data-project="content">
+                  <div class="agent-card-header">
+                    <div class="agent-avatar writer"><i class="ph-bold ph-pen-nib"></i></div>
+                    <div class="agent-meta">
+                      <span class="agent-name">Ghostwriter AI</span>
+                      <span class="agent-role">Content & Brand Voice</span>
+                    </div>
+                  </div>
+                  <div class="agent-tags">
+                    <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Content & Brand</span>
+                    <span class="tag model-tag">Claude 3.5 Sonnet</span>
+                    <span class="tag brand-tag">Brand Voice v2</span>
+                  </div>
+                  <div class="agent-footer">
+                    <span class="agent-status-toggle"><span class="toggle-dot"></span> Active</span>
+                    <button class="btn-sm-text test-agent-btn" data-agent="Ghostwriter AI">Test Chat &rarr;</button>
+                  </div>
+                </div>
+
+                <!-- Agent 3 -->
+                <div class="agent-card" data-project="engineering">
+                  <div class="agent-card-header">
+                    <div class="agent-avatar coder"><i class="ph-bold ph-code"></i></div>
+                    <div class="agent-meta">
+                      <span class="agent-name">Code Reviewer</span>
+                      <span class="agent-role">Security & Refactoring</span>
+                    </div>
+                  </div>
+                  <div class="agent-tags">
+                    <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Engineering & Code</span>
+                    <span class="tag model-tag">Gemini 1.5 Pro</span>
+                    <span class="tag mcp-tag">GitHub MCP</span>
+                  </div>
+                  <div class="agent-footer">
+                    <span class="agent-status-toggle"><span class="toggle-dot"></span> Active</span>
+                    <button class="btn-sm-text test-agent-btn" data-agent="Code Reviewer">Test Chat &rarr;</button>
+                  </div>
+                </div>
+
+                <!-- Agent 4 -->
+                <div class="agent-card" data-project="market">
+                  <div class="agent-card-header">
+                    <div class="agent-avatar analyst"><i class="ph-bold ph-chart-pie"></i></div>
+                    <div class="agent-meta">
+                      <span class="agent-name">Financial Analyst</span>
+                      <span class="agent-role">Metrics & Revenue Forecast</span>
+                    </div>
+                  </div>
+                  <div class="agent-tags">
+                    <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Market Intelligence</span>
+                    <span class="tag model-tag">GPT-4o</span>
+                    <span class="tag composio-tag">Stripe Sync</span>
+                  </div>
+                  <div class="agent-footer">
+                    <span class="agent-status-toggle"><span class="toggle-dot"></span> Active</span>
+                    <button class="btn-sm-text test-agent-btn" data-agent="Financial Analyst">Test Chat &rarr;</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB VIEW 3: WORKFLOWS STUDIO -->
+        <div class="tab-view hidden" id="view-workflows">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title-group">
+                <div class="section-icon"><i class="ph-bold ph-tree-structure"></i></div>
+                <div>
+                  <h2 class="section-title">Workflows Canvas Builder</h2>
+                  <p class="section-subtitle">Multi-Agent Nodes, Triggers & Pipeline Orchestration</p>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="btn-secondary"><i class="ph-bold ph-lightning"></i> API Trigger Settings</button>
+                <button class="btn-primary" onclick="document.getElementById('btnRunWorkflow').click()"><i class="ph-bold ph-play"></i> Run Test Canvas</button>
+              </div>
+            </div>
+
+            <!-- Canvas Grid -->
+            <div class="workflow-canvas-container" style="min-height: 420px; display: flex; align-items: center; justify-content: center;">
+              <div style="text-align: center;">
+                <i class="ph-bold ph-tree-structure" style="font-size: 3rem; color: var(--accent-violet); margin-bottom: 1rem;"></i>
+                <h3 style="font-size: 1.2rem; font-weight: 700;">Visual Node Canvas Workspace</h3>
+                <p style="color: var(--text-muted); max-width: 480px; margin: 0.5rem auto 1.5rem auto; font-size: 0.85rem;">
+                  Drag & drop Agent Nodes, Router Nodes, Evaluator-Optimizer Loops, and HITL Approval Gates directly onto canvas.
+                </p>
+                <button class="btn-primary" onclick="document.getElementById('btnRunWorkflow').click()">Launch Active Canvas &rarr;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB VIEW 4: KNOWLEDGE BASE -->
+        <div class="tab-view hidden" id="view-knowledge">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title-group">
+                <div class="section-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan);"><i class="ph-bold ph-database"></i></div>
+                <div>
+                  <h2 class="section-title">Knowledge Sources & Vector Storage</h2>
+                  <p class="section-subtitle">Files, Web Crawlers, Notes & RAG Embeddings Index</p>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="document.getElementById('dropzone').click()"><i class="ph-bold ph-cloud-arrow-up"></i> Upload Data</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+              <div>
+                <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.85rem;">Connected Knowledge Repositories</h3>
+                <div class="kb-list">
+                  <div class="kb-item">
+                    <div class="kb-info">
+                      <div class="kb-file-icon"><i class="ph-bold ph-file-pdf"></i></div>
+                      <div class="kb-details"><span class="kb-name">Q3_Strategic_Roadmap.pdf</span><span class="kb-size">4.2 MB • 1,420 Vectors</span></div>
+                    </div>
+                    <span class="kb-sync-status"><i class="ph-bold ph-check-circle"></i> Synced</span>
+                  </div>
+                  <div class="kb-item">
+                    <div class="kb-info">
+                      <div class="kb-file-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);"><i class="ph-bold ph-globe"></i></div>
+                      <div class="kb-details"><span class="kb-name">https://docs.acme.ai/api</span><span class="kb-size">Web Crawl • 85 Pages</span></div>
+                    </div>
+                    <span class="kb-sync-status"><i class="ph-bold ph-check-circle"></i> Synced</span>
+                  </div>
+                  <div class="kb-item">
+                    <div class="kb-info">
+                      <div class="kb-file-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);"><i class="ph-bold ph-notepad"></i></div>
+                      <div class="kb-details"><span class="kb-name">Customer_Feedback_2026.docx</span><span class="kb-size">1.8 MB • 620 Vectors</span></div>
+                    </div>
+                    <span class="kb-sync-status"><i class="ph-bold ph-check-circle"></i> Synced</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.85rem;">Upload & Index New Sources</h3>
+                <div class="upload-dropzone" style="padding: 2.5rem 1.5rem;">
+                  <i class="ph-bold ph-cloud-arrow-up upload-icon" style="font-size: 2.5rem;"></i>
+                  <span class="upload-text"><strong>Click to upload</strong> or drag & drop (PDF, DOCX, TXT)</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Instant Pinecone/Qdrant Vector Chunking</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB VIEW 5: EXECUTION LOGS -->
+        <div class="tab-view hidden" id="view-logs">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title-group">
+                <div class="section-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);"><i class="ph-bold ph-terminal-window"></i></div>
+                <div>
+                  <h2 class="section-title">Full Execution Logs & Telemetry Stream</h2>
+                  <p class="section-subtitle">Real-time LLM reasoning stream, tool calling & latency monitoring</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="logs-console" style="height: 480px;">
+              <div class="logs-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span class="logs-title">mindpal-orchestrator://stream.log</span>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">UTF-8 • Real-time Stream</div>
+              </div>
+              <div class="logs-body" style="height: 430px;">
+                <div class="log-line"><span class="log-time">[09:47:15]</span><span class="log-type info">[SYSTEM]</span><span class="log-msg">MindPal Studio Cluster initialized. 4 Worker nodes online.</span></div>
+                <div class="log-line"><span class="log-time">[09:47:18]</span><span class="log-type agent">[AGENT:Researcher]</span><span class="log-msg">Executing tool web_search("AI agent orchestration trends 2026") ...</span></div>
+                <div class="log-line"><span class="log-time">[09:47:20]</span><span class="log-type success">[SUCCESS]</span><span class="log-msg">Retrieved 15 documents. Embeddings similarity score: 0.942.</span></div>
+                <div class="log-line"><span class="log-time">[09:47:22]</span><span class="log-type agent">[AGENT:Synthesizer]</span><span class="log-msg">Receiving context payload (4.8k tokens). Generating executive summary...</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB VIEW 6: ANALYTICS -->
+        <div class="tab-view hidden" id="view-analytics">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title-group">
+                <div class="section-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);"><i class="ph-bold ph-chart-line-up"></i></div>
+                <div>
+                  <h2 class="section-title">Analytics & Usage Telemetry</h2>
+                  <p class="section-subtitle">Token consumption, latency breakdown, error rates & cost analytics</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+              <div class="credit-card" style="padding: 1.25rem;">
+                <span class="stat-label">Total Executions Today</span>
+                <span class="stat-value" style="font-size: 1.8rem; margin: 0.5rem 0; display: block;">4,820</span>
+                <span style="font-size: 0.75rem; color: var(--accent-emerald);"><i class="ph-bold ph-trend-up"></i> +14.2% vs yesterday</span>
+              </div>
+              <div class="credit-card" style="padding: 1.25rem;">
+                <span class="stat-label">Avg Token Latency</span>
+                <span class="stat-value" style="font-size: 1.8rem; margin: 0.5rem 0; display: block;">1.18s</span>
+                <span style="font-size: 0.75rem; color: var(--accent-emerald);"><i class="ph-bold ph-check"></i> Optimal performance</span>
+              </div>
+              <div class="credit-card" style="padding: 1.25rem;">
+                <span class="stat-label">Vector Storage Accuracy</span>
+                <span class="stat-value" style="font-size: 1.8rem; color: var(--accent-emerald); margin: 0.5rem 0; display: block;">99.4%</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">1,420 Chunks indexed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB VIEW 7: SETTINGS -->
+        <div class="tab-view hidden" id="view-settings">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title-group">
+                <div class="section-icon"><i class="ph-bold ph-gear"></i></div>
+                <div>
+                  <h2 class="section-title">Workspace Settings</h2>
+                  <p class="section-subtitle">API Keys, Webhooks, Team Members & Billing</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1.25rem; max-width: 600px;">
+              <div>
+                <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.4rem;">API Key</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="password" value="mp_live_9f88a20491823901b0921" readonly style="flex: 1; background: var(--bg-primary); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.6rem; border-radius: var(--radius-md); font-family: var(--font-mono);">
+                  <button class="btn-secondary" onclick="alert('API Key Copied!')">Copy</button>
+                </div>
+              </div>
+              <div>
+                <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.4rem;">Webhook Endpoint URL</label>
+                <input type="text" value="https://api.acme.ai/webhooks/mindpal-events" style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.6rem; border-radius: var(--radius-md); font-family: var(--font-mono);">
+              </div>
+              <button class="btn-primary" style="align-self: flex-start;" onclick="alert('Settings Saved!')">Save Changes</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- INTERACTIVE DRAWER FOR QUICK AGENT CHAT / MINDIE ASSISTANT -->
+  <div class="drawer-backdrop" id="drawerBackdrop">
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <div class="drawer-title" id="drawerTitle">
+          <i class="ph-bold ph-sparkle" style="color: var(--accent-violet);"></i>
+          <span>Mindie Assistant</span>
+        </div>
+        <button class="drawer-close-btn" id="closeDrawerBtn">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="drawer-body" id="drawerBody">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-msg agent">
+            <div class="chat-bubble">
+              Hi Alex! I'm <strong>Mindie</strong>, your AI Workflow Architect. Tell me what workflow or agent you'd like to build today!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <div class="chat-input-box">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Type prompt (e.g. Build me a newsletter workflow)...">
+          <button class="btn-primary" id="sendChatBtn" style="padding: 0.4rem 0.85rem;">
+            <i class="ph-bold ph-paper-plane-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE SEARCH MODAL -->
+  <div class="modal-backdrop" id="cmdModalBackdrop">
+    <div class="cmd-modal">
+      <div class="cmd-input-container">
+        <i class="ph-bold ph-magnifying-glass"></i>
+        <input type="text" class="cmd-input" id="cmdSearchInput" placeholder="Search commands, agents, workflows... (Type to filter)">
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item selected">
+          <i class="ph-bold ph-play" style="color: var(--accent-emerald);"></i>
+          <span>Run Workflow: Market Research Assembly Line</span>
+        </div>
+        <div class="cmd-item">
+          <i class="ph-bold ph-plus-circle" style="color: var(--accent-violet);"></i>
+          <span>Create New AI Agent</span>
+        </div>
+        <div class="cmd-item">
+          <i class="ph-bold ph-cloud-arrow-up" style="color: var(--accent-cyan);"></i>
+          <span>Upload New Knowledge Base Document</span>
+        </div>
+        <div class="cmd-item">
+          <i class="ph-bold ph-terminal-window"></i>
+          <span>Open Live Execution Logs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE WORKSPACE MODAL -->
+  <div class="modal-backdrop" id="createWsModalBackdrop">
+    <div class="cmd-modal" style="max-width: 440px; padding: 1.5rem; border-radius: var(--radius-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="width: 36px; height: 36px; border-radius: var(--radius-md); background: rgba(99, 102, 241, 0.15); color: var(--accent-violet); display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+            <i class="ph-bold ph-buildings"></i>
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">Create New Workspace</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Organize your agents, teams & workflows</p>
+          </div>
+        </div>
+        <button class="drawer-close-btn" id="closeCreateWsModalBtn" type="button"><i class="ph-bold ph-x"></i></button>
+      </div>
+
+      <form id="createWsForm" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Workspace Name</label>
+          <input type="text" id="newWsNameInput" required placeholder="e.g. VinSmart AI Production Lab" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Description / Tagline</label>
+          <input type="text" id="newWsDescInput" placeholder="e.g. Factory Multi-Agent Automation" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Plan Tier</label>
+          <select id="newWsPlanInput" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+            <option value="Starter • 2 Agents">Starter Plan (2 Agents)</option>
+            <option value="Pro • 6 Agents" selected>Pro Plan (6 Agents)</option>
+            <option value="Enterprise • Unlimited">Enterprise Plan (Unlimited)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+          <button type="button" class="btn-secondary" id="cancelCreateWsBtn">Cancel</button>
+          <button type="submit" class="btn-primary"><i class="ph-bold ph-plus"></i> Create Workspace</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE PROJECT GROUP MODAL -->
+  <div class="modal-backdrop" id="createProjectModalBackdrop">
+    <div class="cmd-modal" style="max-width: 420px; padding: 1.5rem; border-radius: var(--radius-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="width: 36px; height: 36px; border-radius: var(--radius-md); background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+            <i class="ph-bold ph-folder-plus"></i>
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">New Agent Project Group</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Group specialized agents by project</p>
+          </div>
+        </div>
+        <button class="drawer-close-btn" id="closeCreateProjectModalBtn" type="button"><i class="ph-bold ph-x"></i></button>
+      </div>
+
+      <form id="createProjectForm" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Project Group Name</label>
+          <input type="text" id="newProjectNameInput" required placeholder="e.g. VinSmart Factory Automation" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Scope / Description</label>
+          <input type="text" id="newProjectDescInput" placeholder="e.g. Quality Control & Defect Detection Agents" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+          <button type="button" class="btn-secondary" id="cancelCreateProjectBtn">Cancel</button>
+          <button type="submit" class="btn-primary"><i class="ph-bold ph-plus"></i> Create Group</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE AGENT WIZARD MODAL (3 CREATION MODES) -->
+  <div class="modal-backdrop" id="createAgentWizardModalBackdrop">
+    <div class="cmd-modal" style="max-width: 580px; padding: 1.75rem; border-radius: var(--radius-lg);">
+      
+      <!-- STEP 1: MODE SELECTION CARDS -->
+      <div id="agentWizardStepMode">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: var(--gradient-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              <i class="ph-bold ph-robot"></i>
+            </div>
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Create New AI Agent</h3>
+              <p style="font-size: 0.78rem; color: var(--text-muted);">Select how you would like to build your agent</p>
+            </div>
+          </div>
+          <button class="drawer-close-btn" id="closeCreateAgentModalBtn" type="button"><i class="ph-bold ph-x"></i></button>
+        </div>
+
+        <div class="agent-mode-cards">
+          <!-- MODE 1: CHAT WITH AI -->
+          <div class="agent-mode-card" id="modeChatAI">
+            <div class="mode-icon-wrapper ai">
+              <i class="ph-bold ph-sparkle"></i>
+            </div>
+            <div class="mode-info">
+              <div class="mode-title-row">
+                <span class="mode-title">1. Chat with Mindie AI</span>
+                <span class="mode-badge ai">Interactive</span>
+              </div>
+              <p class="mode-desc">Describe your goal in natural language. Mindie AI will auto-generate system prompts, parameters & tools.</p>
+            </div>
+            <i class="ph-bold ph-caret-right mode-arrow"></i>
+          </div>
+
+          <!-- MODE 2: CHOOSE TEMPLATE -->
+          <div class="agent-mode-card" id="modeTemplate">
+            <div class="mode-icon-wrapper template">
+              <i class="ph-bold ph-layout"></i>
+            </div>
+            <div class="mode-info">
+              <div class="mode-title-row">
+                <span class="mode-title">2. Choose from Template</span>
+                <span class="mode-badge template">Fast Start</span>
+              </div>
+              <p class="mode-desc">Pick from battle-tested templates: Deep Research, SEO Writer, Code Reviewer, Financial Analyst.</p>
+            </div>
+            <i class="ph-bold ph-caret-right mode-arrow"></i>
+          </div>
+
+          <!-- MODE 3: BLANK AGENT FROM SCRATCH -->
+          <div class="agent-mode-card" id="modeBlank">
+            <div class="mode-icon-wrapper blank">
+              <i class="ph-bold ph-sliders"></i>
+            </div>
+            <div class="mode-info">
+              <div class="mode-title-row">
+                <span class="mode-title">3. Build Blank Agent</span>
+                <span class="mode-badge blank">Full Control</span>
+              </div>
+              <p class="mode-desc">Configure every setting manually: Prompt, LLM Model, Output Format & Knowledge Sources.</p>
+            </div>
+            <i class="ph-bold ph-caret-right mode-arrow"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2A: TEMPLATE GALLERY (HIDDEN BY DEFAULT) -->
+      <div id="agentWizardStepTemplate" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <button type="button" class="btn-sm-text" id="backToModesFromTemplate">&larr; Back to Modes</button>
+          <h3 style="font-size: 1.05rem; font-weight: 700;">Select Agent Template</h3>
+          <button class="drawer-close-btn" id="closeTemplateStepBtn" type="button"><i class="ph-bold ph-x"></i></button>
+        </div>
+
+        <div class="templates-grid">
+          <div class="template-item" data-template="research">
+            <div class="tmpl-icon research"><i class="ph-bold ph-magnifying-glass-plus"></i></div>
+            <div class="tmpl-info">
+              <span class="tmpl-name">Deep Research & Crawling</span>
+              <span class="tmpl-desc">Scrapes RSS, extracts insights via GPT-4o + Composio</span>
+            </div>
+          </div>
+          <div class="template-item" data-template="writer">
+            <div class="tmpl-icon writer"><i class="ph-bold ph-pen-nib"></i></div>
+            <div class="tmpl-info">
+              <span class="tmpl-name">SEO & Social Content Writer</span>
+              <span class="tmpl-desc">Drafts articles using Brand Voice v2 & Claude 3.5 Sonnet</span>
+            </div>
+          </div>
+          <div class="template-item" data-template="coder">
+            <div class="tmpl-icon coder"><i class="ph-bold ph-code"></i></div>
+            <div class="tmpl-info">
+              <span class="tmpl-name">GitHub Code Reviewer</span>
+              <span class="tmpl-desc">Inspects pull requests & refactors via Gemini 1.5 Pro</span>
+            </div>
+          </div>
+          <div class="template-item" data-template="analyst">
+            <div class="tmpl-icon analyst"><i class="ph-bold ph-chart-pie"></i></div>
+            <div class="tmpl-info">
+              <span class="tmpl-name">Financial Metrics Analyst</span>
+              <span class="tmpl-desc">Syncs Stripe revenue & generates executive reports</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2B: BLANK AGENT MANUAL FORM (HIDDEN BY DEFAULT) -->
+      <div id="agentWizardStepBlank" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <button type="button" class="btn-sm-text" id="backToModesFromBlank">&larr; Back to Modes</button>
+          <h3 style="font-size: 1.05rem; font-weight: 700;">Build Blank Agent from Scratch</h3>
+          <button class="drawer-close-btn" id="closeBlankStepBtn" type="button"><i class="ph-bold ph-x"></i></button>
+        </div>
+
+        <form id="blankAgentForm" style="display: flex; flex-direction: column; gap: 0.85rem; max-height: 480px; overflow-y: auto; padding-right: 0.35rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Agent Name *</label>
+              <input type="text" id="blankAgentName" required placeholder="e.g. VinSmart Quality Inspector" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.55rem; border-radius: var(--radius-md); font-size: 0.8rem;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Role / Description *</label>
+              <input type="text" id="blankAgentRole" required placeholder="e.g. Defect Detection & Compliance" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.55rem; border-radius: var(--radius-md); font-size: 0.8rem;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Project Group *</label>
+              <select id="blankAgentProject" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.55rem; border-radius: var(--radius-md); font-size: 0.8rem;">
+                <option value="market">Market Intelligence</option>
+                <option value="content">Content & Brand</option>
+                <option value="engineering" selected>Engineering & Code</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">LLM Model *</label>
+              <select id="blankAgentModel" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.55rem; border-radius: var(--radius-md); font-size: 0.8rem;">
+                <option value="GPT-4o">GPT-4o (OpenAI)</option>
+                <option value="Claude 3.5 Sonnet" selected>Claude 3.5 Sonnet (Anthropic)</option>
+                <option value="Gemini 1.5 Pro">Gemini 1.5 Pro (Google)</option>
+                <option value="Llama 3.3 70B">Llama 3.3 70B (Meta)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">System Prompt / Instructions</label>
+            <textarea id="blankAgentPrompt" rows="3" placeholder="You are a specialized agent. Your instructions are..." style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); font-family: var(--font-mono); font-size: 0.75rem; padding: 0.55rem; border-radius: var(--radius-md);"></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Output Setting</label>
+              <select id="blankAgentOutput" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.55rem; border-radius: var(--radius-md); font-size: 0.8rem;">
+                <option value="Structured JSON Payload">Structured JSON Payload</option>
+                <option value="Executive Summary (Markdown)">Executive Summary (Markdown)</option>
+                <option value="Real-time Streamed Output">Real-time Streamed Output</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Tools & Integrations</label>
+              <input type="text" id="blankAgentTools" placeholder="e.g. Composio, MCP, GitHub API" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.55rem; border-radius: var(--radius-md); font-size: 0.8rem;">
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+            <button type="button" class="btn-secondary" id="cancelBlankAgentBtn">Cancel</button>
+            <button type="submit" class="btn-primary"><i class="ph-bold ph-sparkle"></i> Create Agent</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- UPGRADE SUBSCRIPTION PLAN MODAL -->
+  <div class="modal-backdrop" id="upgradeModalBackdrop">
+    <div class="cmd-modal" style="max-width: 620px; padding: 1.75rem; border-radius: var(--radius-lg);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: var(--gradient-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            <i class="ph-bold ph-rocket-launch"></i>
+          </div>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Upgrade Your MindPal Plan</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Unlock unlimited agents, custom MCP servers & dedicated priority LLMs</p>
+          </div>
+        </div>
+        <button class="drawer-close-btn" id="closeUpgradeModalBtn" type="button"><i class="ph-bold ph-x"></i></button>
+      </div>
+
+      <div class="pricing-cards-grid">
+        <!-- PLAN 1: STARTER -->
+        <div class="pricing-card">
+          <span class="plan-name">Starter</span>
+          <div class="plan-price">$0 <span>/mo</span></div>
+          <p class="plan-desc">For individual sandbox testing</p>
+          <ul class="plan-features">
+            <li><i class="ph-bold ph-check"></i> 2 Active Agents</li>
+            <li><i class="ph-bold ph-check"></i> Standard LLM Speed</li>
+            <li><i class="ph-bold ph-check"></i> Community Support</li>
+          </ul>
+          <button type="button" class="btn-secondary plan-btn" disabled>Current Free Tier</button>
+        </div>
+
+        <!-- PLAN 2: PRO (CURRENT) -->
+        <div class="pricing-card active">
+          <span class="plan-badge-popular">Current Plan</span>
+          <span class="plan-name">Pro</span>
+          <div class="plan-price">$29 <span>/mo</span></div>
+          <p class="plan-desc">For growing AI automation teams</p>
+          <ul class="plan-features">
+            <li><i class="ph-bold ph-check"></i> 10 Active Agents</li>
+            <li><i class="ph-bold ph-check"></i> GPT-4o & Claude 3.5 Sonnet</li>
+            <li><i class="ph-bold ph-check"></i> Composio & GitHub MCP</li>
+            <li><i class="ph-bold ph-check"></i> Real-time Logs Console</li>
+          </ul>
+          <button type="button" class="btn-secondary plan-btn" disabled style="opacity: 0.7;">Active Plan</button>
+        </div>
+
+        <!-- PLAN 3: ENTERPRISE -->
+        <div class="pricing-card featured">
+          <span class="plan-badge-featured">Recommended</span>
+          <span class="plan-name">Enterprise</span>
+          <div class="plan-price">$99 <span>/mo</span></div>
+          <p class="plan-desc">Unlimited power & custom infrastructure</p>
+          <ul class="plan-features">
+            <li><i class="ph-bold ph-check"></i> Unlimited Agents & Workflows</li>
+            <li><i class="ph-bold ph-check"></i> Dedicated MCP Servers</li>
+            <li><i class="ph-bold ph-check"></i> 99.9% Uptime SLA</li>
+            <li><i class="ph-bold ph-check"></i> 24/7 Dedicated Support</li>
+          </ul>
+          <button type="button" class="btn-primary plan-btn" id="btnConfirmEnterpriseUpgrade">Upgrade to Enterprise</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript File -->
+  <script src="mindpal-app.js"></script>
+</body>
+</html>
