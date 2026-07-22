@@ -532,6 +532,212 @@ body {
   color: var(--accent-violet);
 }
 
+/* Workflows Studio Tab Cards Grid */
+.workflows-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.wf-studio-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: var(--transition-fast);
+}
+
+.wf-studio-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  transform: translateY(-3px);
+}
+
+[data-theme="light"] .wf-studio-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .wf-studio-card:hover {
+  background: #ffffff !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.15) !important;
+}
+
+[data-theme="light"] .wf-studio-card:hover .wf-name {
+  color: #0f172a !important;
+}
+
+.wf-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.65rem;
+}
+
+.wf-mini-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  background: var(--bg-primary);
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-glass);
+}
+
+.mini-step {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-glass);
+}
+
+.mini-step.active-node {
+  background: rgba(139, 92, 246, 0.25) !important;
+  color: var(--accent-purple) !important;
+  border-color: rgba(139, 92, 246, 0.6) !important;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+  transform: scale(1.05);
+  transition: all 0.25s ease;
+}
+
+.executing-card {
+  border-color: rgba(99, 102, 241, 0.8) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.35) !important;
+  animation: glowPulse 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes glowPulse {
+  from {
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+  }
+  to {
+    box-shadow: 0 0 24px rgba(99, 102, 241, 0.55);
+  }
+}
+
+.spin {
+  animation: spinAnim 1s linear infinite;
+}
+
+@keyframes spinAnim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Assets Studio Grid & Cards */
+.assets-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.asset-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.15rem;
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.asset-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  transform: translateY(-3px);
+}
+
+[data-theme="light"] .asset-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .asset-card:hover {
+  background: #ffffff !important;
+  border-color: #06b6d4 !important;
+  box-shadow: 0 10px 28px rgba(6, 182, 212, 0.15) !important;
+}
+
+.asset-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.asset-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+}
+
+.asset-icon-badge.cyan { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+.asset-icon-badge.violet { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+.asset-icon-badge.pink { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+.asset-icon-badge.emerald { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+
+.asset-status-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.asset-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.asset-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.asset-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-glass);
+}
+
+.asset-meta-text {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 /* Sidebar Styles */
 .sidebar {
   width: 260px;
@@ -2769,29 +2975,156 @@ body {
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* Responsive Media Queries */
-@media (max-width: 1024px) {
-  .dashboard-grid-2col {
-    grid-template-columns: 1fr;
-  }
-  .workflow-nodes-flow {
-    flex-direction: column;
-  }
-  .node-connector-line {
-    width: 2px;
-    height: 30px;
-    flex: none;
-  }
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE STYLES
+   ========================================================================== */
+
+/* Mobile Menu Toggle Button (Hidden on Desktop) */
+.mobile-menu-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+  transition: var(--transition-fast);
 }
-@media (max-width: 768px) {
+
+.mobile-menu-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--accent-violet);
+}
+
+.mobile-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-sidebar-backdrop.open {
+  display: block;
+  opacity: 1;
+}
+
+/* Tablet & Mobile Breakpoint <= 900px */
+@media (max-width: 900px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+
   .sidebar {
     position: fixed;
-    left: -260px;
-  }
-  .sidebar.open {
+    top: 0;
     left: 0;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
   }
-  .search-pill {
-    width: 180px;
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .main-wrapper {
+    width: 100vw;
+  }
+
+  .workspace-context-bar {
+    padding: 0.65rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .content-scrollable {
+    padding: 1.25rem 1rem;
+  }
+
+  .assistant-drawer {
+    width: 100vw !important;
+  }
+}
+
+/* Mobile Small Breakpoint <= 640px */
+@media (max-width: 640px) {
+  .header-ws-card {
+    padding: 0.4rem 0.65rem;
+  }
+
+  .ws-name-title {
+    font-size: 0.85rem;
+  }
+
+  .ws-context-meta {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-glass);
+  }
+
+  .hero-banner {
+    padding: 1.25rem 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.25rem;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .hero-stat-item {
+    width: 100%;
+  }
+
+  .agents-cards-grid,
+  .deployed-wf-grid,
+  .workflows-cards-grid,
+  .assets-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .section-header > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .project-select-card {
+    flex: 1;
+  }
+
+  .cmd-modal {
+    max-width: 95vw !important;
+    padding: 1.25rem !important;
+  }
+
+  .agent-mode-cards {
+    gap: 0.65rem;
   }
 }

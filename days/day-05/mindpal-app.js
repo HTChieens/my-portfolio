@@ -387,110 +387,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (modeChatAI) {
     modeChatAI.onclick = () => {
       closeAgentWizardModal();
-      const assistantDrawer = document.getElementById('assistantDrawer');
-      if (assistantDrawer) assistantDrawer.classList.add('open');
-      showToast('Opened Mindie AI Co-Pilot Chat', 'info', 'ph-sparkle');
-      appendLog('ASSISTANT', 'Initiated AI Co-Pilot Chat Agent Creation flow.', 'info');
+      showToast('AI Agent Co-pilot Generator is coming soon!', 'info', 'ph-clock');
+      appendLog('SYSTEM', 'Attempted to use AI Agent Generator (Coming Soon).', 'info');
     };
   }
 
   // MODE 2: CHOOSE FROM TEMPLATE
   if (modeTemplate) {
     modeTemplate.onclick = () => {
-      if (agentWizardStepMode) agentWizardStepMode.style.display = 'none';
-      if (agentWizardStepTemplate) agentWizardStepTemplate.style.display = 'block';
+      closeAgentWizardModal();
+      showToast('Agent Creation from Template is coming soon!', 'info', 'ph-clock');
+      appendLog('SYSTEM', 'Attempted to create Agent from template (Coming Soon).', 'info');
     };
   }
-
-  document.querySelectorAll('.template-item[data-template]').forEach(item => {
-    item.onclick = () => {
-      const tmpl = item.getAttribute('data-template');
-      const tmplName = item.querySelector('.tmpl-name')?.textContent || 'Template Agent';
-      const tmplDesc = item.querySelector('.tmpl-desc')?.textContent || 'Custom Template Role';
-
-      const grid = document.getElementById('agentsCardsGrid');
-      if (grid) {
-        const newCard = document.createElement('div');
-        newCard.className = 'agent-card';
-        newCard.setAttribute('data-project', tmpl === 'research' || tmpl === 'analyst' ? 'market' : (tmpl === 'writer' ? 'content' : 'engineering'));
-        newCard.innerHTML = `
-          <div class="agent-card-header">
-            <div class="agent-avatar ${tmpl}"><i class="ph-bold ph-robot"></i></div>
-            <div class="agent-meta">
-              <span class="agent-name">${tmplName}</span>
-              <span class="agent-role">${tmplDesc}</span>
-            </div>
-          </div>
-          <div class="agent-tags">
-            <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Template Project</span>
-            <span class="tag model-tag">GPT-4o</span>
-            <span class="tag brand-tag">Template Config</span>
-          </div>
-          <div class="agent-footer">
-            <span class="agent-status-toggle"><span class="toggle-dot"></span> Active</span>
-            <button class="btn-sm-text test-agent-btn" data-agent="${tmplName}">Test Chat &rarr;</button>
-          </div>
-        `;
-        grid.prepend(newCard);
-      }
-
-      closeAgentWizardModal();
-      showToast(`Created Agent from Template: ${tmplName}`, 'success', 'ph-layout');
-      appendLog('AGENT', `Created new Agent [${tmplName}] from pre-built template.`, 'success');
-    };
-  });
 
   // MODE 3: BUILD BLANK AGENT FROM SCRATCH
   if (modeBlank) {
     modeBlank.onclick = () => {
-      if (agentWizardStepMode) agentWizardStepMode.style.display = 'none';
-      if (agentWizardStepBlank) agentWizardStepBlank.style.display = 'block';
-    };
-  }
-
-  if (blankAgentForm) {
-    blankAgentForm.onsubmit = (e) => {
-      e.preventDefault();
-      const name = document.getElementById('blankAgentName')?.value.trim();
-      const role = document.getElementById('blankAgentRole')?.value.trim();
-      const project = document.getElementById('blankAgentProject')?.value || 'engineering';
-      const model = document.getElementById('blankAgentModel')?.value || 'Claude 3.5 Sonnet';
-      const prompt = document.getElementById('blankAgentPrompt')?.value.trim();
-      const output = document.getElementById('blankAgentOutput')?.value || 'Structured JSON';
-      const tools = document.getElementById('blankAgentTools')?.value.trim() || 'Custom Tools';
-
-      if (!name || !role) return;
-
-      const grid = document.getElementById('agentsCardsGrid');
-      if (grid) {
-        const newCard = document.createElement('div');
-        newCard.className = 'agent-card';
-        newCard.setAttribute('data-project', project);
-        newCard.innerHTML = `
-          <div class="agent-card-header">
-            <div class="agent-avatar coder"><i class="ph-bold ph-robot"></i></div>
-            <div class="agent-meta">
-              <span class="agent-name">${name}</span>
-              <span class="agent-role">${role}</span>
-            </div>
-          </div>
-          <div class="agent-tags">
-            <span class="tag project-tag"><i class="ph-bold ph-folder"></i> ${project.toUpperCase()}</span>
-            <span class="tag model-tag">${model}</span>
-            <span class="tag composio-tag">${tools}</span>
-          </div>
-          <div class="agent-footer">
-            <span class="agent-status-toggle"><span class="toggle-dot"></span> Active</span>
-            <button class="btn-sm-text test-agent-btn" data-agent="${name}">Test Chat &rarr;</button>
-          </div>
-        `;
-        grid.prepend(newCard);
-      }
-
       closeAgentWizardModal();
-      blankAgentForm.reset();
-      showToast(`Created Custom Agent: ${name}`, 'success', 'ph-sparkle');
-      appendLog('AGENT', `Created custom blank agent [${name}] (${model}, ${output}).`, 'success');
+      showToast('Custom Blank Agent Creation is coming soon!', 'info', 'ph-clock');
+      appendLog('SYSTEM', 'Attempted to create custom blank agent (Coming Soon).', 'info');
     };
   }
   /* ==========================================================================
@@ -565,34 +481,259 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   attachChatHistoryListeners();
 
-  /* ==========================================================================
-     0.0.5 DEPLOYED WORKFLOWS HANDLERS
-     ========================================================================== */
-  document.querySelectorAll('.btn-run-wf').forEach(btn => {
-    btn.onclick = (e) => {
+  /* Workflow Actions Event Delegation (Run Now, Pause, Resume) */
+  document.addEventListener('click', (e) => {
+    // RUN NOW CLICK
+    const runBtn = e.target.closest('.btn-run-wf');
+    if (runBtn) {
       e.stopPropagation();
-      const wfId = btn.getAttribute('data-wf-id');
-      showToast(`Running Workflow ${wfId} in background...`, 'success', 'ph-play');
-      appendLog('WORKFLOW', `Manually triggered background execution for [${wfId}].`, 'success');
-    };
+      const wfId = runBtn.getAttribute('data-wf-id') || '#WF-8890';
+      const card = runBtn.closest('.deployed-wf-card') || runBtn.closest('.wf-studio-card');
+
+      // Instant tactile scale feedback on every single click
+      runBtn.style.transform = 'scale(0.92)';
+      setTimeout(() => {
+        runBtn.style.transform = '';
+      }, 150);
+
+      if (card) {
+        // Flash glow border
+        card.style.borderColor = 'var(--accent-violet)';
+        card.style.boxShadow = '0 0 16px rgba(139, 92, 246, 0.4)';
+        setTimeout(() => {
+          if (card) {
+            card.style.borderColor = '';
+            card.style.boxShadow = '';
+          }
+        }, 400);
+
+        // Update run counter metric dynamically
+        const metricStrong = card.querySelector('.wf-metric strong');
+        if (metricStrong) {
+          let currentVal = parseFloat(metricStrong.textContent) || 14.2;
+          currentVal = (currentVal + 0.1).toFixed(1);
+          metricStrong.textContent = currentVal;
+        }
+      }
+
+      showToast(`Workflow ${wfId} execution triggered!`, 'success', 'ph-play');
+      appendLog('WORKFLOW', `Manually triggered execution for pipeline [${wfId}].`, 'success');
+      return;
+    }
+
+    // PAUSE CLICK
+    const pauseBtn = e.target.closest('.btn-pause-wf');
+    if (pauseBtn) {
+      e.stopPropagation();
+      const wfId = pauseBtn.getAttribute('data-wf-id') || 'WF-8890';
+      const cleanWfId = wfId.replace('#', '');
+
+      // Synchronize all cards matching this workflow ID
+      document.querySelectorAll(`.btn-pause-wf[data-wf-id="${cleanWfId}"], .btn-pause-wf[data-wf-id="#${cleanWfId}"]`).forEach(btn => {
+        const card = btn.closest('.deployed-wf-card') || btn.closest('.wf-studio-card');
+        if (card) {
+          const statusTag = card.querySelector('.wf-status-tag');
+          if (statusTag) {
+            statusTag.className = 'wf-status-tag paused';
+            statusTag.innerHTML = `<i class="ph-bold ph-pause-circle"></i> Paused`;
+          }
+        }
+        btn.className = 'btn-icon-text btn-resume-wf';
+        btn.setAttribute('title', 'Resume & Run');
+        btn.innerHTML = `<i class="ph-bold ph-play"></i> Resume`;
+      });
+
+      showToast(`Workflow #${cleanWfId} has been paused!`, 'warning', 'ph-pause-circle');
+      appendLog('WORKFLOW', `Paused execution pipeline for [#${cleanWfId}].`, 'warning');
+      return;
+    }
+
+    // RESUME CLICK
+    const resumeBtn = e.target.closest('.btn-resume-wf');
+    if (resumeBtn) {
+      e.stopPropagation();
+      const wfId = resumeBtn.getAttribute('data-wf-id') || 'WF-8890';
+      const cleanWfId = wfId.replace('#', '');
+
+      // Synchronize all cards matching this workflow ID
+      document.querySelectorAll(`.btn-resume-wf[data-wf-id="${cleanWfId}"], .btn-resume-wf[data-wf-id="#${cleanWfId}"]`).forEach(btn => {
+        const card = btn.closest('.deployed-wf-card') || btn.closest('.wf-studio-card');
+        if (card) {
+          const statusTag = card.querySelector('.wf-status-tag');
+          if (statusTag) {
+            statusTag.className = 'wf-status-tag live';
+            statusTag.innerHTML = `<span class="pulse-dot"></span> Active Live`;
+          }
+
+          const actionsDiv = card.querySelector('.wf-actions');
+          if (actionsDiv && !actionsDiv.querySelector('.btn-run-wf')) {
+            const runBtnHtml = document.createElement('button');
+            runBtnHtml.className = 'btn-icon-text btn-run-wf';
+            runBtnHtml.setAttribute('data-wf-id', cleanWfId);
+            runBtnHtml.setAttribute('title', 'Run Live Now');
+            runBtnHtml.innerHTML = `<i class="ph-bold ph-play"></i> Run`;
+            actionsDiv.insertBefore(runBtnHtml, btn);
+          }
+        }
+        btn.className = 'btn-icon-text btn-pause-wf';
+        btn.setAttribute('title', 'Pause Workflow');
+        btn.innerHTML = `<i class="ph-bold ph-pause"></i>`;
+      });
+
+      showToast(`Workflow #${cleanWfId} resumed & active live!`, 'success', 'ph-play');
+      appendLog('WORKFLOW', `Resumed live execution pipeline for [#${cleanWfId}].`, 'success');
+      return;
+    }
   });
 
-  const btnDeployNewWf = document.getElementById('btnDeployNewWf');
-  if (btnDeployNewWf) {
-    btnDeployNewWf.onclick = () => {
-      const wfTab = document.querySelector('.nav-item[data-tab="workflows"]');
-      if (wfTab) wfTab.click();
-      showToast('Opening Workflow Builder...', 'info', 'ph-tree-structure');
+  /* ==========================================================================
+     0.0.5.1 ASSETS STUDIO CARDS HANDLERS
+     ========================================================================== */
+  document.querySelectorAll('.asset-card[data-asset-name]').forEach(card => {
+    card.onclick = () => {
+      const assetName = card.getAttribute('data-asset-name') || 'Asset Module';
+      showToast(`Asset Module "${assetName}" is coming soon!`, 'info', 'ph-clock');
+      appendLog('SYSTEM', `Attempted to open asset module [${assetName}] (Coming Soon).`, 'info');
     };
-  }
+  });
 
   const btnDeployNewAgent = document.getElementById('btnDeployNewAgent');
   if (btnDeployNewAgent) {
     btnDeployNewAgent.onclick = () => {
-      const agentsTab = document.querySelector('.nav-item[data-tab="agents"]');
-      if (agentsTab) agentsTab.click();
-      showToast('Navigating to AI Agents Studio...', 'info', 'ph-robot');
+      openAgentWizardModal();
+      showToast('Opening Agent Creation Wizard...', 'info', 'ph-robot');
     };
+  }
+
+  /* ==========================================================================
+     0.0.7 CREATE WORKFLOW WIZARD MODAL POPUP LOGIC (3 MODES)
+     ========================================================================== */
+  const createWorkflowModalBackdrop = document.getElementById('createWorkflowModalBackdrop');
+  const wfWizardStepMode = document.getElementById('wfWizardStepMode');
+  const wfWizardStepTemplate = document.getElementById('wfWizardStepTemplate');
+  const wfWizardStepBlank = document.getElementById('wfWizardStepBlank');
+
+  const btnCreateWfModalOpen = document.getElementById('btnCreateWfModalOpen');
+  const btnDeployNewWf = document.getElementById('btnDeployNewWf');
+
+  function openCreateWorkflowModal() {
+    if (!createWorkflowModalBackdrop) return;
+    if (wfWizardStepMode) wfWizardStepMode.style.display = 'block';
+    if (wfWizardStepTemplate) wfWizardStepTemplate.style.display = 'none';
+    if (wfWizardStepBlank) wfWizardStepBlank.style.display = 'none';
+    createWorkflowModalBackdrop.classList.add('open');
+  }
+
+  function closeCreateWorkflowModal() {
+    if (createWorkflowModalBackdrop) createWorkflowModalBackdrop.classList.remove('open');
+  }
+
+  if (btnCreateWfModalOpen) btnCreateWfModalOpen.onclick = openCreateWorkflowModal;
+  if (btnDeployNewWf) btnDeployNewWf.onclick = openCreateWorkflowModal;
+
+  document.getElementById('closeCreateWfModalBtn')?.addEventListener('click', closeCreateWorkflowModal);
+  document.getElementById('closeWfTemplateStepBtn')?.addEventListener('click', closeCreateWorkflowModal);
+  document.getElementById('closeWfBlankStepBtn')?.addEventListener('click', closeCreateWorkflowModal);
+  document.getElementById('cancelCreateWfBtn')?.addEventListener('click', closeCreateWorkflowModal);
+
+  if (createWorkflowModalBackdrop) {
+    createWorkflowModalBackdrop.onclick = (e) => {
+      if (e.target === createWorkflowModalBackdrop) closeCreateWorkflowModal();
+    };
+  }
+
+  // Mode 1: Chat with AI Co-pilot
+  document.getElementById('wfModeChatAI')?.addEventListener('click', () => {
+    closeCreateWorkflowModal();
+    showToast('AI Workflow Co-pilot Generator is coming soon!', 'info', 'ph-clock');
+    appendLog('SYSTEM', 'Attempted to use AI Workflow Generator (Coming Soon).', 'info');
+  });
+
+  // Mode 2: Choose Template
+  document.getElementById('wfModeTemplate')?.addEventListener('click', () => {
+    closeCreateWorkflowModal();
+    showToast('Workflow Creation from Template is coming soon!', 'info', 'ph-clock');
+    appendLog('SYSTEM', 'Attempted to deploy workflow from template (Coming Soon).', 'info');
+  });
+
+  // Mode 3: Custom Blank Form
+  document.getElementById('wfModeBlank')?.addEventListener('click', () => {
+    closeCreateWorkflowModal();
+    showToast('Custom Blank Workflow Creation is coming soon!', 'info', 'ph-clock');
+    appendLog('SYSTEM', 'Attempted to create custom blank workflow (Coming Soon).', 'info');
+  });
+
+  // Handle Template Item click
+  if (wfWizardStepTemplate) {
+    wfWizardStepTemplate.querySelectorAll('.agent-template-item').forEach(item => {
+      item.onclick = () => {
+        const name = item.getAttribute('data-wf-name') || 'Workflow Template';
+        closeCreateWorkflowModal();
+        showToast(`Tính năng tạo Workflow từ Template (${name}) chưa được triển khai!`, 'warning', 'ph-warning-circle');
+        appendLog('SYSTEM', `Attempted to deploy workflow from template [${name}] (Not Implemented).`, 'warning');
+      };
+    });
+  }
+
+  // Handle Blank Form Submit
+  const createWfForm = document.getElementById('createWfForm');
+  if (createWfForm) {
+    createWfForm.onsubmit = (e) => {
+      e.preventDefault();
+      const wfName = document.getElementById('newWfNameInput')?.value.trim() || 'New Workflow';
+      closeCreateWorkflowModal();
+      createWfForm.reset();
+      showToast(`Tính năng tạo Custom Blank Workflow (${wfName}) chưa được triển khai!`, 'warning', 'ph-warning-circle');
+      appendLog('SYSTEM', `Attempted to create custom workflow [${wfName}] (Not Implemented).`, 'warning');
+    };
+  }
+
+  /* ==========================================================================
+     0.0.6 WORKFLOWS STUDIO PROJECT FILTER DROPDOWN LOGIC
+     ========================================================================== */
+  const wfProjectSelectBtn = document.getElementById('wfProjectSelectBtn');
+  const wfProjectDropdownMenu = document.getElementById('wfProjectDropdownMenu');
+  const selectedWfProjectLabel = document.getElementById('selectedWfProjectLabel');
+
+  if (wfProjectSelectBtn && wfProjectDropdownMenu) {
+    wfProjectSelectBtn.onclick = (e) => {
+      e.stopPropagation();
+      wfProjectDropdownMenu.classList.toggle('open');
+    };
+
+    document.addEventListener('click', (e) => {
+      if (!wfProjectSelectBtn.contains(e.target)) {
+        wfProjectDropdownMenu.classList.remove('open');
+      }
+    });
+
+    wfProjectDropdownMenu.querySelectorAll('.proj-item').forEach(item => {
+      item.onclick = (e) => {
+        e.stopPropagation();
+        wfProjectDropdownMenu.querySelectorAll('.proj-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const proj = item.getAttribute('data-project');
+        const label = item.getAttribute('data-label');
+        if (selectedWfProjectLabel) selectedWfProjectLabel.textContent = label;
+
+        wfProjectDropdownMenu.classList.remove('open');
+
+        // Filter workflow cards
+        const wfCards = document.querySelectorAll('.wf-studio-card');
+        wfCards.forEach(card => {
+          const cardProj = card.getAttribute('data-project');
+          if (proj === 'all' || cardProj === proj) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        showToast(`Filtered Workflows by Project: ${label}`, 'info', 'ph-folder');
+        appendLog('WORKFLOW', `Applied project filter [${proj}] to Workflows Studio.`, 'info');
+      };
+    });
   }
 
   /* ==========================================================================
@@ -1084,5 +1225,28 @@ document.addEventListener('DOMContentLoaded', () => {
         dropzone?.click();
       }
     });
+  });
+
+  /* Mobile Sidebar Toggle Logic */
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileSidebarBackdrop = document.getElementById('mobileSidebarBackdrop');
+  const mobileSidebar = document.querySelector('.sidebar');
+
+  function openMobileSidebar() {
+    if (mobileSidebar) mobileSidebar.classList.add('mobile-open');
+    if (mobileSidebarBackdrop) mobileSidebarBackdrop.classList.add('open');
+  }
+
+  function closeMobileSidebar() {
+    if (mobileSidebar) mobileSidebar.classList.remove('mobile-open');
+    if (mobileSidebarBackdrop) mobileSidebarBackdrop.classList.remove('open');
+  }
+
+  if (mobileMenuBtn) mobileMenuBtn.onclick = openMobileSidebar;
+  if (mobileSidebarBackdrop) mobileSidebarBackdrop.onclick = closeMobileSidebar;
+
+  // Auto-close mobile sidebar when clicking a nav item
+  document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+    item.addEventListener('click', closeMobileSidebar);
   });
 });

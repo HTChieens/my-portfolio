@@ -64,9 +64,9 @@
             <span>Workflows</span>
             <span class="badge">Active</span>
           </a>
-          <a class="nav-item" data-tab="knowledge">
-            <i class="ph-bold ph-database"></i>
-            <span>Knowledge Base</span>
+          <a class="nav-item" data-tab="assets">
+            <i class="ph-bold ph-package"></i>
+            <span>Assets</span>
           </a>
 
           <div class="nav-divider"></div>
@@ -76,7 +76,7 @@
           <div class="chat-history-container" id="chatHistoryContainer">
             
             <!-- Group 1: Market Intelligence -->
-            <div class="chat-proj-group" data-project="market">
+            <div class="chat-proj-group collapsed" data-project="market">
               <div class="chat-proj-header">
                 <i class="ph-bold ph-chart-pie" style="color: var(--accent-violet);"></i>
                 <span>Market Intelligence</span>
@@ -96,7 +96,7 @@
             </div>
 
             <!-- Group 2: Content & Brand -->
-            <div class="chat-proj-group" data-project="content">
+            <div class="chat-proj-group collapsed" data-project="content">
               <div class="chat-proj-header">
                 <i class="ph-bold ph-pen-nib" style="color: var(--accent-cyan);"></i>
                 <span>Content & Brand</span>
@@ -112,7 +112,7 @@
             </div>
 
             <!-- Group 3: Engineering & Code -->
-            <div class="chat-proj-group" data-project="engineering">
+            <div class="chat-proj-group collapsed" data-project="engineering">
               <div class="chat-proj-header">
                 <i class="ph-bold ph-code" style="color: var(--accent-emerald);"></i>
                 <span>Engineering & Code</span>
@@ -186,11 +186,17 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT WRAPPER -->
+    <!-- MOBILE SIDEBAR BACKDROP OVERLAY -->
+    <div class="mobile-sidebar-backdrop" id="mobileSidebarBackdrop"></div>
+
+    <!-- MAIN WORKSPACE CONTENT CONTAINER -->
     <main class="main-wrapper">
 
       <!-- WORKSPACE CONTEXT ENCLOSING BAR -->
       <div class="workspace-context-bar">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Toggle Mobile Sidebar Menu">
+          <i class="ph-bold ph-list"></i>
+        </button>
         <div class="ws-context-info">
           <!-- HEADER WORKSPACE CARD & DROPDOWN -->
           <div class="header-ws-card" id="sidebarWsCard" title="Click to switch workspace">
@@ -312,7 +318,7 @@
             </div>
             <button class="btn-primary" id="btnDeployNewWf" type="button">
               <i class="ph-bold ph-plus-circle"></i>
-              <span>Deploy New Workflow</span>
+              <span>Create New Workflow</span>
             </button>
           </div>
 
@@ -444,7 +450,7 @@
                   <span class="wf-metric" style="color: var(--text-muted);">Paused</span>
                 </div>
                 <div class="wf-actions">
-                  <button class="btn-icon-text btn-run-wf" data-wf-id="WF-3091" title="Resume & Run">
+                  <button class="btn-icon-text btn-resume-wf" data-wf-id="WF-3091" title="Resume & Run">
                     <i class="ph-bold ph-play"></i> Resume
                   </button>
                 </div>
@@ -468,7 +474,7 @@
             </div>
             <button class="btn-primary" id="btnDeployNewAgent" type="button">
               <i class="ph-bold ph-plus-circle"></i>
-              <span>Deploy New Agent</span>
+              <span>Create New Agent</span>
             </button>
           </div>
 
@@ -725,82 +731,302 @@
           <div class="section-card">
             <div class="section-header">
               <div class="section-title-group">
-                <div class="section-icon"><i class="ph-bold ph-tree-structure"></i></div>
+                <div class="section-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--accent-violet);">
+                  <i class="ph-bold ph-tree-structure"></i>
+                </div>
                 <div>
-                  <h2 class="section-title">Workflows Canvas Builder</h2>
-                  <p class="section-subtitle">Multi-Agent Nodes, Triggers & Pipeline Orchestration</p>
+                  <h2 class="section-title">Workflows Studio</h2>
+                  <p class="section-subtitle">Orchestrate multi-agent pipelines, triggers, node flows & project automations</p>
                 </div>
               </div>
-              <div style="display: flex; gap: 0.75rem;">
-                <button class="btn-secondary"><i class="ph-bold ph-lightning"></i> API Trigger Settings</button>
-                <button class="btn-primary" onclick="document.getElementById('btnRunWorkflow').click()"><i class="ph-bold ph-play"></i> Run Test Canvas</button>
+
+              <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <!-- COMPACT PROJECT SELECTOR DROPDOWN FOR WORKFLOWS -->
+                <div class="project-select-card" id="wfProjectSelectBtn" title="Select Project Filter">
+                  <i class="ph-bold ph-folder" style="color: var(--accent-violet);"></i>
+                  <span id="selectedWfProjectLabel">All Projects (3)</span>
+                  <i class="ph-bold ph-caret-down" style="font-size: 0.75rem;"></i>
+
+                  <!-- DROPDOWN MENU -->
+                  <div class="project-dropdown-menu" id="wfProjectDropdownMenu">
+                    <div class="proj-dropdown-title">SELECT PROJECT GROUP</div>
+                    <div class="proj-item active" data-project="all" data-label="All Projects (3)">
+                      <i class="ph-bold ph-squares-four"></i>
+                      <span>All Projects</span>
+                      <span class="proj-count">3</span>
+                    </div>
+                    <div class="proj-dropdown-divider"></div>
+                    <div class="proj-item" data-project="market" data-label="Market Intelligence (1)">
+                      <i class="ph-bold ph-chart-pie" style="color: var(--accent-violet);"></i>
+                      <span>Market Intelligence</span>
+                      <span class="proj-count">1</span>
+                    </div>
+                    <div class="proj-item" data-project="content" data-label="Content & Brand (1)">
+                      <i class="ph-bold ph-pen-nib" style="color: var(--accent-cyan);"></i>
+                      <span>Content & Brand</span>
+                      <span class="proj-count">1</span>
+                    </div>
+                    <div class="proj-item" data-project="engineering" data-label="Engineering & Code (1)">
+                      <i class="ph-bold ph-code" style="color: var(--accent-emerald);"></i>
+                      <span>Engineering & Code</span>
+                      <span class="proj-count">1</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CREATE WORKFLOW BUTTON -->
+                <button class="btn-primary" id="btnCreateWfModalOpen" type="button">
+                  <i class="ph-bold ph-plus-circle"></i>
+                  <span>Create Workflow</span>
+                </button>
               </div>
             </div>
 
-            <!-- Canvas Grid -->
-            <div class="workflow-canvas-container" style="min-height: 420px; display: flex; align-items: center; justify-content: center;">
-              <div style="text-align: center;">
-                <i class="ph-bold ph-tree-structure" style="font-size: 3rem; color: var(--accent-violet); margin-bottom: 1rem;"></i>
-                <h3 style="font-size: 1.2rem; font-weight: 700;">Visual Node Canvas Workspace</h3>
-                <p style="color: var(--text-muted); max-width: 480px; margin: 0.5rem auto 1.5rem auto; font-size: 0.85rem;">
-                  Drag & drop Agent Nodes, Router Nodes, Evaluator-Optimizer Loops, and HITL Approval Gates directly onto canvas.
-                </p>
-                <button class="btn-primary" onclick="document.getElementById('btnRunWorkflow').click()">Launch Active Canvas &rarr;</button>
+            <!-- WORKFLOW CARDS GRID (FILTERABLE BY PROJECT) -->
+            <div class="workflows-cards-grid" id="workflowsCardsGrid">
+              
+              <!-- Workflow 1: Market Intelligence -->
+              <div class="wf-studio-card" data-project="market">
+                <div class="wf-card-top">
+                  <div class="wf-title-row">
+                    <div class="wf-icon-badge violet">
+                      <i class="ph-bold ph-chart-pie"></i>
+                    </div>
+                    <div>
+                      <h3 class="wf-name">Autonomous Deep Market Research & Publishing</h3>
+                      <span class="wf-id">#WF-8890</span>
+                    </div>
+                  </div>
+                  <div class="wf-status-tag live">
+                    <span class="pulse-dot"></span> Active Live
+                  </div>
+                </div>
+
+                <div class="wf-card-body">
+                  <div class="wf-tags-row">
+                    <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Market Intelligence</span>
+                    <span class="tag"><i class="ph-bold ph-clock"></i> Daily 08:00 AM</span>
+                  </div>
+
+                  <!-- MINI PIPELINE STEPS FLOW -->
+                  <div class="wf-mini-pipeline">
+                    <div class="mini-step" title="Agent: Deep Researcher"><i class="ph-bold ph-robot"></i> Researcher</div>
+                    <i class="ph-bold ph-caret-right mini-arrow"></i>
+                    <div class="mini-step" title="Router: Content Classifier"><i class="ph-bold ph-git-fork"></i> Router</div>
+                    <i class="ph-bold ph-caret-right mini-arrow"></i>
+                    <div class="mini-step" title="QA: Evaluator Loop"><i class="ph-bold ph-arrows-counter-clockwise"></i> QA</div>
+                    <i class="ph-bold ph-caret-right mini-arrow"></i>
+                    <div class="mini-step" title="Human Gate"><i class="ph-bold ph-user-check"></i> Gate</div>
+                    <i class="ph-bold ph-caret-right mini-arrow"></i>
+                    <div class="mini-step" title="Webhook: Notion & Slack"><i class="ph-bold ph-paper-plane-tilt"></i> Notion</div>
+                  </div>
+                </div>
+
+                <div class="wf-card-footer">
+                  <div class="wf-metrics">
+                    <span class="wf-metric"><strong>14.2</strong> ops/sec</span>
+                    <span class="wf-metric-divider">•</span>
+                    <span class="wf-metric" style="color: var(--accent-emerald);"><strong>99.8%</strong> Success</span>
+                  </div>
+                  <div class="wf-actions">
+                    <button class="btn-icon-text btn-run-wf" data-wf-id="WF-8890" title="Run Live Now">
+                      <i class="ph-bold ph-play"></i> Run
+                    </button>
+                    <button class="btn-icon-text btn-pause-wf" data-wf-id="WF-8890" title="Pause Workflow">
+                      <i class="ph-bold ph-pause"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
+
+              <!-- Workflow 2: Engineering & Code -->
+              <div class="wf-studio-card" data-project="engineering">
+                <div class="wf-card-top">
+                  <div class="wf-title-row">
+                    <div class="wf-icon-badge emerald">
+                      <i class="ph-bold ph-code"></i>
+                    </div>
+                    <div>
+                      <h3 class="wf-name">Automated Code Review & PR Security Inspection</h3>
+                      <span class="wf-id">#WF-4102</span>
+                    </div>
+                  </div>
+                  <div class="wf-status-tag live">
+                    <span class="pulse-dot"></span> Active Live
+                  </div>
+                </div>
+
+                <div class="wf-card-body">
+                  <div class="wf-tags-row">
+                    <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Engineering & Code</span>
+                    <span class="tag"><i class="ph-bold ph-git-pull-request"></i> GitHub Webhook</span>
+                  </div>
+
+                  <!-- MINI PIPELINE STEPS FLOW -->
+                  <div class="wf-mini-pipeline">
+                    <div class="mini-step" title="Agent: Code Auditor"><i class="ph-bold ph-code"></i> Auditor</div>
+                    <i class="ph-bold ph-caret-right mini-arrow"></i>
+                    <div class="mini-step" title="Security Scanner"><i class="ph-bold ph-shield-check"></i> Security</div>
+                    <i class="ph-bold ph-caret-right mini-arrow"></i>
+                    <div class="mini-step" title="PR Commenter"><i class="ph-bold ph-git-merge"></i> GitHub</div>
+                  </div>
+                </div>
+
+                <div class="wf-card-footer">
+                  <div class="wf-metrics">
+                    <span class="wf-metric"><strong>2.4s</strong> avg</span>
+                    <span class="wf-metric-divider">•</span>
+                    <span class="wf-metric" style="color: var(--accent-emerald);"><strong>100%</strong> Success</span>
+                  </div>
+                  <div class="wf-actions">
+                    <button class="btn-icon-text btn-run-wf" data-wf-id="WF-4102" title="Run Live Now">
+                      <i class="ph-bold ph-play"></i> Run
+                    </button>
+                    <button class="btn-icon-text btn-pause-wf" data-wf-id="WF-4102" title="Pause Workflow">
+                      <i class="ph-bold ph-pause"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Workflow 3: Content & Brand -->
+              <div class="wf-studio-card" data-project="content">
+                <div class="wf-card-top">
+                  <div class="wf-title-row">
+                    <div class="wf-icon-badge cyan">
+                      <i class="ph-bold ph-pen-nib"></i>
+                    </div>
+                    <div>
+                      <h3 class="wf-name">Brand Voice Guidelines & Content Auto-Sync</h3>
+                      <span class="wf-id">#WF-3091</span>
+                    </div>
+                  </div>
+                  <div class="wf-status-tag paused">
+                    <i class="ph-bold ph-pause-circle"></i> Paused
+                  </div>
+                </div>
+
+                <div class="wf-card-body">
+                  <div class="wf-tags-row">
+                    <span class="tag project-tag"><i class="ph-bold ph-folder"></i> Content & Brand</span>
+                    <span class="tag"><i class="ph-bold ph-clock"></i> Hourly Schedule</span>
+                  </div>
+
+                  <!-- MINI PIPELINE STEPS FLOW -->
+                  <div class="wf-mini-pipeline">
+                    <div class="mini-step" title="Agent: Ghostwriter AI"><i class="ph-bold ph-pen-nib"></i> Ghostwriter</div>
+                    <i class="ph-bold ph-caret-right mini-arrow"></i>
+                    <div class="mini-step" title="Notion Publisher"><i class="ph-bold ph-article"></i> Notion</div>
+                  </div>
+                </div>
+
+                <div class="wf-card-footer">
+                  <div class="wf-metrics">
+                    <span class="wf-metric"><strong>1,240</strong> rec/hr</span>
+                    <span class="wf-metric-divider">•</span>
+                    <span class="wf-metric" style="color: var(--text-muted);">Paused</span>
+                  </div>
+                  <div class="wf-actions">
+                    <button class="btn-icon-text btn-resume-wf" data-wf-id="WF-3091" title="Resume & Run">
+                      <i class="ph-bold ph-play"></i> Resume
+                    </button>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
 
-        <!-- TAB VIEW 4: KNOWLEDGE BASE -->
-        <div class="tab-view hidden" id="view-knowledge">
+        <!-- TAB VIEW 4: ASSETS STUDIO -->
+        <div class="tab-view hidden" id="view-assets">
           <div class="section-card">
             <div class="section-header">
               <div class="section-title-group">
-                <div class="section-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan);"><i class="ph-bold ph-database"></i></div>
+                <div class="section-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan);">
+                  <i class="ph-bold ph-package"></i>
+                </div>
                 <div>
-                  <h2 class="section-title">Knowledge Sources & Vector Storage</h2>
-                  <p class="section-subtitle">Files, Web Crawlers, Notes & RAG Embeddings Index</p>
+                  <h2 class="section-title">Assets Studio</h2>
+                  <p class="section-subtitle">Centralized repository for knowledge sources, notes, brand guidelines & tools</p>
                 </div>
               </div>
-              <button class="btn-primary" onclick="document.getElementById('dropzone').click()"><i class="ph-bold ph-cloud-arrow-up"></i> Upload Data</button>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
-              <div>
-                <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.85rem;">Connected Knowledge Repositories</h3>
-                <div class="kb-list">
-                  <div class="kb-item">
-                    <div class="kb-info">
-                      <div class="kb-file-icon"><i class="ph-bold ph-file-pdf"></i></div>
-                      <div class="kb-details"><span class="kb-name">Q3_Strategic_Roadmap.pdf</span><span class="kb-size">4.2 MB • 1,420 Vectors</span></div>
-                    </div>
-                    <span class="kb-sync-status"><i class="ph-bold ph-check-circle"></i> Synced</span>
+            <div class="assets-cards-grid">
+              
+              <!-- Asset 1: Knowledge Source -->
+              <div class="asset-card" data-asset-name="Knowledge Source">
+                <div class="asset-card-top">
+                  <div class="asset-icon-badge cyan">
+                    <i class="ph-bold ph-database"></i>
                   </div>
-                  <div class="kb-item">
-                    <div class="kb-info">
-                      <div class="kb-file-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);"><i class="ph-bold ph-globe"></i></div>
-                      <div class="kb-details"><span class="kb-name">https://docs.acme.ai/api</span><span class="kb-size">Web Crawl • 85 Pages</span></div>
-                    </div>
-                    <span class="kb-sync-status"><i class="ph-bold ph-check-circle"></i> Synced</span>
-                  </div>
-                  <div class="kb-item">
-                    <div class="kb-info">
-                      <div class="kb-file-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);"><i class="ph-bold ph-notepad"></i></div>
-                      <div class="kb-details"><span class="kb-name">Customer_Feedback_2026.docx</span><span class="kb-size">1.8 MB • 620 Vectors</span></div>
-                    </div>
-                    <span class="kb-sync-status"><i class="ph-bold ph-check-circle"></i> Synced</span>
-                  </div>
+                  <span class="asset-status-badge">Coming Soon</span>
+                </div>
+                <div class="asset-info">
+                  <h3 class="asset-title">Knowledge Sources</h3>
+                  <p class="asset-desc">Vector DB embeddings, RAG contexts, uploaded PDFs, DOCX & web crawl repositories.</p>
+                </div>
+                <div class="asset-footer">
+                  <span class="asset-meta-text"><i class="ph-bold ph-file-pdf"></i> 3 Repositories Index</span>
+                  <button type="button" class="btn-sm-text asset-action-btn">Explore &rarr;</button>
                 </div>
               </div>
 
-              <div>
-                <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.85rem;">Upload & Index New Sources</h3>
-                <div class="upload-dropzone" style="padding: 2.5rem 1.5rem;">
-                  <i class="ph-bold ph-cloud-arrow-up upload-icon" style="font-size: 2.5rem;"></i>
-                  <span class="upload-text"><strong>Click to upload</strong> or drag & drop (PDF, DOCX, TXT)</span>
-                  <span style="font-size: 0.75rem; color: var(--text-muted);">Instant Pinecone/Qdrant Vector Chunking</span>
+              <!-- Asset 2: Note -->
+              <div class="asset-card" data-asset-name="Note">
+                <div class="asset-card-top">
+                  <div class="asset-icon-badge violet">
+                    <i class="ph-bold ph-note-pencil"></i>
+                  </div>
+                  <span class="asset-status-badge">Coming Soon</span>
+                </div>
+                <div class="asset-info">
+                  <h3 class="asset-title">Notes & Instructions</h3>
+                  <p class="asset-desc">Shared workspace system prompts, team guidelines, context notes & agent directives.</p>
+                </div>
+                <div class="asset-footer">
+                  <span class="asset-meta-text"><i class="ph-bold ph-notepad"></i> 12 System Notes</span>
+                  <button type="button" class="btn-sm-text asset-action-btn">Explore &rarr;</button>
                 </div>
               </div>
+
+              <!-- Asset 3: Brand -->
+              <div class="asset-card" data-asset-name="Brand">
+                <div class="asset-card-top">
+                  <div class="asset-icon-badge pink">
+                    <i class="ph-bold ph-paint-brush"></i>
+                  </div>
+                  <span class="asset-status-badge">Coming Soon</span>
+                </div>
+                <div class="asset-info">
+                  <h3 class="asset-title">Brand Voice & Identity</h3>
+                  <p class="asset-desc">Tone of voice rules, brand guidelines, logo assets, editorial rules & visual identity.</p>
+                </div>
+                <div class="asset-footer">
+                  <span class="asset-meta-text"><i class="ph-bold ph-palette"></i> Brand Voice v2</span>
+                  <button type="button" class="btn-sm-text asset-action-btn">Explore &rarr;</button>
+                </div>
+              </div>
+
+              <!-- Asset 4: Tools -->
+              <div class="asset-card" data-asset-name="Tools">
+                <div class="asset-card-top">
+                  <div class="asset-icon-badge emerald">
+                    <i class="ph-bold ph-wrench"></i>
+                  </div>
+                  <span class="asset-status-badge">Coming Soon</span>
+                </div>
+                <div class="asset-info">
+                  <h3 class="asset-title">Tools & Integrations</h3>
+                  <p class="asset-desc">Composio tool connectors, GitHub MCP servers, Stripe sync & custom API webhooks.</p>
+                </div>
+                <div class="asset-footer">
+                  <span class="asset-meta-text"><i class="ph-bold ph-plugs"></i> 8 Active MCP Tools</span>
+                  <button type="button" class="btn-sm-text asset-action-btn">Explore &rarr;</button>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -1040,6 +1266,171 @@
           <button type="submit" class="btn-primary"><i class="ph-bold ph-plus"></i> Create Group</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- CREATE WORKFLOW WIZARD MODAL POPUP (3 CREATION MODES) -->
+  <div class="modal-backdrop" id="createWorkflowModalBackdrop">
+    <div class="cmd-modal" style="max-width: 580px; padding: 1.75rem; border-radius: var(--radius-lg);">
+      
+      <!-- STEP 1: MODE SELECTION CARDS -->
+      <div id="wfWizardStepMode">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: rgba(99, 102, 241, 0.15); color: var(--accent-violet); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              <i class="ph-bold ph-tree-structure"></i>
+            </div>
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Create New Workflow</h3>
+              <p style="font-size: 0.78rem; color: var(--text-muted);">Select how you would like to orchestrate your pipeline</p>
+            </div>
+          </div>
+          <button class="drawer-close-btn" id="closeCreateWfModalBtn" type="button"><i class="ph-bold ph-x"></i></button>
+        </div>
+
+        <div class="agent-mode-cards">
+          <!-- MODE 1: CHAT WITH AI CO-PILOT -->
+          <div class="agent-mode-card" id="wfModeChatAI">
+            <div class="mode-icon-wrapper ai">
+              <i class="ph-bold ph-sparkle"></i>
+            </div>
+            <div class="mode-info">
+              <div class="mode-title-row">
+                <span class="mode-title">1. Generate Pipeline with AI</span>
+                <span class="mode-badge ai">Interactive</span>
+              </div>
+              <p class="mode-desc">Describe your automation goal in plain English. Mindie AI will auto-connect nodes, triggers & agents.</p>
+            </div>
+            <i class="ph-bold ph-caret-right mode-arrow"></i>
+          </div>
+
+          <!-- MODE 2: CHOOSE FROM TEMPLATES -->
+          <div class="agent-mode-card" id="wfModeTemplate">
+            <div class="mode-icon-wrapper template">
+              <i class="ph-bold ph-layout"></i>
+            </div>
+            <div class="mode-info">
+              <div class="mode-title-row">
+                <span class="mode-title">2. Choose Workflow Template</span>
+                <span class="mode-badge template">Fast Start</span>
+              </div>
+              <p class="mode-desc">Pick from 15+ pre-configured pipelines: Market Research, PR Security Audit, Content Sync.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <i class="ph-bold ph-caret-right mode-arrow"></i>
+            </div>
+          </div>
+
+          <!-- MODE 3: CUSTOM BLANK WORKFLOW -->
+          <div class="agent-mode-card" id="wfModeBlank">
+            <div class="mode-icon-wrapper blank">
+              <i class="ph-bold ph-sliders"></i>
+            </div>
+            <div class="mode-info">
+              <div class="mode-title-row">
+                <span class="mode-title">3. Build Blank Workflow</span>
+                <span class="mode-badge blank">Full Control</span>
+              </div>
+              <p class="mode-desc">Configure every node manually: Trigger Mechanism, Agent Nodes, Router Rules & Webhooks.</p>
+            </div>
+            <i class="ph-bold ph-caret-right mode-arrow"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2A: WORKFLOW TEMPLATE GALLERY (HIDDEN BY DEFAULT) -->
+      <div id="wfWizardStepTemplate" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <button type="button" class="btn-sm-text" id="backToWfModesFromTemplate">&larr; Back to Modes</button>
+          <h3 style="font-size: 1.05rem; font-weight: 700;">Select Workflow Template</h3>
+          <button class="drawer-close-btn" id="closeWfTemplateStepBtn" type="button"><i class="ph-bold ph-x"></i></button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 340px; overflow-y: auto; padding-right: 0.35rem;">
+          <!-- Template 1 -->
+          <div class="agent-template-item" data-wf-name="Autonomous Deep Market Research & Publishing" data-project="market">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 36px; height: 36px; border-radius: var(--radius-md); background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="ph-bold ph-chart-pie"></i>
+              </div>
+              <div>
+                <h4 style="font-size: 0.88rem; font-weight: 700;">Autonomous Market Research & Publishing</h4>
+                <p style="font-size: 0.72rem; color: var(--text-muted);">Researcher ➔ Router ➔ QA ➔ Gate ➔ Notion</p>
+              </div>
+            </div>
+            <button type="button" class="btn-sm-primary">Use Template</button>
+          </div>
+
+          <!-- Template 2 -->
+          <div class="agent-template-item" data-wf-name="Automated Code Review & PR Security Inspection" data-project="engineering">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 36px; height: 36px; border-radius: var(--radius-md); background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="ph-bold ph-code"></i>
+              </div>
+              <div>
+                <h4 style="font-size: 0.88rem; font-weight: 700;">Automated Code Review & PR Inspection</h4>
+                <p style="font-size: 0.72rem; color: var(--text-muted);">Code Auditor ➔ Security Scanner ➔ GitHub PR</p>
+              </div>
+            </div>
+            <button type="button" class="btn-sm-primary">Use Template</button>
+          </div>
+
+          <!-- Template 3 -->
+          <div class="agent-template-item" data-wf-name="Brand Voice Guidelines & Content Auto-Sync" data-project="content">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 36px; height: 36px; border-radius: var(--radius-md); background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                <i class="ph-bold ph-pen-nib"></i>
+              </div>
+              <div>
+                <h4 style="font-size: 0.88rem; font-weight: 700;">Brand Voice & Content Auto-Sync</h4>
+                <p style="font-size: 0.72rem; color: var(--text-muted);">Ghostwriter AI ➔ Notion Publisher</p>
+              </div>
+            </div>
+            <button type="button" class="btn-sm-primary">Use Template</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2B: BLANK WORKFLOW FORM (HIDDEN BY DEFAULT) -->
+      <div id="wfWizardStepBlank" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <button type="button" class="btn-sm-text" id="backToWfModesFromBlank">&larr; Back to Modes</button>
+          <h3 style="font-size: 1.05rem; font-weight: 700;">Configure Custom Workflow</h3>
+          <button class="drawer-close-btn" id="closeWfBlankStepBtn" type="button"><i class="ph-bold ph-x"></i></button>
+        </div>
+
+        <form id="createWfForm" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Workflow Name</label>
+            <input type="text" id="newWfNameInput" required placeholder="e.g. VinSmart Defect Inspection Pipeline" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Project Group</label>
+            <select id="newWfProjectInput" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+              <option value="market">Market Intelligence</option>
+              <option value="content">Content & Brand</option>
+              <option value="engineering" selected>Engineering & Code</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Trigger Mechanism</label>
+            <select id="newWfTriggerInput" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 0.65rem; border-radius: var(--radius-md); font-size: 0.85rem;">
+              <option value="Daily 08:00 AM">Daily Scheduled Pipeline (08:00 AM)</option>
+              <option value="GitHub Webhook" selected>GitHub Webhook (On Pull Request)</option>
+              <option value="Custom API Webhook">Custom API Endpoint Trigger</option>
+              <option value="Hourly Interval">Hourly Scheduled Pipeline</option>
+            </select>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+            <button type="button" class="btn-secondary" id="cancelCreateWfBtn">Cancel</button>
+            <button type="submit" class="btn-primary"><i class="ph-bold ph-plus"></i> Deploy Workflow</button>
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 
