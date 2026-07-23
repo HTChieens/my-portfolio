@@ -35,6 +35,30 @@
   </script>
 
   <style>
+    .log-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .btn-back:hover {
+      color: #6366f1;
+    }
+
     .report-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
@@ -180,6 +204,7 @@
       font-weight: 700;
     }
 
+    /* Compact Proof Transcript Box */
     .chat-proof-box {
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
@@ -244,14 +269,16 @@
   </header>
 
   <!-- LOG SECTION -->
-  <section class="section-padding" style="padding-top: 40px; padding-bottom: 40px;">
+  <section class="section-padding" style="padding-top: 120px; padding-bottom: 40px;">
     <div class="container">
       
       <div class="log-header" style="margin-bottom: 24px;">
-        <a href="vinsmart-log.html" class="btn-back">
-          <i class="fa-solid fa-arrow-left"></i> Quay lại Báo cáo VinSmart
-        </a>
-        <span class="section-tag">Ultra-Concise One-Pager • Day 06</span>
+        <div class="log-header-top">
+          <a href="vinsmart-log.html" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại Báo cáo VinSmart
+          </a>
+          <span class="section-tag" style="margin-bottom: 0;">Ultra-Concise One-Pager • Day 06</span>
+        </div>
         <h1 class="section-title text-gradient" style="font-size: 1.8rem; margin-bottom: 6px;">B2B Sales Qualification & Proposal Agent</h1>
         <p class="section-desc" style="margin-left: auto; margin-right: auto; font-size: 0.9rem;">
           Executive Summary: Tự động hóa sàng lọc lead B2B, phỏng vấn BANT, chấm điểm Lead Score (95/100 HOT) và tổng hợp Proposal Structured Summary trên MindPal Platform.
