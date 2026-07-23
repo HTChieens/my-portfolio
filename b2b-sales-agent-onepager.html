@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B Sales Lead Qualification & Proposal Agent - PAL Platform One-Pager</title>
+  <meta name="description" content="Executive One-Pager: B2B Sales Lead Qualification & Proposal Agent trên PAL Platform - Live Agent Interaction Log & Simulation.">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Outfit, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Instant Theme Initializer Script -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (prefersDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
+  <style>
+    .report-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 22px 26px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .live-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.12));
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .live-link {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff !important;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .live-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #6366f1;
+      margin-bottom: 2px;
+    }
+
+    .stat-num.cyan { color: #06b6d4; }
+    .stat-num.emerald { color: #10b981; }
+    .stat-num.amber { color: #f59e0b; }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .before-box {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .after-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .math-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    .math-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .arch-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .arch-spec-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .arch-spec-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #06b6d4;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mindpal-tag {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .chat-proof-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+
+    .chat-msg-mini {
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .chat-user-mini {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .chat-agent-mini {
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    @media (max-width: 900px) {
+      .compare-grid, .arch-specs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND DECORATIONS -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        Chiến<span class="logo-dot"></span>
+      </a>
+      
+      <nav class="nav-menu" id="nav-menu">
+        <a href="index.html#hero" class="nav-link">Trang chủ</a>
+        <a href="index.html#services" class="nav-link">Dịch vụ</a>
+        <a href="index.html#projects" class="nav-link">Dự án</a>
+        <a href="vinsmart-log.html" class="nav-link active">Báo cáo VinSmart</a>
+        <a href="index.html#contact" class="nav-link">Liên hệ</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="theme-toggle" aria-label="Đổi giao diện Bright/Dark">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOG SECTION -->
+  <section class="section-padding" style="padding-top: 40px; padding-bottom: 40px;">
+    <div class="container">
+      
+      <div class="log-header" style="margin-bottom: 24px;">
+        <a href="vinsmart-log.html" class="btn-back">
+          <i class="fa-solid fa-arrow-left"></i> Quay lại Báo cáo VinSmart
+        </a>
+        <span class="section-tag">Ultra-Concise One-Pager • Day 06</span>
+        <h1 class="section-title text-gradient" style="font-size: 1.8rem; margin-bottom: 6px;">B2B Sales Qualification & Proposal Agent</h1>
+        <p class="section-desc" style="margin-left: auto; margin-right: auto; font-size: 0.9rem;">
+          Executive Summary: Tự động hóa sàng lọc lead B2B, phỏng vấn BANT, chấm điểm Lead Score (95/100 HOT) và tổng hợp Proposal Structured Summary trên MindPal Platform.
+        </p>
+      </div>
+
+      <!-- Live Agent Banner -->
+      <div class="live-banner">
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">LIVE MINDPAL AGENT DELIVERABLE:</div>
+          <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-top: 2px;">
+            Alex - B2B Solution Architect & Sales Intake Specialist
+          </div>
+        </div>
+        <a href="https://chatbot.getmindpal.com/alex-b2b-solution-architect-sales-intake-specialist-tqy" target="_blank" class="live-link">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Live Agent Chat
+        </a>
+      </div>
+
+      <!-- Summary Stats Banner -->
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-num cyan">95 / 100</div>
+          <div class="stat-label">BANT Lead Score (🔥 HOT LEAD)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num emerald">80%</div>
+          <div class="stat-label">AI Tự Động Hóa (800 / 1,000 req/ngày)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num amber">3 - 6 Tháng</div>
+          <div class="stat-label">Thời Gian Hoàn Vốn (Payback Period)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Tự Động Tạo Lead Profile Note & Lịch Hẹn</div>
+        </div>
+      </div>
+
+      <!-- CORE DELIVERABLE 1: USE CASE & ESTIMATED ROI -->
+      <div class="report-card">
+        <span class="section-tag" style="margin-bottom: 4px;">Khối 1</span>
+        <h2 style="font-size: 18px; color: var(--text-primary); margin-bottom: 8px;">
+          <i class="fa-solid fa-briefcase text-gradient"></i> Use Case & Đo Lường ROI (Business Impact & ROI)
+        </h2>
+
+        <!-- Macro Lost Revenue Model -->
+        <div class="math-box" style="margin-top: 0; margin-bottom: 12px; background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.3);">
+          <div style="font-weight: 700; color: #ef4444; margin-bottom: 4px; font-size: 13px;">
+            <i class="fa-solid fa-calculator"></i> Bài Toán Tổn Thất Doanh Thu Vĩ Mô (Macro Lost Revenue - Deal Size: $15,000 USD)
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+            Độ trễ phản hồi 24-48h khiến doanh nghiệp B2B mất 40% lead nóng vào tay đối thủ. Với quy mô 600 leads/tháng:
+          </p>
+          <div class="math-row">
+            <span>• Lead bị mất do trễ phản hồi (40% × 600 leads):</span>
+            <b style="color: #ef4444;">240 Leads / tháng</b>
+          </div>
+          <div class="math-row" style="border-bottom: none;">
+            <span>➔ Doanh thu thất thoát hàng năm (240 leads × 20% win rate × $15k):</span>
+            <b style="color: #ef4444; font-size: 14.5px;">$720,000 USD / tháng ($8.64M USD / năm)</b>
+          </div>
+        </div>
+
+        <!-- Before vs After Workflow Comparison -->
+        <div class="compare-grid">
+          <div class="before-box">
+            <h3 style="color: #ef4444; font-size: 14px; margin-bottom: 6px;"><i class="fa-solid fa-circle-xmark"></i> Quy Trình Cũ (Thủ Công Mất 2-4 Giờ)</h3>
+            <ul style="padding-left: 16px; color: var(--text-secondary); font-size: 12.5px; line-height: 1.5;">
+              <li>Sales mất <b>24–48 giờ</b> mới phản hồi lead ➔ Mất 40% lead nóng.</li>
+              <li>Mất <b>2–4 giờ</b> soạn tay từng bản Proposal/Báo giá thủ công.</li>
+              <li>Sàng lọc lead không nhất quán theo cảm quan cá nhân.</li>
+            </ul>
+          </div>
+
+          <div class="after-box">
+            <h3 style="color: #10b981; font-size: 14px; margin-bottom: 6px;"><i class="fa-solid fa-circle-check"></i> Luồng PAL AI Agent (Tức Thì Trực Tiếp Trong Chat)</h3>
+            <ul style="padding-left: 16px; color: var(--text-secondary); font-size: 12.5px; line-height: 1.5;">
+              <li>Sàng lọc BANT tự động trong <b>30 giây</b> ➔ Chấm điểm <b>🔥 95/100 (HOT)</b>.</li>
+              <li>Xuất Proposal dạng <b>Structured Summary / SoW tức thì trong Chat</b>.</li>
+              <li>Tự động lưu <b>Ghi chú hồ sơ Lead (Lead Profile Note) trong MindPal Workspace</b>.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Real Test Case ROI Summary -->
+        <div class="math-box">
+          <div style="font-weight: 700; color: #10b981; margin-bottom: 4px; font-size: 13px;">
+            <i class="fa-solid fa-chart-pie"></i> Ước Tính ROI Từ Lần Test Trực Tiếp (Test Case: Chiến Hoàng Thanh - Retail Mỹ Phẩm):
+          </div>
+          <div class="math-row">
+            <span>• Quy mô & Yêu cầu:</span>
+            <b>10 nhân sự, nghẽn 1,000 req/ngày, Ngân sách $8,000/năm</b>
+          </div>
+          <div class="math-row">
+            <span>• Khả năng tự động hóa CSKH:</span>
+            <b style="color: #10b981;">Tự động xử lý 80% (800 / 1,000 req/ngày)</b>
+          </div>
+          <div class="math-row">
+            <span>• Tiết kiệm định ngạch nhân sự:</span>
+            <b>Giảm 2 – 3 nhân viên CSKH (~$1,400 – $3,000 / tháng)</b>
+          </div>
+          <div class="math-row" style="border-bottom: none; margin-top: 2px;">
+            <span>➔ Thời gian hoàn vốn đầu tư (Payback Period):</span>
+            <b style="color: #f59e0b; font-size: 14px;">3 – 6 Tháng (Cho chi phí gói Starter $8,488)</b>
+          </div>
+        </div>
+
+        <!-- Embedded Mini Chat Proof -->
+        <div class="chat-proof-box">
+          <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 6px; font-size: 12px;">
+            <i class="fa-solid fa-comments text-gradient"></i> Trích Đoạn Log Chát Thật Với MindPal Agent:
+          </div>
+          <div class="chat-msg-mini chat-user-mini">
+            <b>Khách hàng</b>: Ngân sách $8,000/năm. Đang bị nghẽn 1,000 req/ngày mỹ phẩm.
+          </div>
+          <div class="chat-msg-mini chat-agent-mini">
+            <b>Agent Alex</b>: BANT Score 🔥 <b>95/100 (HOT LEAD)</b>. Đề xuất Starter Pack ($2,500 setup + $499/mo = $8,488). Đã chạy `search_workspace_tools` lưu Lead Profile Note & xác nhận hẹn 14:00 23/07!
+          </div>
+        </div>
+      </div>
+
+      <!-- CORE DELIVERABLE 2: AGENT TECHNICAL DESIGN & ARCHITECTURE -->
+      <div class="report-card">
+        <span class="section-tag" style="margin-bottom: 4px;">Khối 2</span>
+        <h2 style="font-size: 18px; color: var(--text-primary); margin-bottom: 8px;">
+          <i class="fa-solid fa-layer-group text-gradient"></i> Thiết Kế Kiến Trúc MindPal Agent (Architecture Mapping)
+        </h2>
+
+        <div class="arch-specs-grid">
+          <div class="arch-spec-card">
+            <div class="arch-spec-title">
+              <i class="fa-solid fa-terminal"></i> 1. System Prompt
+              <span class="mindpal-tag">MindPal Tab 1</span>
+            </div>
+            <ul style="padding-left: 14px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              <li><b>Persona</b>: Alex - B2B Solution Architect & Sales Intake Specialist.</li>
+              <li><b>Quy trình BANT</b>: Khai thác 4 câu hỏi (Budget, Authority, Need, Timeline).</li>
+              <li><b>Guardrails</b>: Bắt buộc dùng KB báo giá ($2,500 setup / $499 mo), khéo léo đàm phán lệch $488.</li>
+            </ul>
+          </div>
+
+          <div class="arch-spec-card">
+            <div class="arch-spec-title">
+              <i class="fa-solid fa-book"></i> 2. Knowledge & Memory
+              <span class="mindpal-tag">MindPal Tab 2</span>
+            </div>
+            <ul style="padding-left: 14px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              <li><b>RAG Source</b>: Upload file `B2B Sales Lead Qualification.pdf`.</li>
+              <li><b>RAG Config</b>: Đã bật <i>"Force always get context from knowledge sources"</i>.</li>
+              <li><b>Memory</b>: Lưu email `hoangthanhchien0810@gmail.com` & hẹn 14:00 23/07.</li>
+            </ul>
+          </div>
+
+          <div class="arch-spec-card">
+            <div class="arch-spec-title">
+              <i class="fa-solid fa-sliders"></i> 3. LLM & Output Settings
+              <span class="mindpal-tag">MindPal Tab 3 & 4</span>
+            </div>
+            <ul style="padding-left: 14px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              <li><b>LLM Selection</b>: GPT-4o (Lập luận phân tích BANT & thương lượng giá).</li>
+              <li><b>Output Format</b>: Proposal dạng Structured Summary / Scope of Work (SoW) 8 mục trong Chat.</li>
+            </ul>
+          </div>
+
+          <div class="arch-spec-card">
+            <div class="arch-spec-title">
+              <i class="fa-solid fa-plug"></i> 4. Workspace Tools & Action
+              <span class="mindpal-tag">MindPal Tab 5 & 6</span>
+            </div>
+            <ul style="padding-left: 14px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              <li><b>Workspace Tool</b>: Chạy `search_workspace_tools` tạo <b>Lead Profile Note trong MindPal Workspace</b> (Ghi chú hồ sơ lead: <i>"Lead: Chiến Hoàng Thanh - Mỹ phẩm"</i>).</li>
+              <li><b>Action Execution</b>: Phân loại Lead Score 95 HOT & gửi email follow-up.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" style="padding: 16px 0;">
+    <div class="container">
+      <p class="footer-text">
+        &copy; 2026 Hoàng Thanh Chiến. All rights reserved. VinSmart Future Day 06 Ultra-Concise One-Pager.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
