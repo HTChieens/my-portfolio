@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Ngày 07 | PAM Playbook & Performance Ad Variations (1:1 & 4:5)</title>
+  <meta name="description" content="Báo cáo Ngày 07 VinSmart Future: PAM Playbook & Bộ Biến Thể Quảng Cáo Hiệu Suất Multi-Hook (Hiển thị đầy đủ 2 tỷ lệ 1:1 và 4:5).">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Outfit, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="../../styles.css">
+
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (prefersDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
+  <style>
+    .log-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .btn-back:hover {
+      color: #6366f1;
+    }
+
+    .report-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-step {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      text-transform: uppercase;
+    }
+
+    /* Ratio Filter Tabs */
+    .ratio-filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .ratio-tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ratio-tab-btn.active, .ratio-tab-btn:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    .creative-angle-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .creative-angle-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .angle-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dual-images-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .dual-images-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .img-box-wrapper {
+      position: relative;
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .img-box-wrapper.ratio-1-1 {
+      aspect-ratio: 1 / 1;
+    }
+
+    .img-box-wrapper.ratio-4-5 {
+      aspect-ratio: 4 / 5;
+    }
+
+    .img-box-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .img-box-wrapper:hover img {
+      transform: scale(1.02);
+    }
+
+    .ratio-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+      z-index: 2;
+    }
+
+    .ad-copy-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+    }
+
+    .ad-copy-label {
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: #06b6d4;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+
+    .code-block {
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .code-block .keyword { color: #8b5cf6; font-weight: 700; }
+    .code-block .title { color: #10b981; font-weight: 700; }
+    .code-block .string { color: #06b6d4; }
+
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal-content-img {
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: 12px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND DECORATIONS -->
+  <div class="bg-grid"></div>
+
+  <!-- HEADER -->
+  <header class="header scrolled" id="header">
+    <div class="container">
+      <a href="../../index.html" class="logo">Chiến<span class="logo-dot"></span></a>
+      <nav class="nav-menu">
+        <a href="../../vinsmart-log.html" class="nav-link active">Báo cáo VinSmart</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <section class="section-padding" style="padding-top: 110px; padding-bottom: 50px;">
+    <div class="container">
+      
+      <div class="log-header" style="margin-bottom: 20px; text-align: left;">
+        <div class="log-header-top">
+          <a href="../../vinsmart-log.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Báo cáo VinSmart</a>
+          <span class="section-tag">Day 07 Report</span>
+        </div>
+        <h1 class="section-title text-gradient" style="font-size: 1.8rem; margin-bottom: 6px; text-align: left;">
+          Performance Ad Variations Generator Playbook
+        </h1>
+      </div>
+
+      <!-- 1. CREATIVE FORMAT SELECTION -->
+      <div class="report-card">
+        <div class="section-heading">
+          <span class="badge-step">Phần 1</span>
+          Định dạng Quảng cáo Lựa chọn (Format)
+        </div>
+        <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+          <strong>Format:</strong> <strong>Performance Ad Variations (Bộ biến thể Quảng cáo Hiệu suất Multi-Hook)</strong>.
+          <br>
+          <strong>Kích thước hiển thị:</strong> <strong>Square (1:1 Feed)</strong> &amp; <strong>Vertical (4:5 Instagram/Facebook Mobile Feed)</strong>.
+        </div>
+      </div>
+
+      <!-- 2. DOCUMENTED PLAYBOOK (SKILL.MD) -->
+      <div class="report-card">
+        <div class="section-heading">
+          <span class="badge-step">Phần 2</span>
+          Nội dung Playbook (`SKILL.md`)
+        </div>
+
+        <div class="code-block"><span class="title"># Performance Ad Variations Generator Playbook</span>
+
+<span class="keyword">1. OBJECTIVE (Mục tiêu)</span>
+Tạo ra một bộ biến thể quảng cáo hiệu suất cao (Performance Ad Variations) gồm 4 góc nhìn tiếp thị (Marketing Angles) khác nhau dựa trên thông tin sản phẩm và Brand Kit được cung cấp.
+
+<span class="keyword">2. INPUTS (Đầu vào bắt buộc)</span>
+Khi gọi Playbook này, người dùng cần cung cấp hoặc tag các thông tin sau:
+- <span class="string">Brand Kit</span>: Logo, màu chủ đạo (Primary &amp; Secondary Colors), Font chữ thương hiệu.
+- <span class="string">Thông tin sản phẩm/dịch vụ</span>: Tên, tính năng chính, USP (Unique Selling Proposition), giá bán/ưu đãi.
+- <span class="string">Đối tượng mục tiêu (Target Audience)</span>: Chân dung khách hàng chính và pain points (điểm đau).
+- <span class="string">Định dạng hiển thị (Format)</span>: Square (1:1 cho Feed) hoặc Vertical (4:5 cho Instagram và Facebook).
+
+<span class="keyword">3. EXECUTION STEPS (Các bước xử lý của Agent)</span>
+- <span class="title">Bước 1: Phân tích &amp; Xây dựng 4 Marketing Angles</span>
+  * Angle 1 (Problem - Solution): Đánh thẳng vào nỗi đau của khách hàng và đưa ra giải pháp từ sản phẩm.
+  * Angle 2 (Social Proof / Testimonial): Nhấn mạnh uy tín, đánh giá tích cực hoặc kết quả thực tế.
+  * Angle 3 (Benefit / Feature Spotlight): Làm nổi bật tính năng vượt trội nhất hoặc lợi ích sát sườn.
+  * Angle 4 (FOMO / Special Offer): Tạo cảm giác gấp gáp về giá, quà tặng hoặc số lượng có hạn.
+
+- <span class="title">Bước 2: Viết Ad Copy cho từng Angle</span>
+  * Primary Text: 2-3 câu dẫn dắt hấp dẫn.
+  * Headline: Tiêu đề ngắn gọn, đắt giá (&lt; 7 từ).
+  * CTA Button: Lời kêu gọi hành động (ví dụ: Mua ngay, Dùng thử miễn phí, Tìm hiểu thêm).
+
+- <span class="title">Bước 3: Đề xuất Visual Prompt &amp; Tạo hình ảnh (Creative Assets)</span>
+  * Tạo Visual Prompt cho từng Angle tuân thủ Brand Colors &amp; Aesthetics.
+  * Sử dụng công cụ tạo ảnh tự động sinh ra ảnh quảng cáo tương ứng từng concept, không chứa watermark hay text rác.
+
+<span class="keyword">4. OUTPUTS (Đầu ra tiêu chuẩn)</span>
+Kết quả trả về phải đóng gói dưới dạng Artifact gồm:
+- Bảng tổng hợp 4 Biến thể Quảng cáo (STT, Marketing Angle, Headline, Primary Text, CTA, Visual Concept).
+- Bộ ảnh Quảng cáo hoàn chỉnh (Batch Creatives) hiển thị trực quan ứng với từng biến thể (gồm 2 kích thước: 1:1 Feed &amp; 4:5 Vertical).</div>
+      </div>
+
+      <!-- 3. BATCH OF FINISHED CREATIVES GENERATED -->
+      <div class="report-card">
+        <div class="section-heading">
+          <span class="badge-step">Phần 3</span>
+          Bộ 4 Angles x 2 Kích thước (1:1 &amp; 4:5 Batch Creatives)
+        </div>
+
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px;">
+          Mỗi Angle được xuất đồng thời 2 kích thước chuẩn: <strong>Square (1:1)</strong> cho Feed và <strong>Vertical (4:5)</strong> cho Mobile Feed:
+        </p>
+
+        <!-- ANGLE 1 -->
+        <div class="creative-angle-block">
+          <div class="creative-angle-header">
+            <div class="angle-title" style="color: #10b981;">
+              <i class="fa-solid fa-bullseye"></i> Angle 1: Problem - Solution (Giải quyết nỗi đau)
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Format: 1:1 &amp; 4:5</span>
+          </div>
+
+          <div class="dual-images-grid">
+            <div class="img-box-wrapper ratio-1-1" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-square"></i> 1:1 Square</span>
+              <img src="assets/Sony_Pro_Headphones.png" alt="Angle 1 - 1:1">
+            </div>
+            <div class="img-box-wrapper ratio-4-5" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-mobile-screen"></i> 4:5 Vertical</span>
+              <img src="assets/Sony_Pro_Headphondes.png" alt="Angle 1 - 4:5">
+            </div>
+          </div>
+
+          <div class="ad-copy-box">
+            <div><span class="ad-copy-label">Headline:</span> TẮT TIẾNG ỒN, BẬT TẬP TRUNG</div>
+            <div><span class="ad-copy-label">Primary Text:</span> Chống ồn chủ động ANC 45dB giúp bạn tập trung tuyệt đối.</div>
+            <div><span class="ad-copy-label">CTA:</span> Mua ngay</div>
+          </div>
+        </div>
+
+        <!-- ANGLE 2 -->
+        <div class="creative-angle-block">
+          <div class="creative-angle-header">
+            <div class="angle-title" style="color: #8b5cf6;">
+              <i class="fa-solid fa-star"></i> Angle 2: Social Proof / Testimonial (Chứng thực 5★)
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Format: 1:1 &amp; 4:5</span>
+          </div>
+
+          <div class="dual-images-grid">
+            <div class="img-box-wrapper ratio-1-1" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-square"></i> 1:1 Square</span>
+              <img src="assets/Sony_Pro_Headphones (1).png" alt="Angle 2 - 1:1">
+            </div>
+            <div class="img-box-wrapper ratio-4-5" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-mobile-screen"></i> 4:5 Vertical</span>
+              <img src="assets/Sony_Pro_Headphones (4).png" alt="Angle 2 - 4:5">
+            </div>
+          </div>
+
+          <div class="ad-copy-box">
+            <div><span class="ad-copy-label">Headline:</span> 10.000+ NGƯỜI ĐÃ TIN DÙNG</div>
+            <div><span class="ad-copy-label">Primary Text:</span> "Đeo vào là quên hết ồn ào... Xứng đáng từng đồng!" (Minh H.)</div>
+            <div><span class="ad-copy-label">CTA:</span> Tìm hiểu thêm &rsaquo;</div>
+          </div>
+        </div>
+
+        <!-- ANGLE 3 -->
+        <div class="creative-angle-block">
+          <div class="creative-angle-header">
+            <div class="angle-title" style="color: #06b6d4;">
+              <i class="fa-solid fa-battery-full"></i> Angle 3: Benefit / Feature Spotlight (Pin 40h &amp; Audio)
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Format: 1:1 &amp; 4:5</span>
+          </div>
+
+          <div class="dual-images-grid">
+            <div class="img-box-wrapper ratio-1-1" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-square"></i> 1:1 Square</span>
+              <img src="assets/Sony_Pro_Headphones (2).png" alt="Angle 3 - 1:1">
+            </div>
+            <div class="img-box-wrapper ratio-4-5" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-mobile-screen"></i> 4:5 Vertical</span>
+              <img src="assets/Sony_Pro_Headphones (3).png" alt="Angle 3 - 4:5">
+            </div>
+          </div>
+
+          <div class="ad-copy-box">
+            <div><span class="ad-copy-label">Headline:</span> PIN 40H • ÂM THANH HI-RES</div>
+            <div><span class="ad-copy-label">Primary Text:</span> Sạc 1 lần dùng cả tuần với thời lượng pin 40h ấn tượng.</div>
+            <div><span class="ad-copy-label">CTA:</span> Khám phá ngay</div>
+          </div>
+        </div>
+
+        <!-- ANGLE 4 -->
+        <div class="creative-angle-block">
+          <div class="creative-angle-header">
+            <div class="angle-title" style="color: #f59e0b;">
+              <i class="fa-solid fa-fire"></i> Angle 4: FOMO / Special Offer (Ưu đãi 30%)
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Format: 1:1 &amp; 4:5</span>
+          </div>
+
+          <div class="dual-images-grid">
+            <div class="img-box-wrapper ratio-1-1" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-square"></i> 1:1 Square</span>
+              <img src="assets/Sony_Pro_Headphones_Sale.png" alt="Angle 4 - 1:1">
+            </div>
+            <div class="img-box-wrapper ratio-4-5" onclick="openModal(this.querySelector('img').src)">
+              <span class="ratio-tag"><i class="fa-solid fa-mobile-screen"></i> 4:5 Vertical</span>
+              <img src="assets/Sony_Pro_Headphones_Sale (1).png" alt="Angle 4 - 4:5">
+            </div>
+          </div>
+
+          <div class="ad-copy-box">
+            <div><span class="ad-copy-label">Headline:</span> GIẢM 30% — CHỈ TUẦN NÀY</div>
+            <div><span class="ad-copy-label">Primary Text:</span> Chương trình ưu đãi 30% sắp kết thúc vào cuối tuần này.</div>
+            <div><span class="ad-copy-label">CTA:</span> Đặt ngay</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <div class="modal-backdrop" id="imgModal" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img src="" alt="Full view" class="modal-content-img" id="modalImg" onclick="event.stopPropagation()">
+  </div>
+
+  <script src="../../script.js"></script>
+  <script>
+    function openModal(imgSrc) {
+      document.getElementById('modalImg').src = imgSrc;
+      document.getElementById('imgModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('imgModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>
