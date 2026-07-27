@@ -731,7 +731,7 @@
         <a href="../../index.html#hero" class="nav-link">Trang chủ</a>
         <a href="../../index.html#services" class="nav-link">Dịch vụ</a>
         <a href="../../index.html#projects" class="nav-link">Dự án</a>
-        <a href="../../vinsmart-log.html" class="nav-link active">Báo cáo VinSmart</a>
+        <a href="../../vinsmart-log.html" class="nav-link active">Báo cáo VFS</a>
         <a href="../../index.html#contact" class="nav-link">Liên hệ</a>
       </nav>
 
@@ -752,7 +752,7 @@
     <div class="container">
       <div class="report-topbar">
         <a href="../../vinsmart-log.html" class="btn-back">
-          <i class="fa-solid fa-arrow-left"></i> Quay lại Báo cáo VinSmart
+          <i class="fa-solid fa-arrow-left"></i> Quay lại Báo cáo VFS
         </a>
         <span class="section-tag" style="margin-bottom: 0;">Day 08 · UX Flow Redesign</span>
       </div>
@@ -762,7 +762,7 @@
           <span class="report-eyebrow"><i class="fa-solid fa-route"></i> PAL Agent Creation Flow</span>
           <h1 class="hero-title">Redesign flow tạo mới Agent trên PAL</h1>
           <p class="hero-desc">
-            Bài phân tích này tập trung vào flow tạo mới Agent trên PAL. Người dùng muốn tạo một agent mới có knowledge riêng, nhưng flow hiện tại tạo ra nhiều điểm friction: quá nhiều entry point ở màn hình tạo agent, thao tác lặp khi gắn knowledge, và khi upload knowledge thì file bị đưa vào group mặc định tên "New group". Mục tiêu redesign là làm flow rõ hơn, ít friction hơn, và tạo cảm giác tin cậy khi hoàn tất.
+            Bài phân tích này tập trung vào flow tạo mới Agent trên PAL. Người dùng muốn tạo một agent mới có knowledge riêng, nhưng flow hiện tại tạo ra nhiều điểm friction: quá nhiều entry point ở màn hình tạo agent, thao tác lặp khi gắn knowledge, và khi upload knowledge (nếu không chọn folder) thì file bị đưa vào folder mặc định tên "New folder". Mục tiêu redesign là làm flow rõ hơn, ít friction hơn, và tạo cảm giác tin cậy khi hoàn tất.
           </p>
         </div>
 
@@ -772,7 +772,7 @@
             <ul class="summary-list">
               <li><i class="fa-solid fa-check"></i><span>Flow được chọn: tạo mới Agent từ màn hình Agents đến bước config, upload knowledge và hoàn tất.</span></li>
               <li><i class="fa-solid fa-check"></i><span>Phân tích hiện trạng: chỉ ra friction, confusion và trust issue trong từng bước.</span></li>
-              <li><i class="fa-solid fa-check"></i><span>Đề xuất redesign: guided setup, auto-attach knowledge, semantic group naming, và summary rõ sau bước knowledge.</span></li>
+              <li><i class="fa-solid fa-check"></i><span>Đề xuất redesign: guided setup, auto-attach knowledge, semantic folder naming, và xác nhận trạng thái attached trực tiếp.</span></li>
             </ul>
           </div>
           <div class="quote-box">
@@ -805,17 +805,17 @@
           <div class="flow-node bad">
             <span class="flow-step">3</span>
             <h3>Start mode</h3>
-            <p>Generate instantly, Chat with AI, prompt, chips và templates cùng cạnh tranh chú ý.</p>
+            <p>Generate instantly, Chat with AI, prompt và templates cùng cạnh tranh chú ý.</p>
           </div>
           <div class="flow-node bad">
             <span class="flow-step">4</span>
             <h3>Config Agent</h3>
-            <p>Màn hình config có nhiều nhóm cài đặt; trạng thái knowledge sau upload chưa được xác nhận rõ trong flow.</p>
+            <p>Trạng thái knowledge sau upload không tự attached vào agent.</p>
           </div>
           <div class="flow-node bad">
             <span class="flow-step">5</span>
-            <h3>Knowledge group</h3>
-            <p>Knowledge vừa upload bị gắn vào group tên "New group", dễ trùng và không thể hiện agent owner.</p>
+            <h3>Knowledge folder</h3>
+            <p>Knowledge vừa upload (nếu không chọn folder) bị gắn vào folder tên "New folder", dễ trùng và không thể hiện agent owner.</p>
           </div>
         </div>
       </section>
@@ -840,7 +840,7 @@
             <tr>
               <td><strong>Create Agent modal</strong></td>
               <td>User muốn bắt đầu nhanh và được hướng dẫn theo mục tiêu.</td>
-              <td>Modal hiển thị nhiều starting points cùng lúc: Generate instantly, Chat with AI, prompt box, @ resource mention, persona chips, template cards và More templates.</td>
+              <td>Modal hiển thị nhiều starting points cùng lúc: Generate instantly, Chat with AI, prompt box, @ resource mention, template cards và blank.</td>
               <td><strong>Confusion:</strong> user chưa rõ đâu là đường chính. <strong>Friction:</strong> quá nhiều lựa chọn xuất hiện trước khi user thấy value đầu tiên.</td>
               <td><span class="severity medium">Medium</span></td>
             </tr>
@@ -852,10 +852,10 @@
               <td><span class="severity high">High</span></td>
             </tr>
             <tr>
-              <td><strong>Knowledge grouping</strong></td>
-              <td>User kỳ vọng file được lưu vào một group có tên rõ ràng theo agent hoặc project.</td>
-              <td>Khi user upload knowledge, knowledge đó được gắn vào group mặc định tên "New group", bị trùng với các group khác.</td>
-              <td><strong>Confusion:</strong> user không biết file vừa upload thuộc group nào trong các "New group" trùng tên. <strong>Trust issue:</strong> sợ agent dùng sai knowledge hoặc không dùng knowledge đã upload.</td>
+              <td><strong>Knowledge folder</strong></td>
+              <td>User kỳ vọng file được lưu vào một folder có tên rõ ràng theo agent hoặc project.</td>
+              <td>Khi user upload knowledge (nếu không chọn folder), knowledge đó được gắn vào folder mặc định tên "New folder", bị trùng với các folder khác.</td>
+              <td><strong>Confusion:</strong> user không biết file vừa upload thuộc folder nào trong các "New folder" trùng tên. <strong>Trust issue:</strong> sợ agent dùng sai knowledge hoặc không dùng knowledge đã upload.</td>
               <td><span class="severity high">High</span></td>
             </tr>
           </tbody>
@@ -879,7 +879,7 @@
           </div>
           <div class="diagnosis-card">
             <h3><i class="fa-solid fa-folder-tree" style="color: var(--ux-cyan);"></i> Tên mặc định thiếu ngữ nghĩa</h3>
-            <p>Sau khi upload, knowledge được gắn vào group mặc định "New group". Tên này không có ngữ nghĩa, dễ trùng, và làm ownership của knowledge bị mờ ngay từ lúc tạo.</p>
+            <p>Sau khi upload (nếu không chọn folder), knowledge được gắn vào folder mặc định "New folder". Tên này không có ngữ nghĩa, dễ trùng, và làm ownership của knowledge bị mờ ngay từ lúc tạo.</p>
           </div>
         </div>
       </section>
@@ -896,42 +896,29 @@
             <ol>
               <li>Agent</li>
               <li>Create New</li>
-              <li>Choose Generate instantly, Chat with AI, chips, or templates</li>
-              <li>Config editor starts correctly on System prompt</li>
+              <li>Choose Generate instantly, Chat with AI, templates, blank</li>
+              <li>Config essentials (...)</li>
               <li>Go to Knowledge & Memory</li>
               <li>Upload knowledge</li>
               <li>Tick knowledge again</li>
-              <li>Knowledge vừa upload được đưa vào "New group"</li>
+              <li>Knowledge vừa upload (nếu không chọn folder) được đưa vào folder "New folder"</li>
+              <li>Create</li>
             </ol>
           </div>
 
           <div class="compare-panel after">
-            <h3><i class="fa-solid fa-circle-check" style="color: var(--ux-green);"></i> Flow đề xuất</h3>
+            <h3><i class="fa-solid fa-circle-check" style="color: var(--ux-green);"></i> Flow đề xuất (Chuẩn hóa)</h3>
             <ol>
-              <li>Agent</li>
-              <li>Create New</li>
-              <li>Describe goal as primary path</li>
-              <li>Configure essentials with visible setup checklist</li>
-              <li>Add knowledge with auto-attach and clear group name</li>
-              <li>Show knowledge summary inside the config flow</li>
+              <li>Agent List</li>
+              <li>Create New Agent</li>
+              <li>Step 1: Define Goal & Role (AI-assisted làm luồng chính, giữ Template & Blank làm luồng phụ)</li>
+              <li>Step 2: Configure Essentials (Cấu hình cốt lõi)</li>
+              <li>Step 3: Add Knowledge & Finish (Auto-attach, Naming folder & Hoàn tất)</li>
             </ol>
           </div>
         </div>
 
-        <div class="mono-flow">Agent -> Create New
-  -> Step 1: What should this agent do?
-  -> Step 2: Configure essentials
-       - Show setup checklist: System prompt, Knowledge, Output, Model, Integrations
-       - Keep System prompt as the default start
-       - Surface Knowledge status once files are uploaded or selected
-  -> Step 3: Add knowledge
-       - Uploaded files are auto-attached
-       - Uploaded files go into [Agent name] Knowledge by default
-       - Duplicate names get a clear suffix or rename prompt
-  -> Step 4: Show knowledge summary in config
-       - Attached files
-       - Knowledge group name
-       - Option to remove/rename before updating agent</div>
+
       </section>
 
       <section class="report-section">
@@ -943,8 +930,8 @@
         <div class="wireframe-grid">
           <article class="wireframe">
             <div class="wireframe-top">
-              <span class="wireframe-title">Step 1 - Start with goal</span>
-              <span class="wireframe-tag">Simplify entry points</span>
+              <span class="wireframe-title">Step 1 - Define Goal & Role</span>
+              <span class="wireframe-tag">Primary Goal & Secondary Template/Blank</span>
             </div>
             <div class="wireframe-body">
               <div>
@@ -955,17 +942,17 @@
               <div class="mock-input">Analyze support tickets and answer questions from uploaded policy documents...</div>
               <div class="mock-choice primary">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <div><strong>Continue with AI-assisted setup</strong><span>Recommended for most users</span></div>
+                <div><strong>Continue with AI-assisted setup</strong><span>Primary Path • Recommended for most users</span></div>
                 <i class="fa-solid fa-arrow-right"></i>
               </div>
               <div class="mock-choice">
                 <i class="fa-solid fa-layer-group"></i>
-                <div><strong>Browse templates</strong><span>Start from a proven setup</span></div>
+                <div><strong>Browse templates</strong><span>Secondary Path • Start from a proven setup</span></div>
                 <i class="fa-solid fa-chevron-right"></i>
               </div>
               <div class="mock-choice">
                 <i class="fa-solid fa-sliders"></i>
-                <div><strong>Advanced blank setup</strong><span>Manual configuration for power users</span></div>
+                <div><strong>Blank setup</strong><span>Secondary Path • Manual configuration for power users</span></div>
                 <i class="fa-solid fa-chevron-right"></i>
               </div>
             </div>
@@ -1002,8 +989,8 @@
 
           <article class="wireframe">
             <div class="wireframe-top">
-              <span class="wireframe-title">Step 3 - Add knowledge</span>
-              <span class="wireframe-tag">Auto-attached</span>
+              <span class="wireframe-title">Step 3 - Add knowledge & Finish</span>
+              <span class="wireframe-tag">Auto-attached & Folder naming</span>
             </div>
             <div class="wireframe-body">
               <div>
@@ -1030,38 +1017,12 @@
                 </div>
               </div>
               <div class="mock-review-row">
-                <strong>Knowledge group</strong>
+                <strong>Knowledge folder</strong>
                 <span>Support Ticket Analyst Knowledge <span style="color: var(--ux-cyan); font-weight: 800;">Rename</span></span>
-              </div>
-            </div>
-          </article>
-
-          <article class="wireframe">
-            <div class="wireframe-top">
-              <span class="wireframe-title">Step 4 - Knowledge summary</span>
-              <span class="wireframe-tag">Confirm ownership</span>
-            </div>
-            <div class="wireframe-body">
-              <div class="mock-review-row">
-                <strong>Agent</strong>
-                <span>Support Ticket Analyst</span>
-              </div>
-              <div class="mock-review-row">
-                <strong>Knowledge</strong>
-                <span>2 files attached from Support Ticket Analyst Knowledge</span>
-              </div>
-              <div class="mock-review-row">
-                <strong>Group name</strong>
-                <span>Support Ticket Analyst Knowledge <span style="color: var(--ux-cyan); font-weight: 800;">Rename</span></span>
-              </div>
-              <div class="mock-box" style="padding: 12px; line-height: 1.55;">
-                <strong style="color: hsl(var(--text-primary));">Status</strong><br>
-                Knowledge is attached to this agent and will be used when the agent answers.
               </div>
               <div class="mock-button-row">
                 <span class="mock-button">Back</span>
-                <span class="mock-button">Remove file</span>
-                <span class="mock-button primary">Update agent <i class="fa-solid fa-check"></i></span>
+                <span class="mock-button primary">Create Agent <i class="fa-solid fa-check"></i></span>
               </div>
             </div>
           </article>
@@ -1077,53 +1038,16 @@
         <div class="rationale-grid">
           <div class="rationale-card">
             <h3><i class="fa-solid fa-arrows-turn-right" style="color: var(--ux-green);"></i> Ưu tiên một primary path</h3>
-            <p>Vẫn giữ instant generation, chat-based creation, suggested chips, templates và advanced setup, nhưng không để tất cả cạnh tranh thị giác cùng một lúc. Flow nên dẫn bằng "Describe goal", sau đó đặt templates và advanced setup thành secondary paths để giảm decision fatigue.</p>
+            <p>Vẫn giữ instant generation, chat-based creation, templates và advanced setup, nhưng không để tất cả cạnh tranh thị giác cùng một lúc. Flow nên dẫn bằng "Describe goal", sau đó đặt templates và advanced setup thành secondary paths để giảm decision fatigue.</p>
           </div>
           <div class="rationale-card">
             <h3><i class="fa-solid fa-paperclip" style="color: var(--ux-cyan);"></i> Auto-attach knowledge vừa upload</h3>
-            <p>Khi file được upload trong flow tạo agent, default outcome nên là file đó được gắn với agent hiện tại. System prompt vẫn có thể là bước config đầu tiên, nhưng sau khi thêm knowledge, editor cần xác nhận rõ trạng thái attached.</p>
+            <p>Khi file được upload trong flow tạo agent, default outcome nên là file đó được gắn với agent hiện tại và editor cần xác nhận rõ trạng thái attached.</p>
           </div>
           <div class="rationale-card">
-            <h3><i class="fa-solid fa-tags" style="color: var(--ux-blue);"></i> Đặt tên group theo ngữ cảnh</h3>
-            <p>Khi user upload knowledge trong lúc tạo agent, file nên được đưa vào group "[Agent name] Knowledge" thay vì group generic "New group". Nếu tên đã tồn tại, PAL nên thêm suffix rõ ràng hoặc yêu cầu rename trước khi lưu.</p>
+            <h3><i class="fa-solid fa-tags" style="color: var(--ux-blue);"></i> Đặt tên folder theo ngữ cảnh</h3>
+            <p>Khi user upload knowledge trong lúc tạo agent (nếu không chọn folder), file nên được đưa vào folder "[Agent name] Knowledge" thay vì folder generic "New folder". Nếu tên đã tồn tại, PAL nên thêm suffix rõ ràng hoặc yêu cầu rename trước khi lưu.</p>
           </div>
-          <div class="rationale-card">
-            <h3><i class="fa-solid fa-clipboard-check" style="color: var(--ux-violet);"></i> Hiển thị summary sau khi gắn knowledge</h3>
-            <p>Không cần thay đổi trạng thái Done nếu bước đó đã rõ. Điểm cần bổ sung là summary ngay trong config: file nào đã attached, thuộc group nào, và có thể remove/rename trước khi update agent.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="report-section">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-chart-line" style="color: var(--ux-green);"></i> 7. Success metrics</h2>
-          <span class="section-kicker">Measurement plan</span>
-        </div>
-
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <h3><i class="fa-solid fa-stopwatch" style="color: var(--ux-cyan);"></i> Time to first usable agent</h3>
-            <p>Đo thời gian trung vị từ lúc bấm Create New đến lần test agent thành công đầu tiên. Kỳ vọng: giảm.</p>
-          </div>
-          <div class="metric-card">
-            <h3><i class="fa-solid fa-check-double" style="color: var(--ux-green);"></i> Completion rate</h3>
-            <p>Theo dõi tỷ lệ user hoàn tất tạo agent sau khi đã bắt đầu flow. Kỳ vọng: tăng.</p>
-          </div>
-          <div class="metric-card">
-            <h3><i class="fa-solid fa-folder-open" style="color: var(--ux-amber);"></i> Knowledge attachment accuracy</h3>
-            <p>Theo dõi tỷ lệ agent được tạo với knowledge upload đã attached đúng. Kỳ vọng: tăng.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="report-section">
-        <div class="section-heading">
-          <h2><i class="fa-solid fa-message" style="color: var(--ux-cyan);"></i> 8. Kết luận gửi mentor</h2>
-          <span class="section-kicker">Submission summary</span>
-        </div>
-
-        <div class="quote-box">
-          Em chọn flow tạo mới Agent vì đây là một activation moment quan trọng trong PAL. Flow hiện tại đã hỗ trợ nhiều cách bắt đầu như instant generation, chat-based creation, resource mention, suggested chips và templates, nhưng các entry point này đang cạnh tranh sự chú ý trước khi user có đủ clarity. Trong bước config, vấn đề chính nằm ở chỗ knowledge upload trong quá trình setup không được auto-attach, trạng thái attached chưa được xác nhận rõ, và knowledge vừa upload bị đưa vào group mơ hồ tên "New group". Redesign đề xuất chuyển flow thành guided setup, giữ context upload, auto-attach knowledge, tạo group có ý nghĩa theo agent, và hiển thị summary rõ ngay trong config để user biết file nào đang thuộc về agent.
         </div>
       </section>
     </div>
