@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ngày 10 | Báo Cáo SafeAgent Workspace: Architecture, UX Design, Happy Path, Failure & Abuse Cases + State Persistence — Hoàng Thanh Chiến</title>
+  <meta name="description" content="Nhật ký báo cáo Ngày 10 của Hoàng Thanh Chiến: Cấu trúc 4 phần chuẩn hóa bổ sung State Persistence (Lưu trữ & Khôi phục Trạng thái Môi trường).">
+
+  <!-- FontAwesome 6 for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts: Be Vietnam Pro, Plus Jakarta Sans, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main Custom Stylesheet -->
+  <link rel="stylesheet" href="../../styles.css">
+
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --agent-cyan: #06b6d4;
+      --agent-emerald: #10b981;
+      --agent-violet: #8b5cf6;
+      --agent-amber: #f59e0b;
+      --agent-rose: #f43f5e;
+      --agent-surface: rgba(15, 23, 42, 0.85);
+      --agent-surface-soft: rgba(30, 41, 59, 0.6);
+      --agent-border: rgba(148, 163, 184, 0.2);
+    }
+
+    [data-theme="light"] {
+      --agent-surface: rgba(255, 255, 255, 0.95);
+      --agent-surface-soft: rgba(241, 245, 249, 0.9);
+      --agent-border: rgba(15, 23, 42, 0.12);
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.65;
+      letter-spacing: -0.01em;
+    }
+
+    h1, h2, h3, h4, h5, h6, .hero-title, .section-title {
+      font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', sans-serif;
+      letter-spacing: -0.025em;
+    }
+
+    .day-wrapper {
+      padding-top: 110px;
+      padding-bottom: 80px;
+    }
+
+    .report-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: hsl(var(--text-muted));
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .btn-back:hover {
+      color: var(--agent-cyan);
+    }
+
+    .pill-badge {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--agent-cyan);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .hero-card, .spec-card {
+      background: var(--agent-surface);
+      border: 1px solid var(--agent-border);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 20px 50px rgba(2, 6, 23, 0.2);
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 3.6vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: hsl(var(--text-primary));
+    }
+
+    .section-num {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--agent-cyan);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Architecture Flow Box & Component Cards */
+    .arch-flow-box {
+      background: #090d16;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .arch-explain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .arch-explain-card {
+      background: var(--agent-surface-soft);
+      border: 1px solid var(--agent-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .arch-explain-card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--agent-cyan);
+      margin-bottom: 6px;
+    }
+
+    .arch-explain-card p {
+      font-size: 0.88rem;
+      color: hsl(var(--text-secondary));
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* UX Wireframe Printed Cards */
+    .wireframe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .wireframe-card {
+      background: #090d16;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 14px;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .wireframe-header {
+      background: #0f172a;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #38bdf8;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .wireframe-body {
+      padding: 16px;
+      font-size: 0.82rem;
+      color: #e2e8f0;
+    }
+
+    /* Flow Chart Steps */
+    .flow-steps-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: thin;
+    }
+
+    .flow-step-item {
+      min-width: 140px;
+      background: var(--agent-surface-soft);
+      border: 1px solid var(--agent-border);
+      padding: 14px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .flow-step-item .step-num {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--agent-cyan);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .flow-step-item .step-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: hsl(var(--text-primary));
+    }
+
+    /* Custom Tables */
+    .custom-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--agent-border);
+      margin-top: 14px;
+    }
+
+    .custom-table th {
+      background: var(--agent-surface-soft);
+      color: hsl(var(--text-primary));
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-align: left;
+      border-bottom: 1px solid var(--agent-border);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .custom-table td {
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      color: hsl(var(--text-secondary));
+      border-bottom: 1px solid var(--agent-border);
+      line-height: 1.5;
+    }
+
+    .custom-table tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND DECORATIONS -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <div class="container">
+      <a href="../../index.html" class="logo">Chiến<span class="logo-dot"></span></a>
+      <nav class="nav-menu" id="nav-menu">
+        <a href="../../index.html" class="nav-link">Trang chủ</a>
+        <a href="../../vinsmart-log.html" class="nav-link active">Nhật ký Báo cáo</a>
+        <a href="../../index.html#contact" class="nav-link">Liên hệ</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle" class="theme-toggle"><i class="fa-solid fa-sun"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="day-wrapper">
+    <div class="container">
+
+      <!-- TOPBAR -->
+      <div class="report-topbar">
+        <a href="../../vinsmart-log.html" class="btn-back">
+          <i class="fa-solid fa-arrow-left"></i> Trở về Nhật ký Báo cáo
+        </a>
+        <span class="pill-badge"><i class="fa-solid fa-calendar-check"></i> NGÀY 10 / 100 DAYS LOG</span>
+      </div>
+
+      <!-- HERO BANNER -->
+      <div class="hero-card">
+        <h1 class="hero-title">Ngày 10: SafeAgent Workspace - Architecture, Safety UX & State Persistence</h1>
+        <p style="color: hsl(var(--text-secondary)); font-size: 1rem; line-height: 1.6; margin: 0;">
+          Báo cáo công việc Ngày 10 bao gồm: Kiến trúc hệ thống tích hợp <strong>State Persistence (Lưu trữ trạng thái)</strong>, Thiết kế Giao diện UX (4 màn hình), Luồng sử dụng chuẩn (Happy Path) và Các kịch bản Lỗi & Phá hoại (Failure & Abuse Cases).
+        </p>
+      </div>
+
+      <!-- 1. ARCHITECTURE (HỆ THỐNG) -->
+      <section class="spec-card">
+        <h2 class="section-title">
+          <span class="section-num">1</span> Architecture (Hệ thống & State Persistence)
+        </h2>
+        <p style="color: hsl(var(--text-secondary)); font-size: 0.92rem; margin-bottom: 14px;">
+          <strong>Mục tiêu:</strong> Giải thích AI làm việc ở đâu, các thành phần kết nối và cơ chế <strong>State Persistence</strong> lưu snapshot khôi phục dữ liệu khi ngắt kết nối.
+        </p>
+
+        <!-- SƠ ĐỒ KẾT NỐI -->
+        <div class="arch-flow-box">
+          User<br>
+          &nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;▼<br>
+          Chat Interface<br>
+          &nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;▼<br>
+          AI Agent<br>
+          &nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;▼<br>
+          Cloud Sandbox<br>
+          &nbsp;├─ Browser<br>
+          &nbsp;├─ Python Runtime<br>
+          &nbsp;├─ Workspace (Files)<br>
+          &nbsp;└─ Internet Access<br>
+          &nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;├──────► State Persistence (Auto Snapshot Workspace & Session DB)<br>
+          &nbsp;&nbsp;▼<br>
+          Result → User
+        </div>
+
+        <!-- GIẢI THÍCH TỪNG THÀNH PHẦN -->
+        <div class="arch-explain-grid">
+          <div class="arch-explain-card">
+            <h4><i class="fa-solid fa-comments"></i> Chat Interface</h4>
+            <p>Nơi người dùng nhập yêu cầu và tải lên các tệp tin.</p>
+          </div>
+          <div class="arch-explain-card">
+            <h4><i class="fa-solid fa-brain"></i> AI Agent</h4>
+            <p>Hiểu yêu cầu và quyết định các bước chi tiết cần thực hiện.</p>
+          </div>
+          <div class="arch-explain-card">
+            <h4><i class="fa-solid fa-box"></i> Cloud Sandbox</h4>
+            <p>Môi trường an toàn cô lập để chạy code, mở Browser và thao tác file.</p>
+          </div>
+          <div class="arch-explain-card" style="border-color: rgba(139, 92, 246, 0.4);">
+            <h4 style="color: var(--agent-violet);"><i class="fa-solid fa-floppy-disk"></i> State Persistence</h4>
+            <p>Tự động chụp snapshot lưu biến code, file tạm và session state vào Persistent Volume/DB để khôi phục khi mất mạng hoặc timeout.</p>
+          </div>
+          <div class="arch-explain-card">
+            <h4><i class="fa-solid fa-square-poll-vertical"></i> Result</h4>
+            <p>Trả kết quả tóm tắt và tập tin đầu ra về cho người dùng.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. UX DESIGN (4 MÀN HÌNH) -->
+      <section class="spec-card">
+        <h2 class="section-title">
+          <span class="section-num">2</span> UX Design (Giao diện 4 Màn hình & State Indicator)
+        </h2>
+        <p style="color: hsl(var(--text-secondary)); font-size: 0.92rem; margin-bottom: 16px;">
+          <strong>Mục tiêu:</strong> Thiết kế trải nghiệm sử dụng qua 4 màn hình cốt lõi tích hợp trạng thái lưu dữ liệu:
+        </p>
+
+        <div class="wireframe-grid">
+          <!-- SCREEN 1: TASK INPUT -->
+          <div class="wireframe-card">
+            <div class="wireframe-header">
+              <span>1. TASK INPUT</span>
+              <span>NHẬP YÊU CẦU</span>
+            </div>
+            <div class="wireframe-body">
+              <div style="color: #38bdf8; margin-bottom: 6px;">💬 Prompt:</div>
+              <div style="background: rgba(30,41,59,0.8); padding: 8px; border-radius: 6px; margin-bottom: 8px;">"Analyze CSV & search web prices."</div>
+              <div style="border: 1px dashed #475569; padding: 8px; text-align: center; border-radius: 6px; color: #94a3b8;">
+                📎 Upload: data.csv (2.4 MB)
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN 2: AGENT RUNNING -->
+          <div class="wireframe-card">
+            <div class="wireframe-header">
+              <span>2. AGENT RUNNING</span>
+              <span>TIẾN TRÌNH LIVE</span>
+            </div>
+            <div class="wireframe-body">
+              <div style="color: #38bdf8; margin-bottom: 6px;">📊 Tiến trình & State Snapshot:</div>
+              <div style="color: #34d399; margin-bottom: 4px;"><i class="fa-solid fa-check"></i> 1. Sandboxed</div>
+              <div style="color: #34d399; margin-bottom: 4px;"><i class="fa-solid fa-check"></i> 2. Cleaned CSV</div>
+              <div style="color: #fbbf24; margin-bottom: 4px;"><i class="fa-solid fa-spinner fa-spin"></i> 3. Crawling Web...</div>
+              <div style="color: #a78bfa; margin-top: 6px; font-size: 0.75rem;"><i class="fa-solid fa-hard-drive"></i> State Persistence: Snapshot #2 Saved</div>
+            </div>
+          </div>
+
+          <!-- SCREEN 3: PERMISSION REQUEST -->
+          <div class="wireframe-card" style="border-color: #f59e0b;">
+            <div class="wireframe-header" style="color: #fbbf24;">
+              <span>3. PERMISSION REQUEST</span>
+              <span>XIN CẤP QUYỀN</span>
+            </div>
+            <div class="wireframe-body">
+              <div style="color: #fbbf24; font-weight: 700; margin-bottom: 4px;">⚠️ Thao tác nhạy cảm</div>
+              <p style="margin: 0 0 10px; font-size: 0.78rem; color: #cbd5e1;">Agent xin phép xóa 12 file cache trong /workspace.</p>
+              <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                <span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); padding: 4px 10px; border-radius: 4px; font-weight: 700;">Cancel</span>
+                <span style="background: #10b981; color: #fff; padding: 4px 10px; border-radius: 4px; font-weight: 700;">Approve</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN 4: TASK COMPLETE -->
+          <div class="wireframe-card" style="border-color: #10b981;">
+            <div class="wireframe-header" style="color: #34d399;">
+              <span>4. TASK COMPLETE</span>
+              <span>HOÀN THÀNH</span>
+            </div>
+            <div class="wireframe-body">
+              <div style="color: #34d399; font-weight: 700; margin-bottom: 4px;">🎉 Tóm tắt & Download</div>
+              <p style="margin: 0 0 8px; font-size: 0.78rem; color: #cbd5e1;">Đã làm sạch 10k dòng & bóc tách 15 mức giá web.</p>
+              <div style="background: rgba(30,41,59,0.8); padding: 6px 10px; border-radius: 4px; font-size: 0.78rem; margin-bottom: 6px;">📥 Download final_report.pdf</div>
+              <div style="font-size: 0.72rem; color: #a78bfa;"><i class="fa-solid fa-cloud-arrow-up"></i> State Archived: Available for 7 days</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. HAPPY PATH -->
+      <section class="spec-card">
+        <h2 class="section-title">
+          <span class="section-num">3</span> Happy Path (Luồng Hoạt Động Bình Thường)
+        </h2>
+        <p style="color: hsl(var(--text-secondary)); font-size: 0.92rem; margin-bottom: 16px;">
+          Sơ đồ luồng sử dụng thành công có tích hợp Auto State Snapshot:
+        </p>
+
+        <div class="flow-steps-container">
+          <div class="flow-step-item">
+            <div class="step-num">BƯỚC 1</div>
+            <div class="step-text">User nhập yêu cầu</div>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--agent-cyan);"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="flow-step-item">
+            <div class="step-num">BƯỚC 2</div>
+            <div class="step-text">Upload file</div>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--agent-cyan);"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="flow-step-item">
+            <div class="step-num">BƯỚC 3</div>
+            <div class="step-text">Sandbox được tạo</div>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--agent-cyan);"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="flow-step-item">
+            <div class="step-num">BƯỚC 4</div>
+            <div class="step-text">Agent chạy code / duyệt web</div>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--agent-cyan);"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="flow-step-item" style="border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.12);">
+            <div class="step-num" style="color: #a78bfa;">BƯỚC 5</div>
+            <div class="step-text">Auto State Persistence (Snapshot)</div>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--agent-violet);"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="flow-step-item">
+            <div class="step-num">BƯỚC 6</div>
+            <div class="step-text">Hoàn thành</div>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--agent-cyan);"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="flow-step-item" style="border-color: #10b981; background: rgba(16,185,129,0.12);">
+            <div class="step-num" style="color: #34d399;">BƯỚC 7</div>
+            <div class="step-text">User tải kết quả</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. FAILURE & ABUSE CASES -->
+      <section class="spec-card">
+        <h2 class="section-title">
+          <span class="section-num" style="background: rgba(244, 63, 94, 0.15); color: var(--agent-rose);">4</span> Failure & Abuse Cases
+        </h2>
+
+        <!-- FAILURE CASES -->
+        <h3 style="font-size: 1.05rem; color: var(--agent-amber); margin-bottom: 10px;">
+          1. Failure Cases (Lỗi Hệ Thống & Khôi Phục Trạng Thái State Persistence)
+        </h3>
+        <table class="custom-table" style="margin-bottom: 24px;">
+          <thead>
+            <tr>
+              <th style="width: 35%;">Tình Huống Lỗi</th>
+              <th style="width: 65%;">UX Xử Lý & State Persistence Recovery</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Code lỗi</strong></td>
+              <td>Hiển thị lỗi + Retry</td>
+            </tr>
+            <tr>
+              <td><strong>Website không truy cập được</strong></td>
+              <td>Retry hoặc Skip</td>
+            </tr>
+            <tr>
+              <td><strong>Sandbox hết thời gian</strong></td>
+              <td>Khôi phục trạng thái từ Snapshot gần nhất (Restore Workspace State)</td>
+            </tr>
+            <tr>
+              <td><strong>Mất kết nối network</strong></td>
+              <td>Nối lại phiên (Resume Session) và nạp lại trạng thái từ State Persistence DB</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ABUSE CASES -->
+        <h3 style="font-size: 1.05rem; color: var(--agent-rose); margin-bottom: 10px;">
+          2. Abuse Cases (Hành Vi Nguy Hiểm & Ngừa Phá Hoại)
+        </h3>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th style="width: 35%;">Tình Huống Nguy Hiểm</th>
+              <th style="width: 65%;">UX Xử Lý</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Xóa nhiều file</strong></td>
+              <td>Yêu cầu người dùng xác nhận (Popup Permission)</td>
+            </tr>
+            <tr>
+              <td><strong>Truy cập file nhạy cảm</strong></td>
+              <td>Chặn hoặc xin quyền</td>
+            </tr>
+            <tr>
+              <td><strong>Chạy code quá lâu</strong></td>
+              <td>Tự động dừng (Timeout 120s) và lưu checkpoint trạng thái hiện tại</td>
+            </tr>
+            <tr>
+              <td><strong>Tải file đáng ngờ</strong></td>
+              <td>Cảnh báo và chặn</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">&copy; 2026 Hoàng Thanh Chiến. Nhật ký công việc Ngày 10.</p>
+    </div>
+  </footer>
+
+  <script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeToggleBtn.querySelector('i').className = newTheme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+    });
+  </script>
+
+</body>
+</html>

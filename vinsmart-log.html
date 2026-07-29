@@ -275,13 +275,21 @@
         <!-- Day 10 -->
         <div class="log-item reveal">
           <div class="log-dot"></div>
-          <div class="log-card glass-card">
-            <div class="log-meta">
+          <a href="days/day-10/index.html" class="log-card glass-card" style="display: block; text-decoration: none; color: inherit; transition: var(--transition-normal); border: 1px solid rgba(6, 182, 212, 0.4);">
+            <div class="log-meta" style="margin-bottom: 12px;">
               <span class="log-day"><i class="fa-regular fa-calendar-days"></i> Ngày 10</span>
-              <span class="log-status status-pending">Đang chờ báo cáo</span>
+              <span class="log-status status-done" style="background: rgba(6, 182, 212, 0.15); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.3);">Hoàn thành báo cáo</span>
             </div>
-            <p class="log-placeholder">Chờ cập nhật kết quả công việc từ Hoàng Thanh Chiến...</p>
-          </div>
+            <h3 style="font-size: 20px; margin-bottom: 8px; color: hsl(var(--text-primary)); transition: color var(--transition-fast);">
+              SafeAgent Workspace: Safe Autonomous AI Cloud Sandbox & Safety UX
+            </h3>
+            <p style="color: hsl(var(--text-muted)); font-size: 14.5px; line-height: 1.6;">
+              Báo cáo thiết kế sản phẩm & kiến trúc hệ thống 10 trang tiêu chuẩn: Phân tích bài toán vận hành AI Agent chạy Python code, điều khiển Browser và thao tác file an toàn trong Cloud Container cô lập. Tích hợp mô phỏng giao diện Live Progress Stepper và Pop-up xin quyền Human-in-the-Loop.
+            </p>
+            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #67e8f9; margin-top: 14px;">
+              Xem UX Case Study & Interactive Prototype <i class="fa-solid fa-arrow-right-long"></i>
+            </div>
+          </a>
         </div>
 
       </div>
@@ -297,21 +305,32 @@
     </div>
   </footer>
 
-  <!-- MindPal Chatbot Widget -->
-  <script>
-    window.mindpalConfig = {
-      chatbotId: "hr-helpdesk",
-      display: {
-        type: "floating-corner",
-        anchor: "right"
-      },
-      behavior: {
-        showInitialMessageBubbleWhenMinimized: true,
-        minimizedByDefault: true
-      }
-    };
-  </script>
-  <script src="https://palcb.aiops-uat.vsf.services/embed.min.js"></script>
+  <!-- AI Workflow Chatbot Floating Widget -->
+  <div id="ai-chatbot-widget" class="ai-chatbot-widget">
+    <button id="ai-chatbot-toggle" class="ai-chatbot-toggle" aria-label="Mở Trợ lý AI Workflow">
+      <i class="fa-solid fa-robot icon-open"></i>
+      <i class="fa-solid fa-xmark icon-close" style="display: none;"></i>
+    </button>
+
+    <div id="ai-chatbot-panel" class="ai-chatbot-panel">
+      <div class="ai-chatbot-header">
+        <div class="ai-chatbot-header-info">
+          <span class="ai-chatbot-status"></span>
+          <span class="ai-chatbot-title">AI Assistant & Workflow</span>
+        </div>
+        <button id="ai-chatbot-close" class="ai-chatbot-close" aria-label="Đóng">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="ai-chatbot-body">
+        <iframe
+          src="https://palwf.aiops-uat.vsf.services/form"
+          allow="clipboard-read; clipboard-write; microphone"
+          style="width: 100%; height: 100%; min-height: 700px"
+        ></iframe>
+      </div>
+    </div>
+  </div>
 
   <!-- Script -->
   <script src="script.js"></script>

@@ -258,4 +258,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ==========================================================================
+     AI WORKFLOW CHATBOT WIDGET TOGGLE
+     ========================================================================== */
+  const aiChatbotToggle = document.getElementById('ai-chatbot-toggle');
+  const aiChatbotClose = document.getElementById('ai-chatbot-close');
+  const aiChatbotPanel = document.getElementById('ai-chatbot-panel');
+
+  if (aiChatbotToggle && aiChatbotPanel) {
+    const iconOpen = aiChatbotToggle.querySelector('.icon-open');
+    const iconClose = aiChatbotToggle.querySelector('.icon-close');
+
+    function toggleAiChatbot() {
+      const isActive = aiChatbotPanel.classList.toggle('active');
+      if (iconOpen && iconClose) {
+        iconOpen.style.display = isActive ? 'none' : 'block';
+        iconClose.style.display = isActive ? 'block' : 'none';
+      }
+    }
+
+    aiChatbotToggle.addEventListener('click', toggleAiChatbot);
+    if (aiChatbotClose) {
+      aiChatbotClose.addEventListener('click', toggleAiChatbot);
+    }
+  }
+
 });
