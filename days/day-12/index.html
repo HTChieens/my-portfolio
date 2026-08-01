@@ -1,1978 +1,563 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="dark">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ngày 12 | Shared Canvas Human-Agent</title>
-  <meta name="description" content="Deliverable Ngày 12: Thiết kế shared canvas để human và AI agent cùng làm việc trên một bản thiết kế, gồm interaction model, agent vision, conflict/undo, turn-taking và kiến trúc cộng tác.">
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../styles.css">
-
-  <script>
-    (function() {
-      const savedTheme = localStorage.getItem('theme');
-      document.documentElement.setAttribute('data-theme', savedTheme === 'light' ? 'light' : 'dark');
-    })();
-  </script>
-
+  <title>Day 12 - Shared Canvas Human-Agent</title>
   <style>
-    :root {
-      --canvas-cyan: #06b6d4;
-      --canvas-teal: #14b8a6;
-      --canvas-lime: #84cc16;
-      --canvas-amber: #f59e0b;
-      --canvas-coral: #fb7185;
-      --canvas-violet: #8b5cf6;
-      --canvas-blue: #3b82f6;
-      --canvas-ink: #0f172a;
-      --canvas-surface: rgba(15, 23, 42, 0.86);
-      --canvas-surface-2: rgba(30, 41, 59, 0.7);
-      --canvas-surface-3: rgba(51, 65, 85, 0.55);
-      --canvas-border: rgba(148, 163, 184, 0.22);
-      --canvas-text-soft: #cbd5e1;
-      --canvas-text-muted: #94a3b8;
-      --canvas-shadow: 0 22px 56px rgba(2, 6, 23, 0.28);
-    }
-
-    [data-theme="light"] {
-      --canvas-surface: rgba(255, 255, 255, 0.96);
-      --canvas-surface-2: rgba(241, 245, 249, 0.92);
-      --canvas-surface-3: rgba(226, 232, 240, 0.82);
-      --canvas-border: rgba(15, 23, 42, 0.12);
-      --canvas-text-soft: #334155;
-      --canvas-text-muted: #64748b;
-      --canvas-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
-      font-family: 'Be Vietnam Pro', 'Inter', sans-serif;
-      line-height: 1.64;
-      overflow-x: hidden;
-      letter-spacing: 0;
-      background-color: var(--bg-base);
-      color: var(--text-primary);
-    }
-
-    h1, h2, h3, h4, .hero-title, .section-title {
-      font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', sans-serif;
-      letter-spacing: 0;
-    }
-
-    .day-wrapper {
-      padding-top: 112px;
-      padding-bottom: 80px;
-    }
-
-    .report-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--canvas-text-muted);
-      font-size: 0.92rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    .btn-back:hover,
-    .btn-back:focus-visible {
-      color: var(--canvas-cyan);
-      outline: none;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .pill-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 36px;
-      padding: 7px 14px;
-      border: 1px solid rgba(20, 184, 166, 0.35);
-      border-radius: 999px;
-      background: rgba(20, 184, 166, 0.12);
-      color: var(--canvas-teal);
-      font-size: 0.82rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .hero-panel {
-      border: 1px solid var(--canvas-border);
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.72));
-      border-radius: 8px;
-      box-shadow: var(--canvas-shadow);
-      overflow: hidden;
-    }
-
-    [data-theme="light"] .hero-panel {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.9));
-    }
-
-    .hero-grid-day12 {
-      display: grid;
-      grid-template-columns: minmax(0, 0.84fr) minmax(420px, 1.16fr);
-      min-height: 560px;
-    }
-
-    .hero-copy {
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-right: 1px solid var(--canvas-border);
-    }
-
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 7px 12px;
-      margin-bottom: 18px;
-      border-radius: 999px;
-      background: rgba(6, 182, 212, 0.12);
-      color: var(--canvas-cyan);
-      border: 1px solid rgba(6, 182, 212, 0.25);
-      font-size: 0.82rem;
-      font-weight: 800;
-    }
-
-    .hero-title {
-      font-size: 2.55rem;
-      line-height: 1.14;
-      font-weight: 800;
-      margin: 0 0 18px;
-      max-width: 760px;
-      color: hsl(var(--text-primary));
-    }
-
-    .hero-title .accent {
-      color: var(--canvas-cyan);
-    }
-
-    .hero-desc {
-      max-width: 720px;
-      color: var(--canvas-text-soft);
-      font-size: 1rem;
       margin: 0;
+      background: #fbfaf7;
+      color: #1f2933;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.68;
     }
 
-    .hero-chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 26px;
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 42px 24px 76px;
     }
 
-    .hero-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 34px;
-      padding: 6px 11px;
-      border-radius: 8px;
-      border: 1px solid var(--canvas-border);
-      background: var(--canvas-surface-2);
-      color: hsl(var(--text-primary));
-      font-size: 0.82rem;
+    a {
+      color: #1f2933;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      max-width: 760px;
+      font-size: 32px;
+      line-height: 1.22;
+    }
+
+    h2 {
+      margin: 42px 0 8px;
+      padding-top: 20px;
+      border-top: 1px solid #d7d2c8;
+      font-size: 23px;
+      line-height: 1.28;
+    }
+
+    h3 {
+      margin: 26px 0 8px;
+      font-size: 18px;
+    }
+
+    p {
+      max-width: 760px;
+      margin: 8px 0 14px;
+    }
+
+    ul,
+    ol {
+      max-width: 780px;
+      margin: 8px 0 18px;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    table {
+      width: 100%;
+      margin: 16px 0 24px;
+      border-collapse: collapse;
+      background: #ffffff;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid #d7d2c8;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0ede7;
       font-weight: 700;
     }
 
-    .hero-chip i {
-      color: var(--canvas-amber);
+    code,
+    pre {
+      font-family: Consolas, "Courier New", monospace;
     }
 
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 32px;
+    code {
+      padding: 1px 4px;
+      background: #f0ede7;
+      border-radius: 3px;
     }
 
-    .stat-tile {
-      border: 1px solid var(--canvas-border);
-      background: var(--canvas-surface-2);
-      border-radius: 8px;
-      padding: 14px;
+    pre {
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      padding: 14px 16px;
+      border: 1px solid #d7d2c8;
+      background: #ffffff;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
-    .stat-value {
-      display: block;
-      color: var(--canvas-cyan);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 800;
-      line-height: 1.2;
+    .back-link {
+      display: inline-block;
+      margin-bottom: 14px;
+      text-decoration: none;
     }
 
-    .stat-label {
-      display: block;
-      margin-top: 4px;
-      color: var(--canvas-text-muted);
-      font-size: 0.78rem;
-      font-weight: 700;
+    .meta {
+      color: #5b6470;
+      font-size: 14px;
     }
 
-    .canvas-demo {
-      padding: 18px;
-      background:
-        linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-        rgba(2, 6, 23, 0.42);
-      background-size: 28px 28px;
-      min-width: 0;
-    }
-
-    [data-theme="light"] .canvas-demo {
-      background:
-        linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-        rgba(248, 250, 252, 0.9);
-      background-size: 28px 28px;
-    }
-
-    .workspace-shell {
-      display: grid;
-      grid-template-columns: 152px minmax(0, 1fr) 210px;
-      grid-template-rows: 44px minmax(370px, 1fr) 96px;
-      height: 100%;
-      min-height: 520px;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 8px;
-      overflow: hidden;
-      background: rgba(2, 6, 23, 0.6);
-    }
-
-    [data-theme="light"] .workspace-shell {
-      background: rgba(255, 255, 255, 0.86);
-    }
-
-    .tool-row {
-      grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--canvas-border);
-      background: rgba(15, 23, 42, 0.82);
-    }
-
-    [data-theme="light"] .tool-row {
-      background: rgba(241, 245, 249, 0.96);
-    }
-
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .tool-btn {
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--canvas-border);
-      border-radius: 6px;
-      color: var(--canvas-text-soft);
-      background: rgba(15, 23, 42, 0.58);
-      font-size: 0.78rem;
-    }
-
-    [data-theme="light"] .tool-btn {
+    .thesis {
+      max-width: 760px;
+      margin: 18px 0 20px;
+      padding: 14px 16px;
+      border-left: 4px solid #3f5364;
       background: #ffffff;
     }
 
-    .tool-btn.active {
-      background: rgba(6, 182, 212, 0.18);
-      color: var(--canvas-cyan);
-      border-color: rgba(6, 182, 212, 0.42);
+    .note {
+      max-width: 780px;
+      margin: 16px 0 20px;
+      padding: 12px 14px;
+      border: 1px solid #d7d2c8;
+      background: #ffffff;
     }
 
-    .presence-stack {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--canvas-text-muted);
-      font-size: 0.76rem;
-      font-weight: 700;
+    .flow {
+      max-width: 880px;
+      white-space: pre-wrap;
     }
 
-    .avatar-dot {
-      width: 26px;
-      height: 26px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      color: #fff;
-      font-size: 0.72rem;
-      font-weight: 800;
-      border: 2px solid rgba(255, 255, 255, 0.22);
-    }
-
-    .avatar-human {
-      background: var(--canvas-cyan);
-    }
-
-    .avatar-agent {
-      background: var(--canvas-coral);
-    }
-
-    .left-layers,
-    .right-agent,
-    .event-strip {
-      background: rgba(15, 23, 42, 0.72);
-    }
-
-    [data-theme="light"] .left-layers,
-    [data-theme="light"] .right-agent,
-    [data-theme="light"] .event-strip {
-      background: rgba(248, 250, 252, 0.92);
-    }
-
-    .left-layers {
-      border-right: 1px solid var(--canvas-border);
-      padding: 12px;
-    }
-
-    .panel-label {
-      color: var(--canvas-text-muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .layer-item {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      height: 30px;
-      padding: 0 8px;
-      margin-bottom: 5px;
-      border-radius: 6px;
-      color: var(--canvas-text-soft);
-      font-size: 0.76rem;
-      font-weight: 700;
-      border: 1px solid transparent;
-    }
-
-    .layer-item.active {
-      background: rgba(6, 182, 212, 0.14);
-      color: var(--canvas-cyan);
-      border-color: rgba(6, 182, 212, 0.32);
-    }
-
-    .layer-item.agent-draft {
-      color: var(--canvas-coral);
-      background: rgba(251, 113, 133, 0.12);
-      border-color: rgba(251, 113, 133, 0.28);
-    }
-
-    .canvas-stage {
-      position: relative;
-      min-width: 0;
-      overflow: hidden;
-      padding: 28px;
-    }
-
-    .artboard {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 280px;
-      min-height: 318px;
-      transform: translate(-50%, -50%);
-      border-radius: 8px;
-      background: #f8fafc;
-      box-shadow: 0 24px 54px rgba(2, 6, 23, 0.34);
-      overflow: hidden;
-      border: 1px solid rgba(15, 23, 42, 0.1);
-    }
-
-    .mobile-header {
-      height: 74px;
-      padding: 16px;
-      background: linear-gradient(135deg, #0f172a, #155e75);
-      color: #fff;
-    }
-
-    .mobile-title {
-      height: 12px;
-      width: 118px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.88);
-      margin-bottom: 10px;
-    }
-
-    .mobile-copy {
-      height: 8px;
-      width: 176px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.42);
-    }
-
-    .mobile-body {
-      padding: 16px;
-    }
-
-    .mobile-card-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .mock-card {
-      min-height: 74px;
-      border-radius: 8px;
-      background: #e2e8f0;
-      border: 1px solid #cbd5e1;
-      padding: 10px;
-    }
-
-    .mock-card:nth-child(2) {
-      background: #dcfce7;
-      border-color: #86efac;
-    }
-
-    .mock-line {
-      height: 7px;
-      border-radius: 999px;
-      background: #94a3b8;
-      margin-bottom: 7px;
-    }
-
-    .mock-line.short {
-      width: 58%;
-    }
-
-    .mock-button {
-      height: 34px;
-      border-radius: 8px;
-      background: #06b6d4;
-      margin-top: 14px;
-    }
-
-    .selection-box {
-      position: absolute;
-      left: calc(50% - 24px);
-      top: calc(50% + 34px);
-      width: 128px;
-      height: 92px;
-      border: 2px solid var(--canvas-cyan);
-      border-radius: 6px;
-      pointer-events: none;
-    }
-
-    .selection-box::before {
-      content: "Human selecting card";
-      position: absolute;
-      left: -2px;
-      top: -27px;
-      padding: 4px 7px;
-      border-radius: 5px;
-      background: var(--canvas-cyan);
-      color: #001018;
-      font-size: 0.66rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .agent-ghost {
-      position: absolute;
-      left: calc(50% - 126px);
-      top: calc(50% - 6px);
-      width: 250px;
-      height: 190px;
-      border: 2px dashed var(--canvas-coral);
-      border-radius: 8px;
-      background: rgba(251, 113, 133, 0.08);
-      pointer-events: none;
-    }
-
-    .agent-ghost::after {
-      content: "Agent proposal: rebalance spacing + CTA";
-      position: absolute;
-      right: -2px;
-      bottom: -29px;
-      padding: 4px 8px;
-      border-radius: 5px;
-      background: var(--canvas-coral);
-      color: #fff;
-      font-size: 0.66rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .cursor-label {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 8px;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 0.7rem;
-      font-weight: 800;
-      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.25);
-    }
-
-    .cursor-human {
-      left: 57%;
-      top: 57%;
-      background: var(--canvas-cyan);
-    }
-
-    .cursor-agent {
-      left: 38%;
-      top: 32%;
-      background: var(--canvas-coral);
-    }
-
-    .right-agent {
-      border-left: 1px solid var(--canvas-border);
-      padding: 12px;
-    }
-
-    .agent-status-card {
-      border: 1px solid rgba(251, 113, 133, 0.32);
-      background: rgba(251, 113, 133, 0.1);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    .agent-status-title {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: var(--canvas-coral);
-      font-size: 0.78rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .agent-status-copy {
-      margin: 0;
-      color: var(--canvas-text-soft);
-      font-size: 0.72rem;
-      line-height: 1.45;
-    }
-
-    .proposal-action-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 7px;
-      margin-top: 10px;
-    }
-
-    .mini-action {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      min-height: 30px;
-      border-radius: 6px;
-      border: 1px solid var(--canvas-border);
-      background: rgba(15, 23, 42, 0.5);
-      color: var(--canvas-text-soft);
-      font-size: 0.72rem;
-      font-weight: 800;
-    }
-
-    .mini-action.accept {
-      color: #052e16;
-      background: var(--canvas-lime);
-      border-color: var(--canvas-lime);
-    }
-
-    .context-list {
-      display: grid;
-      gap: 7px;
-    }
-
-    .context-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      min-height: 28px;
-      padding: 0 8px;
-      border-radius: 6px;
-      background: var(--canvas-surface-2);
-      color: var(--canvas-text-muted);
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-
-    .context-row strong {
-      color: var(--canvas-text-soft);
-      font-weight: 800;
-    }
-
-    .event-strip {
-      grid-column: 1 / -1;
-      border-top: 1px solid var(--canvas-border);
-      padding: 10px 12px;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .event-item {
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      padding: 8px;
-      background: rgba(15, 23, 42, 0.42);
-    }
-
-    [data-theme="light"] .event-item {
-      background: #fff;
-    }
-
-    .event-title {
-      display: block;
-      color: hsl(var(--text-primary));
-      font-size: 0.74rem;
-      font-weight: 800;
-      margin-bottom: 3px;
-    }
-
-    .event-meta {
-      color: var(--canvas-text-muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.64rem;
-    }
-
-    .sticky-nav {
-      position: sticky;
-      top: 82px;
-      z-index: 80;
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding: 8px;
-      margin: 28px 0 34px;
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      background: var(--canvas-surface);
-      backdrop-filter: blur(16px);
-    }
-
-    .sticky-nav::-webkit-scrollbar {
-      display: none;
-    }
-
-    .nav-tab {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 38px;
-      padding: 0 13px;
-      border-radius: 6px;
-      color: var(--canvas-text-muted);
-      text-decoration: none;
-      font-size: 0.82rem;
-      font-weight: 800;
-      white-space: nowrap;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .nav-tab:hover,
-    .nav-tab.active,
-    .nav-tab:focus-visible {
-      background: rgba(6, 182, 212, 0.14);
-      color: var(--canvas-cyan);
-      outline: none;
-    }
-
-    .spec-section {
-      scroll-margin-top: 136px;
-      margin-bottom: 42px;
-      padding: 30px;
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      background: var(--canvas-surface);
-      box-shadow: 0 12px 30px rgba(2, 6, 23, 0.12);
-    }
-
-    .section-heading {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 22px;
-    }
-
-    .section-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 28px;
-      padding: 4px 9px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      background: rgba(6, 182, 212, 0.12);
-      border: 1px solid rgba(6, 182, 212, 0.24);
-      color: var(--canvas-cyan);
-      font-size: 0.76rem;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .section-title {
-      margin: 0;
-      color: hsl(var(--text-primary));
-      font-size: 1.52rem;
-      line-height: 1.25;
-      font-weight: 800;
-    }
-
-    .section-lede {
-      margin: 10px 0 0;
-      color: var(--canvas-text-soft);
-      max-width: 900px;
-      font-size: 0.95rem;
-    }
-
-    .section-num {
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      color: #001018;
-      background: var(--canvas-cyan);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 800;
-    }
-
-    .grid-2,
-    .grid-3,
-    .grid-4 {
-      display: grid;
-      gap: 14px;
-    }
-
-    .grid-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .grid-3 {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .grid-4 {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .info-box,
-    .mode-card,
-    .step-card,
-    .rule-card {
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      background: var(--canvas-surface-2);
-      padding: 18px;
-    }
-
-    .info-box h3,
-    .mode-card h3,
-    .step-card h3,
-    .rule-card h3 {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 0 9px;
-      color: hsl(var(--text-primary));
-      font-size: 1rem;
-      font-weight: 800;
-    }
-
-    .info-box h3 i,
-    .mode-card h3 i,
-    .step-card h3 i,
-    .rule-card h3 i {
-      color: var(--canvas-cyan);
-    }
-
-    .info-box p,
-    .mode-card p,
-    .step-card p,
-    .rule-card p {
-      margin: 0;
-      color: var(--canvas-text-soft);
-      font-size: 0.88rem;
-    }
-
-    .small-list {
-      list-style: none;
-      padding: 0;
-      margin: 12px 0 0;
-      display: grid;
-      gap: 8px;
-    }
-
-    .small-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      color: var(--canvas-text-soft);
-      font-size: 0.86rem;
-    }
-
-    .small-list i {
-      color: var(--canvas-lime);
-      margin-top: 4px;
-      font-size: 0.72rem;
-    }
-
-    .mode-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 178px;
-    }
-
-    .mode-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 3px;
-      background: var(--mode-color, var(--canvas-cyan));
-    }
-
-    .mode-card .mode-label {
-      display: inline-flex;
-      align-items: center;
-      min-height: 24px;
-      padding: 3px 8px;
-      margin-bottom: 12px;
-      border-radius: 999px;
-      color: var(--mode-color, var(--canvas-cyan));
-      background: rgba(148, 163, 184, 0.1);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .mode-card.suggest { --mode-color: var(--canvas-amber); }
-    .mode-card.edit { --mode-color: var(--canvas-coral); }
-    .mode-card.auto { --mode-color: var(--canvas-lime); }
-
-    .flow-diagram {
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      background: rgba(2, 6, 23, 0.46);
-      padding: 18px;
-      overflow-x: auto;
-    }
-
-    [data-theme="light"] .flow-diagram {
-      background: #f8fafc;
-    }
-
-    .flow-row {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(160px, 1fr));
-      gap: 10px;
-      min-width: 840px;
-    }
-
-    .flow-node {
-      position: relative;
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      padding: 14px;
-      background: var(--canvas-surface-2);
-    }
-
-    .flow-node:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      right: -11px;
-      top: 50%;
-      width: 11px;
-      height: 2px;
-      background: var(--canvas-cyan);
-    }
-
-    .flow-node strong {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: hsl(var(--text-primary));
-      font-size: 0.86rem;
-      margin-bottom: 6px;
-    }
-
-    .flow-node strong i {
-      color: var(--canvas-cyan);
-    }
-
-    .flow-node span {
-      color: var(--canvas-text-muted);
-      font-size: 0.76rem;
-    }
-
-    .architecture-map {
-      display: grid;
-      grid-template-columns: minmax(220px, 0.82fr) minmax(0, 1.18fr) minmax(220px, 0.82fr);
-      gap: 14px;
-      align-items: stretch;
-    }
-
-    .arch-column {
-      display: grid;
-      gap: 10px;
-    }
-
-    .arch-node {
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      padding: 14px;
-      background: var(--canvas-surface-2);
-    }
-
-    .arch-node.emphasis {
-      background: rgba(6, 182, 212, 0.12);
-      border-color: rgba(6, 182, 212, 0.32);
-    }
-
-    .arch-node.policy {
-      background: rgba(245, 158, 11, 0.12);
-      border-color: rgba(245, 158, 11, 0.34);
-    }
-
-    .arch-node.merge {
-      background: rgba(132, 204, 22, 0.12);
-      border-color: rgba(132, 204, 22, 0.34);
-    }
-
-    .arch-node h3 {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      margin: 0 0 7px;
-      font-size: 0.94rem;
-      font-weight: 800;
-      color: hsl(var(--text-primary));
-    }
-
-    .arch-node h3 i {
-      color: var(--canvas-cyan);
-    }
-
-    .arch-node p {
-      color: var(--canvas-text-soft);
-      margin: 0;
-      font-size: 0.82rem;
-    }
-
-    .arch-hub {
-      border: 1px solid rgba(6, 182, 212, 0.34);
-      border-radius: 8px;
-      padding: 16px;
-      background: linear-gradient(180deg, rgba(6, 182, 212, 0.14), rgba(139, 92, 246, 0.12));
-    }
-
-    .arch-hub-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: hsl(var(--text-primary));
-      font-size: 1.05rem;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-
-    .arch-hub-title i {
-      color: var(--canvas-cyan);
-    }
-
-    .hub-lanes {
-      display: grid;
-      gap: 9px;
-    }
-
-    .hub-lane {
-      display: grid;
-      grid-template-columns: 38px 1fr;
-      gap: 10px;
-      align-items: center;
-      min-height: 46px;
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      background: rgba(15, 23, 42, 0.42);
-      padding: 8px;
-    }
-
-    [data-theme="light"] .hub-lane {
-      background: rgba(255, 255, 255, 0.74);
-    }
-
-    .lane-icon {
-      width: 32px;
-      height: 32px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 7px;
-      background: rgba(6, 182, 212, 0.16);
-      color: var(--canvas-cyan);
-    }
-
-    .lane-copy strong {
-      display: block;
-      color: hsl(var(--text-primary));
-      font-size: 0.82rem;
-    }
-
-    .lane-copy span {
-      display: block;
-      color: var(--canvas-text-muted);
-      font-size: 0.72rem;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-    }
-
-    .custom-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 780px;
-    }
-
-    .custom-table th {
-      background: rgba(6, 182, 212, 0.1);
-      color: hsl(var(--text-primary));
-      text-align: left;
-      padding: 13px 14px;
-      font-size: 0.82rem;
-      font-weight: 800;
-      border-bottom: 1px solid var(--canvas-border);
-    }
-
-    .custom-table td {
-      padding: 13px 14px;
-      vertical-align: top;
-      border-bottom: 1px solid var(--canvas-border);
-      color: var(--canvas-text-soft);
-      font-size: 0.84rem;
-    }
-
-    .custom-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      min-height: 24px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .badge.human {
-      background: rgba(6, 182, 212, 0.14);
-      color: var(--canvas-cyan);
-      border: 1px solid rgba(6, 182, 212, 0.32);
-    }
-
-    .badge.agent {
-      background: rgba(251, 113, 133, 0.14);
-      color: var(--canvas-coral);
-      border: 1px solid rgba(251, 113, 133, 0.32);
-    }
-
-    .badge.system {
-      background: rgba(132, 204, 22, 0.14);
-      color: var(--canvas-lime);
-      border: 1px solid rgba(132, 204, 22, 0.32);
-    }
-
-    .code-panel {
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      background: #0b1120;
-      overflow: hidden;
-    }
-
-    .code-titlebar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 13px;
-      background: #111827;
-      color: #dbeafe;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.76rem;
-      font-weight: 700;
-    }
-
-    .code-panel pre {
-      margin: 0;
-      padding: 16px;
-      color: #d1d5db;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      line-height: 1.58;
-      overflow-x: auto;
-      white-space: pre;
-    }
-
-    .state-machine {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(134px, 1fr));
-      gap: 9px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .state-node {
-      min-width: 134px;
-      border: 1px solid var(--canvas-border);
-      border-radius: 8px;
-      padding: 12px;
-      background: var(--canvas-surface-2);
-    }
-
-    .state-node strong {
-      display: block;
-      color: hsl(var(--text-primary));
-      font-size: 0.82rem;
-      margin-bottom: 5px;
-    }
-
-    .state-node span {
-      display: block;
-      color: var(--canvas-text-muted);
-      font-size: 0.72rem;
-    }
-
-    .state-node.active-state {
-      border-color: rgba(251, 113, 133, 0.42);
-      background: rgba(251, 113, 133, 0.11);
-    }
-
-    .footer-note {
-      margin-top: 36px;
-      padding-top: 24px;
-      border-top: 1px solid var(--canvas-border);
-      color: var(--canvas-text-muted);
-      text-align: center;
-      font-size: 0.88rem;
-    }
-
-    @media (max-width: 1180px) {
-      .hero-grid-day12,
-      .architecture-map {
-        grid-template-columns: 1fr;
+    @media print {
+      body {
+        background: #ffffff;
       }
 
-      .hero-copy {
-        border-right: none;
-        border-bottom: 1px solid var(--canvas-border);
+      main {
+        max-width: none;
+        padding: 0;
       }
 
-      .workspace-shell {
-        grid-template-columns: 132px minmax(0, 1fr);
-      }
-
-      .right-agent {
+      .back-link {
         display: none;
-      }
-
-      .event-strip {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .grid-4 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 760px) {
-      .day-wrapper {
-        padding-top: 92px;
-      }
-
-      .hero-copy,
-      .spec-section {
-        padding: 22px;
-      }
-
-      .hero-title {
-        font-size: 2rem;
-      }
-
-      .hero-stats,
-      .grid-2,
-      .grid-3,
-      .grid-4 {
-        grid-template-columns: 1fr;
-      }
-
-      .sticky-nav {
-        top: 70px;
-      }
-
-      .workspace-shell {
-        grid-template-columns: 1fr;
-        grid-template-rows: 44px 390px 130px;
-      }
-
-      .left-layers {
-        display: none;
-      }
-
-      .event-strip {
-        grid-template-columns: 1fr;
-      }
-
-      .canvas-stage {
-        padding: 18px;
-      }
-
-      .artboard {
-        width: 238px;
-      }
-
-      .agent-ghost {
-        width: 212px;
-        left: calc(50% - 106px);
-      }
-
-      .selection-box::before,
-      .agent-ghost::after {
-        font-size: 0.58rem;
       }
     }
   </style>
 </head>
 <body>
+  <main>
+    <a class="back-link" href="../../vinsmart-log.html">&larr; Quay lại nhật ký VFS</a>
 
-  <div class="bg-grid"></div>
-  <div class="bg-glow-1"></div>
-  <div class="bg-glow-2"></div>
+    <p class="meta">Day 12 · System Design · Hoàng Thanh Chiến</p>
+    <h1>Thiết kế shared canvas để người dùng và AI agent cùng tạo thiết kế</h1>
 
-  <header class="header" id="header">
-    <div class="container">
-      <a href="../../index.html" class="logo">Chiến<span class="logo-dot"></span></a>
-      <nav class="nav-menu" id="nav-menu">
-        <a href="../../index.html#hero" class="nav-link">Trang chủ</a>
-        <a href="../../vinsmart-log.html" class="nav-link active">Nhật ký Báo cáo</a>
-        <a href="../../index.html#projects" class="nav-link">Dự án</a>
-        <a href="../../index.html#contact" class="nav-link">Liên hệ</a>
-      </nav>
-      <div class="header-actions">
-        <button id="theme-toggle" class="theme-toggle" aria-label="Đổi giao diện sáng tối">
-          <i class="fa-solid fa-sun"></i>
-        </button>
-        <div class="nav-toggle" id="nav-toggle" aria-label="Menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
+    <div class="thesis">
+      Shared canvas không nên biến agent thành một con trỏ thứ hai tranh quyền với người dùng. Thiết kế tốt là để agent quan sát, đề xuất, chỉnh trong phạm vi rõ ràng, và luôn để người dùng hiểu điều gì sắp thay đổi trước khi thay đổi thật sự được áp dụng.
     </div>
-  </header>
 
-  <main class="day-wrapper">
-    <div class="container">
-      <div class="report-topbar">
-        <a href="../../vinsmart-log.html" class="btn-back">
-          <i class="fa-solid fa-arrow-left"></i> Trở về Nhật ký Báo cáo
-        </a>
-        <div class="top-actions">
-          <span class="pill-badge"><i class="fa-solid fa-calendar-check"></i> NGÀY 12 / 100 DAYS LOG</span>
-          <span class="pill-badge" style="border-color: rgba(251, 113, 133, 0.35); background: rgba(251, 113, 133, 0.12); color: var(--canvas-coral);">
-            <i class="fa-solid fa-pen-ruler"></i> HUMAN ↔ AGENT CANVAS
-          </span>
-        </div>
-      </div>
+    <p>
+      Sản phẩm giống Claude Design hoặc pencil.dev cần một không gian làm việc chung: người dùng kéo thả, viết, chọn layer; agent nhìn được trạng thái canvas, đưa đề xuất, phản hồi theo thao tác mới, và chỉ chỉnh trực tiếp khi được cấp quyền.
+    </p>
 
-      <section class="hero-panel" aria-label="Shared canvas overview">
-        <div class="hero-grid-day12">
-          <div class="hero-copy">
-            <div>
-              <span class="hero-eyebrow"><i class="fa-solid fa-layer-group"></i> Interaction Design + Architecture</span>
-              <h1 class="hero-title">Shared Canvas cho human và agent cùng <span class="accent">thiết kế</span></h1>
-              <p class="hero-desc">
-                Bài này mô tả cách một người dùng và AI agent có thể cùng làm việc trên một canvas thiết kế. Human vẫn là người quyết định chính; agent quan sát, đề xuất, tạo bản nháp và chỉ áp dụng thay đổi khi được duyệt.
-              </p>
-              <div class="hero-chip-row">
-                <span class="hero-chip"><i class="fa-solid fa-eye"></i> Agent thấy canvas thế nào</span>
-                <span class="hero-chip"><i class="fa-solid fa-file-lines"></i> Đề xuất trước khi sửa</span>
-                <span class="hero-chip"><i class="fa-solid fa-hand-pointer"></i> Human giữ quyền quyết định</span>
-                <span class="hero-chip"><i class="fa-solid fa-rotate-left"></i> Có undo</span>
-              </div>
-            </div>
+    <h2>1. Mục tiêu trải nghiệm</h2>
+    <p>
+      Người dùng phải cảm thấy mình vẫn là người điều khiển thiết kế. Agent là cộng sự: nhìn thấy ngữ cảnh, hiểu ý định, đề xuất nhanh, và làm các việc lặp lại khi được giao.
+    </p>
 
-            <div class="hero-stats" aria-label="Key collaboration numbers">
-              <div class="stat-tile">
-                <span class="stat-value">Bản đầu</span>
-                <span class="stat-label">Ưu tiên bản đơn giản trước</span>
-              </div>
-              <div class="stat-tile">
-                <span class="stat-value">Duyệt</span>
-                <span class="stat-label">Agent không tự ghi đè</span>
-              </div>
-              <div class="stat-tile">
-                <span class="stat-value">Undo</span>
-                <span class="stat-label">Quay lại theo từng thay đổi</span>
-              </div>
-            </div>
-          </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Mục tiêu</th>
+          <th>Thiết kế cần đảm bảo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Không giành quyền điều khiển</td>
+          <td>Agent không tự sửa vùng người dùng đang kéo, gõ hoặc resize.</td>
+        </tr>
+        <tr>
+          <td>Đề xuất nhìn thấy được</td>
+          <td>Thay đổi của agent hiển thị như bản nháp/preview trước khi áp dụng.</td>
+        </tr>
+        <tr>
+          <td>Dễ chấp nhận một phần</td>
+          <td>Người dùng có thể nhận layout nhưng bỏ màu, nhận copy nhưng bỏ spacing.</td>
+        </tr>
+        <tr>
+          <td>Dễ quay lại</td>
+          <td>Mỗi thay đổi lớn có lịch sử, lý do, người tạo và nút undo rõ ràng.</td>
+        </tr>
+        <tr>
+          <td>Agent hiểu đúng phạm vi</td>
+          <td>Agent biết người dùng đang chọn object nào, frame nào, và muốn sửa phần nào.</td>
+        </tr>
+      </tbody>
+    </table>
 
-          <div class="canvas-demo">
-            <div class="workspace-shell" aria-label="Mock shared design canvas">
-              <div class="tool-row">
-                <div class="tool-group">
-                  <span class="tool-btn active" title="Select"><i class="fa-solid fa-arrow-pointer"></i></span>
-                  <span class="tool-btn" title="Frame"><i class="fa-regular fa-square"></i></span>
-                  <span class="tool-btn" title="Text"><i class="fa-solid fa-font"></i></span>
-                  <span class="tool-btn" title="Comment"><i class="fa-regular fa-comment"></i></span>
-                </div>
-                <div class="presence-stack">
-                  <span class="avatar-dot avatar-human">HC</span>
-                  <span class="avatar-dot avatar-agent">AI</span>
-                  <span>live proposal</span>
-                </div>
-              </div>
+    <h2>2. Mô hình tương tác</h2>
+    <p>
+      Tương tác chính gồm bốn chế độ. Chế độ mặc định nên an toàn: agent quan sát hoặc đề xuất, không âm thầm sửa thiết kế chính.
+    </p>
 
-              <aside class="left-layers">
-                <div class="panel-label">Layer tree</div>
-                <div class="layer-item"><i class="fa-regular fa-square"></i> Frame / Home</div>
-                <div class="layer-item"><i class="fa-solid fa-heading"></i> Hero copy</div>
-                <div class="layer-item active"><i class="fa-regular fa-object-group"></i> Metric cards</div>
-                <div class="layer-item"><i class="fa-solid fa-toggle-on"></i> Primary CTA</div>
-                <div class="layer-item agent-draft"><i class="fa-solid fa-wand-magic-sparkles"></i> AI draft layer</div>
-              </aside>
+    <table>
+      <thead>
+        <tr>
+          <th>Chế độ</th>
+          <th>Agent được làm gì</th>
+          <th>Khi nào dùng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Quan sát</td>
+          <td>Chỉ quan sát canvas, selection, comment và lịch sử thao tác gần nhất.</td>
+          <td>Khi người dùng đang tự thiết kế hoặc chưa gọi agent.</td>
+        </tr>
+        <tr>
+          <td>Đề xuất</td>
+          <td>Tạo nhận xét, bản nháp hoặc vùng preview; canvas thật chưa đổi.</td>
+          <td>Khi người dùng hỏi: "làm layout này sạch hơn" hoặc "gợi ý 3 hướng".</td>
+        </tr>
+        <tr>
+          <td>Chỉnh có duyệt</td>
+          <td>Tạo thay đổi có thể áp dụng, nhưng cần người dùng duyệt.</td>
+          <td>Khi agent sửa spacing, copy, màu, thứ tự section, component props.</td>
+        </tr>
+        <tr>
+          <td>Tự chạy có giới hạn</td>
+          <td>Tự làm việc nhỏ trong phạm vi rõ ràng và có nút dừng.</td>
+          <td>Đổi tên layer, căn hàng loạt object, format text, áp token thiết kế.</td>
+        </tr>
+      </tbody>
+    </table>
 
-              <section class="canvas-stage" aria-label="Canvas stage">
-                <div class="artboard">
-                  <div class="mobile-header">
-                    <div class="mobile-title"></div>
-                    <div class="mobile-copy"></div>
-                  </div>
-                  <div class="mobile-body">
-                    <div class="mobile-card-row">
-                      <div class="mock-card">
-                        <div class="mock-line"></div>
-                        <div class="mock-line short"></div>
-                      </div>
-                      <div class="mock-card">
-                        <div class="mock-line"></div>
-                        <div class="mock-line short"></div>
-                      </div>
-                    </div>
-                    <div class="mock-line wide"></div>
-                    <div class="mock-line mid"></div>
-                    <div class="mock-button"></div>
-                  </div>
-                </div>
-                <div class="agent-ghost"></div>
-                <div class="selection-box"></div>
-                <div class="cursor-label cursor-human"><i class="fa-solid fa-location-arrow"></i> Human</div>
-                <div class="cursor-label cursor-agent"><i class="fa-solid fa-robot"></i> Agent</div>
-              </section>
+    <h3>Luồng tương tác cơ bản</h3>
+    <pre class="flow">Người dùng chọn vùng trên canvas
+  -> Người dùng chat/comment yêu cầu
+  -> Agent đọc canvas trong phạm vi đó
+  -> Agent tạo đề xuất hoặc bản nháp
+  -> Người dùng xem khác biệt và lý do
+  -> Người dùng accept / accept một phần / reject / hỏi lại
+  -> Hệ thống áp dụng thay đổi đã duyệt và tạo điểm undo</pre>
 
-              <aside class="right-agent">
-                <div class="panel-label">Agent sidecar</div>
-                <div class="agent-status-card">
-                  <div class="agent-status-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Proposal #38</div>
-                  <p class="agent-status-copy">Tăng khoảng cách giữa card và CTA, đổi CTA sang accent teal, giữ token hiện có.</p>
-                  <div class="proposal-action-row">
-                    <span class="mini-action accept"><i class="fa-solid fa-check"></i> Accept</span>
-                    <span class="mini-action"><i class="fa-solid fa-xmark"></i> Reject</span>
-                  </div>
-                </div>
-                <div class="context-list">
-                  <div class="context-row"><strong>Scope</strong><span>Frame/Home</span></div>
-                  <div class="context-row"><strong>Mode</strong><span>Suggest</span></div>
-                  <div class="context-row"><strong>Lock</strong><span>Human active</span></div>
-                  <div class="context-row"><strong>Undo</strong><span>Tx: 1 step</span></div>
-                </div>
-              </aside>
+    <h3>Các hành động người dùng cần có</h3>
+    <ul>
+      <li><strong>Hỏi:</strong> hỏi agent về một phần thiết kế.</li>
+      <li><strong>Ghim phạm vi:</strong> ghim vùng agent được phép nhìn hoặc sửa.</li>
+      <li><strong>Xem trước:</strong> xem bản nháp của agent nằm cạnh hoặc phủ nhẹ lên thiết kế thật.</li>
+      <li><strong>Nhận một phần:</strong> nhận một phần đề xuất.</li>
+      <li><strong>Dừng:</strong> dừng agent ngay, giữ lại bản nháp để xem sau nếu cần.</li>
+    </ul>
 
-              <div class="event-strip">
-                <div class="event-item">
-                  <span class="event-title">Human selected card</span>
-                  <span class="event-meta">op#1042 selection.update</span>
-                </div>
-                <div class="event-item">
-                  <span class="event-title">Agent observed pause</span>
-                  <span class="event-meta">attention: metric group</span>
-                </div>
-                <div class="event-item">
-                  <span class="event-title">Draft layer created</span>
-                  <span class="event-meta">proposal#38 ghost</span>
-                </div>
-                <div class="event-item">
-                  <span class="event-title">Awaiting review</span>
-                  <span class="event-meta">policy: approval required</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <h2>3. Agent nhìn canvas bằng gì?</h2>
+    <p>
+      Gửi mỗi ảnh chụp cho agent là chưa đủ. Ảnh giúp agent thấy hình ảnh, nhưng không cho biết layer nào đang được chọn, object nào là button, khoảng cách đang theo chuẩn nào, hay người dùng vừa sửa gì. Agent cần cả ảnh và dữ liệu có cấu trúc.
+    </p>
 
-      <nav class="sticky-nav" id="day12-tabs">
-        <a class="nav-tab active" href="#overview"><i class="fa-solid fa-bullseye"></i> Tổng quan</a>
-        <a class="nav-tab" href="#interaction"><i class="fa-solid fa-handshake-angle"></i> Interaction</a>
-        <a class="nav-tab" href="#vision"><i class="fa-solid fa-eye"></i> Agent sees</a>
-        <a class="nav-tab" href="#loop"><i class="fa-solid fa-diagram-project"></i> Architecture</a>
-        <a class="nav-tab" href="#conflict"><i class="fa-solid fa-code-merge"></i> Conflict</a>
-        <a class="nav-tab" href="#turns"><i class="fa-solid fa-traffic-light"></i> Turn-taking</a>
-        <a class="nav-tab" href="#contracts"><i class="fa-solid fa-file-code"></i> Contracts</a>
-      </nav>
+    <table>
+      <thead>
+        <tr>
+          <th>Dữ liệu agent cần</th>
+          <th>Hiểu đơn giản</th>
+          <th>Dùng để làm gì</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ảnh chụp canvas</td>
+          <td>Hình ảnh hiện tại của frame hoặc vùng đang xem.</td>
+          <td>Nhận diện bố cục, khoảng trống, tương phản, cảm giác thị giác.</td>
+        </tr>
+        <tr>
+          <td>Cây layer</td>
+          <td>Danh sách frame, group, text, button, image và quan hệ cha-con.</td>
+          <td>Biết sửa đúng object, không đoán từ ảnh.</td>
+        </tr>
+        <tr>
+          <td>Vùng đang chọn</td>
+          <td>Object hoặc frame người dùng đang focus.</td>
+          <td>Giới hạn phạm vi để agent không sửa lan sang chỗ khác.</td>
+        </tr>
+        <tr>
+          <td>Thuộc tính thiết kế</td>
+          <td>Màu, font, size, spacing, radius, auto-layout.</td>
+          <td>Đề xuất đúng style hệ thống, không tạo thiết kế lệch tông.</td>
+        </tr>
+        <tr>
+          <td>Lịch sử thao tác gần nhất</td>
+          <td>Người dùng vừa chọn, kéo, resize, sửa text, comment gì.</td>
+          <td>Hiểu ý định hiện tại và tránh chen ngang.</td>
+        </tr>
+        <tr>
+          <td>Quyền của agent</td>
+          <td>Agent được xem, đề xuất hay sửa trực tiếp vùng nào.</td>
+          <td>Tránh agent thay đổi phần ngoài phạm vi được giao.</td>
+        </tr>
+      </tbody>
+    </table>
 
-      <section id="overview" class="spec-section">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker"><i class="fa-solid fa-compass"></i> Scope</span>
-            <h2 class="section-title">Phạm vi bài nộp</h2>
-            <p class="section-lede">
-              Bài nộp tập trung vào luồng cộng tác giữa human và AI agent trên canvas thiết kế. Mục tiêu là làm rõ agent tham gia thế nào, được phép sửa tới đâu, khi nào cần hỏi human và cách tránh làm mất thay đổi của người dùng.
-            </p>
-          </div>
-          <span class="section-num">01</span>
-        </div>
-
-        <div class="grid-4">
-          <div class="info-box">
-            <h3><i class="fa-solid fa-check"></i> Có trong scope</h3>
-            <p>Interaction model, agent nhìn canvas thế nào, conflict/undo, turn-taking và kiến trúc vòng lặp cộng tác.</p>
-          </div>
-          <div class="info-box">
-            <h3><i class="fa-solid fa-circle-minus"></i> Không đi sâu</h3>
-            <p>Chưa thiết kế model AI chi tiết, thuật toán layout tự động hoặc code production cho editor thật.</p>
-          </div>
-          <div class="info-box">
-            <h3><i class="fa-solid fa-lightbulb"></i> Giả định</h3>
-            <p>Canvas đã có layer tree, object id, selection state và khả năng lưu lịch sử thay đổi theo từng operation.</p>
-          </div>
-          <div class="info-box">
-            <h3><i class="fa-solid fa-comment-dots"></i> Cần mentor góp ý</h3>
-            <p>Bản đầu nên để agent chỉ đề xuất hay cho phép chỉnh có duyệt? Conflict nên xử lý bằng operation log đơn giản hay cần CRDT?</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="interaction" class="spec-section">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker"><i class="fa-solid fa-handshake-angle"></i> Interaction model</span>
-            <h2 class="section-title">Mô hình tương tác human ↔ agent</h2>
-            <p class="section-lede">
-              Hướng đề xuất là canvas-first: agent không chỉ trả lời trong chat, mà có thể hiện đề xuất ngay trên canvas bằng cursor, draft layer hoặc comment. Mọi thay đổi quan trọng vẫn cần human xem trước.
-            </p>
-          </div>
-          <span class="section-num">02</span>
-        </div>
-
-        <div class="grid-4" style="margin-bottom: 18px;">
-          <div class="mode-card">
-            <span class="mode-label">Observe</span>
-            <h3><i class="fa-solid fa-eye"></i> Chỉ quan sát</h3>
-            <p>Agent đọc canvas, selection và lịch sử edit; chưa được tự sửa.</p>
-          </div>
-          <div class="mode-card suggest">
-            <span class="mode-label">Suggest</span>
-            <h3><i class="fa-regular fa-lightbulb"></i> Đề xuất</h3>
-            <p>Agent tạo preview hoặc comment. Canvas thật chưa đổi cho đến khi human đồng ý.</p>
-          </div>
-          <div class="mode-card edit">
-            <span class="mode-label">Edit with approval</span>
-            <h3><i class="fa-solid fa-pen-ruler"></i> Chỉnh có duyệt</h3>
-            <p>Agent gửi thay đổi kèm lý do và phạm vi ảnh hưởng. Human có thể duyệt một phần hoặc toàn bộ.</p>
-          </div>
-          <div class="mode-card auto">
-            <span class="mode-label">Limited auto</span>
-            <h3><i class="fa-solid fa-route"></i> Tự chạy có giới hạn</h3>
-            <p>Dành cho việc nhỏ, lặp lại như align hoặc đổi tên layer. Luôn có phạm vi và nút dừng.</p>
-          </div>
-        </div>
-
-        <div class="flow-diagram" aria-label="Interaction flow">
-          <div class="flow-row">
-            <div class="flow-node">
-              <strong><i class="fa-solid fa-crosshairs"></i> Intent</strong>
-              <span>Human chọn frame, chat hoặc comment trực tiếp trên object.</span>
-            </div>
-            <div class="flow-node">
-              <strong><i class="fa-solid fa-eye"></i> Observe</strong>
-              <span>Agent nhận scene graph + snapshot + recent ops.</span>
-            </div>
-            <div class="flow-node">
-              <strong><i class="fa-solid fa-wand-magic-sparkles"></i> Propose</strong>
-              <span>Agent tạo draft layer hoặc nhiều alternative.</span>
-            </div>
-            <div class="flow-node">
-              <strong><i class="fa-solid fa-scale-balanced"></i> Review</strong>
-              <span>Human xem diff, lý do, ảnh hưởng và chi phí undo.</span>
-            </div>
-            <div class="flow-node">
-              <strong><i class="fa-solid fa-code-merge"></i> Merge</strong>
-              <span>Accepted transaction được đưa vào canonical state.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="vision" class="spec-section">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker"><i class="fa-solid fa-eye"></i> Agent vision</span>
-            <h2 class="section-title">Agent cần đọc dữ liệu gì từ canvas?</h2>
-            <p class="section-lede">
-              Nếu chỉ gửi screenshot thì agent khó chỉnh đúng layer. Vì vậy canvas nên gửi thêm dữ liệu có cấu trúc: layer tree, object id, vùng đang chọn, token thiết kế và các thao tác gần nhất.
-            </p>
-          </div>
-          <span class="section-num">03</span>
-        </div>
-
-        <div class="grid-2">
-          <div>
-            <div class="grid-2">
-              <div class="info-box">
-                <h3><i class="fa-solid fa-sitemap"></i> Scene graph</h3>
-                <p>Frame, layer, kích thước, vị trí, z-index, component và trạng thái auto-layout.</p>
-              </div>
-              <div class="info-box">
-                <h3><i class="fa-solid fa-palette"></i> Design tokens</h3>
-                <p>Màu, font, spacing, radius và theme hiện tại để agent không đề xuất lệch style.</p>
-              </div>
-              <div class="info-box">
-                <h3><i class="fa-solid fa-location-crosshairs"></i> Attention scope</h3>
-                <p>Vùng agent đang phân tích: object đang chọn, frame đang mở hoặc nhóm component liên quan.</p>
-              </div>
-              <div class="info-box">
-                <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent ops</h3>
-                <p>Một số operation gần nhất giúp agent hiểu human vừa muốn làm gì.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="code-panel">
-            <div class="code-titlebar">
-              <span><i class="fa-solid fa-file-code"></i> canvas_context_bundle.json</span>
-              <span>sent to agent</span>
-            </div>
-            <pre>{
+    <h3>Ví dụ gói ngữ cảnh gửi cho agent</h3>
+    <pre>{
   "workspace_id": "ws_12",
-  "viewport": { "frame_id": "home_mobile", "zoom": 0.82 },
-  "selection": ["metric_card_2"],
-  "attention_scope": {
-    "type": "selected_group",
-    "neighbors": ["metric_card_1", "primary_cta"]
+  "current_frame": "home_page_mobile",
+  "selected_objects": ["pricing_card_2"],
+  "user_request": "Make this section feel cleaner and easier to scan.",
+  "canvas_snapshot": "image_of_selected_frame",
+  "layers": [
+    { "id": "pricing_card_2", "type": "card", "x": 24, "y": 360, "width": 312, "height": 180 },
+    { "id": "primary_cta", "type": "button", "text": "Start trial" }
+  ],
+  "style": {
+    "font": "Inter",
+    "accent_color": "#2563eb",
+    "spacing_scale": [4, 8, 12, 16, 24, 32]
   },
-  "scene_graph": {
-    "layers": ["hero", "metric_cards", "primary_cta"],
-    "constraints": ["auto_layout", "token_spacing_16"]
-  },
-  "design_tokens": {
-    "color.accent": "#06b6d4",
-    "space.card_gap": 12
-  },
-  "recent_ops": ["select", "resize", "comment"],
-  "raster_snapshot": "signed_url_or_base64_tile",
-  "policy": {
-    "agent_mode": "suggest",
+  "recent_actions": ["selected pricing_card_2", "edited headline text"],
+  "agent_permission": {
+    "mode": "suggest",
+    "allowed_scope": ["pricing_section"],
     "requires_approval": true
   }
 }</pre>
-          </div>
-        </div>
-      </section>
 
-      <section id="loop" class="spec-section">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker"><i class="fa-solid fa-diagram-project"></i> Architecture</span>
-            <h2 class="section-title">Kiến trúc collaboration loop</h2>
-            <p class="section-lede">
-              Đây là kiến trúc ở mức conceptual. Các thành phần chính được tách ra để thấy dữ liệu đi từ canvas sang agent, agent tạo đề xuất, hệ thống kiểm tra quyền và chỉ merge khi thay đổi được duyệt.
-            </p>
-          </div>
-          <span class="section-num">04</span>
-        </div>
+    <h2>4. Kiến trúc vòng cộng tác người dùng ↔ agent</h2>
+    <p>
+      Vòng cộng tác cần tách rõ ba việc: canvas đang ở trạng thái nào, agent được nhìn gì, và thay đổi nào được phép nhập vào thiết kế thật.
+    </p>
 
-        <div class="architecture-map">
-          <div class="arch-column">
-            <div class="arch-node emphasis">
-              <h3><i class="fa-solid fa-display"></i> Human client</h3>
-              <p>Hiển thị canvas, tool, layer đang chọn, comment, proposal và cursor của người tham gia.</p>
-            </div>
-            <div class="arch-node">
-              <h3><i class="fa-solid fa-wifi"></i> Realtime channel</h3>
-              <p>Kênh realtime gửi thay đổi canvas, cursor, selection và trạng thái đang thao tác.</p>
-            </div>
-            <div class="arch-node">
-              <h3><i class="fa-solid fa-clock-rotate-left"></i> Local undo stack</h3>
-              <p>Cho phép user quay lại thao tác gần nhất, sau đó đồng bộ với lịch sử chung.</p>
-            </div>
-          </div>
+    <pre class="flow">Màn hình canvas của người dùng
+  -> Kênh đồng bộ thời gian thực
+  -> Nơi lưu trạng thái canvas
+  -> Bộ đóng gói ngữ cảnh cho agent
+  -> Agent phân tích và tạo đề xuất
+  -> Nơi lưu đề xuất
+  -> Màn hình review
+  -> Bộ áp dụng thay đổi đã duyệt
+  -> Lịch sử phiên bản và undo
+  -> Đồng bộ lại cho mọi người đang mở canvas</pre>
 
-          <div class="arch-hub">
-            <div class="arch-hub-title"><i class="fa-solid fa-arrows-spin"></i> Collaboration core</div>
-            <div class="hub-lanes">
-              <div class="hub-lane">
-                <span class="lane-icon"><i class="fa-solid fa-code-branch"></i></span>
-                <div class="lane-copy">
-                  <strong>Operation log</strong>
-                  <span>Lưu thay đổi theo actor, object và thời điểm để có thể undo/merge.</span>
-                </div>
-              </div>
-              <div class="hub-lane">
-                <span class="lane-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
-                <div class="lane-copy">
-                  <strong>Context builder</strong>
-                  <span>Gom layer tree, token, selection, comment và ảnh preview cho agent.</span>
-                </div>
-              </div>
-              <div class="hub-lane">
-                <span class="lane-icon"><i class="fa-solid fa-brain"></i></span>
-                <div class="lane-copy">
-                  <strong>Agent planner</strong>
-                  <span>Đọc ngữ cảnh, hiểu yêu cầu và sinh đề xuất chỉnh sửa.</span>
-                </div>
-              </div>
-              <div class="hub-lane">
-                <span class="lane-icon"><i class="fa-solid fa-shield-halved"></i></span>
-                <div class="lane-copy">
-                  <strong>Policy gate</strong>
-                  <span>Kiểm tra agent có được sửa vùng này không và có cần duyệt không.</span>
-                </div>
-              </div>
-              <div class="hub-lane">
-                <span class="lane-icon"><i class="fa-solid fa-code-merge"></i></span>
-                <div class="lane-copy">
-                  <strong>Transaction merger</strong>
-                  <span>Áp dụng thay đổi đã được duyệt và tạo điểm undo.</span>
-                </div>
-              </div>
-            </div>
-          </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Thành phần</th>
+          <th>Nhiệm vụ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Màn hình canvas của người dùng</td>
+          <td>Hiển thị canvas, selection, comment, cursor, preview và nút accept/reject.</td>
+        </tr>
+        <tr>
+          <td>Kênh đồng bộ thời gian thực</td>
+          <td>Đồng bộ thao tác người dùng, trạng thái agent và proposal mới.</td>
+        </tr>
+        <tr>
+          <td>Nơi lưu trạng thái canvas</td>
+          <td>Lưu trạng thái thiết kế hiện tại: frame, layer, object, version.</td>
+        </tr>
+        <tr>
+          <td>Bộ đóng gói ngữ cảnh</td>
+          <td>Gói ảnh chụp, layer, selection, style và lịch sử gần nhất cho agent.</td>
+        </tr>
+        <tr>
+          <td>Agent phân tích</td>
+          <td>Hiểu yêu cầu, lập kế hoạch, tạo đề xuất hoặc bản nháp.</td>
+        </tr>
+        <tr>
+          <td>Nơi lưu đề xuất</td>
+          <td>Lưu đề xuất của agent như một bản nháp có lý do, phạm vi và mức rủi ro.</td>
+        </tr>
+        <tr>
+          <td>Bộ áp dụng thay đổi</td>
+          <td>Chỉ áp dụng thay đổi đã được duyệt và không xung đột với thao tác mới.</td>
+        </tr>
+        <tr>
+          <td>Lịch sử phiên bản</td>
+          <td>Lưu lịch sử để undo theo từng thao tác, từng proposal hoặc từng actor.</td>
+        </tr>
+      </tbody>
+    </table>
 
-          <div class="arch-column">
-            <div class="arch-node policy">
-              <h3><i class="fa-solid fa-lock"></i> Permission service</h3>
-              <p>Quy định agent được xem, đề xuất hoặc sửa vùng nào.</p>
-            </div>
-            <div class="arch-node merge">
-              <h3><i class="fa-solid fa-database"></i> Version store</h3>
-              <p>Lưu snapshot, proposal và lịch sử thay đổi để xem lại.</p>
-            </div>
-            <div class="arch-node">
-              <h3><i class="fa-solid fa-bell"></i> Notification layer</h3>
-              <p>Báo cho user khi có proposal, conflict hoặc yêu cầu review.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <h2>5. Xung đột và undo</h2>
+    <p>
+      Xung đột xảy ra khi người dùng và agent cùng muốn sửa một vùng, hoặc agent tạo đề xuất dựa trên bản thiết kế đã cũ. Quy tắc chính: thao tác trực tiếp của người dùng luôn có ưu tiên cao hơn.
+    </p>
 
-      <section id="conflict" class="spec-section">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker"><i class="fa-solid fa-code-merge"></i> Conflict & undo</span>
-            <h2 class="section-title">Xử lý conflict, undo và lịch sử thay đổi</h2>
-            <p class="section-lede">
-              Nguyên tắc chính: agent không được âm thầm ghi đè phần human đang sửa. Mỗi thay đổi lớn nên có preview, lý do và cách undo.
-            </p>
-          </div>
-          <span class="section-num">05</span>
-        </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Tình huống</th>
+          <th>Rủi ro</th>
+          <th>Cách xử lý</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Người dùng đang kéo object, agent muốn chỉnh spacing.</td>
+          <td>Agent ghi đè thao tác trực tiếp.</td>
+          <td>Agent chỉ được tạo preview, chờ người dùng dừng thao tác rồi mới hỏi duyệt.</td>
+        </tr>
+        <tr>
+          <td>Agent đề xuất dựa trên version cũ.</td>
+          <td>Đề xuất không còn khớp canvas hiện tại.</td>
+          <td>Đánh dấu "cần cập nhật đề xuất", cho agent tạo lại dựa trên bản mới.</td>
+        </tr>
+        <tr>
+          <td>Người dùng thích layout nhưng không thích màu.</td>
+          <td>Accept toàn bộ làm mất kiểm soát.</td>
+          <td>Cho accept từng phần: layout, text, màu, spacing.</td>
+        </tr>
+        <tr>
+          <td>Người dùng muốn undo chỉ phần agent.</td>
+          <td>Undo nhầm cả thao tác của người dùng sau đó.</td>
+          <td>Lịch sử phải nhóm theo người tạo: human, agent, hoặc proposal.</td>
+        </tr>
+      </tbody>
+    </table>
 
-        <div class="table-wrap">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Tình huống</th>
-                <th>Rủi ro</th>
-                <th>UX xử lý</th>
-                <th>Cơ chế kỹ thuật</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="badge human">Human active</span><br>Human đang drag object, agent cũng muốn chỉnh spacing.</td>
-                <td>Agent ghi đè thao tác trực tiếp.</td>
-                <td>Agent chuyển sang ghost proposal, chờ human thả chuột hoặc dừng thao tác.</td>
-                <td>Activity lock theo selection + debounce idle 700-1200ms.</td>
-              </tr>
-              <tr>
-                <td><span class="badge agent">Agent draft</span><br>Agent proposal dựa trên state cũ.</td>
-                <td>Proposal không còn khớp canvas hiện tại.</td>
-                <td>Hiển thị “Needs rebase”, cho phép refresh proposal hoặc compare với bản mới.</td>
-                <td>Lưu base_version của proposal và yêu cầu tạo lại proposal nếu state đã đổi nhiều.</td>
-              </tr>
-              <tr>
-                <td><span class="badge system">Undo</span><br>Human muốn undo chỉ phần agent.</td>
-                <td>Undo nhầm cả chỉnh sửa của human sau đó.</td>
-                <td>History filter theo actor: All, Human, Agent, Proposal.</td>
-                <td>Nhóm operation theo transaction_id và actor_id.</td>
-              </tr>
-              <tr>
-                <td><span class="badge system">Partial accept</span><br>Human thích layout nhưng không thích màu.</td>
-                <td>Accept toàn bộ làm mất kiểm soát chi tiết.</td>
-                <td>Proposal diff tách theo layer/token: accept spacing, reject color.</td>
-                <td>Tách patch theo nhóm: layout, style, text, component props.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+    <h3>Undo nên hoạt động như thế nào</h3>
+    <ul>
+      <li>Mỗi thay đổi của agent là một nhóm thao tác có tên, lý do và phạm vi.</li>
+      <li>Người dùng có thể undo toàn bộ proposal hoặc chỉ một phần đã accept.</li>
+      <li>Nếu undo ảnh hưởng thao tác mới của người dùng, hệ thống phải báo trước.</li>
+      <li>Lịch sử cần hiển thị rõ: ai làm, làm lúc nào, đổi object nào, có thể quay lại không.</li>
+    </ul>
 
-      <section id="turns" class="spec-section">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker"><i class="fa-solid fa-traffic-light"></i> Turn-taking</span>
-            <h2 class="section-title">Luật chia lượt giữa human và agent</h2>
-            <p class="section-lede">
-              Trên canvas, human có thể đang kéo, gõ hoặc resize liên tục. Vì vậy agent nên chờ thời điểm phù hợp để đề xuất thay vì chen vào ngay.
-            </p>
-          </div>
-          <span class="section-num">06</span>
-        </div>
+    <h2>6. Chia lượt giữa người dùng và agent</h2>
+    <p>
+      Agent không nên phản ứng như một người liên tục chen vào cuộc trò chuyện. Trên canvas, người dùng có thể đang suy nghĩ bằng tay: kéo thử, đổi size, gõ nháp. Agent nên biết lúc nào nên im lặng, lúc nào nên đề xuất.
+    </p>
 
-        <div class="state-machine" aria-label="Turn-taking state machine">
-          <div class="state-node">
-            <strong>Idle</strong>
-            <span>Không có thao tác hoặc agent đang observe nền.</span>
-          </div>
-          <div class="state-node">
-            <strong>Human active</strong>
-            <span>Pointer down, typing, resizing, dragging, editing text.</span>
-          </div>
-          <div class="state-node active-state">
-            <strong>Agent thinking</strong>
-            <span>Agent phân tích vùng attention, không chạm state chính.</span>
-          </div>
-          <div class="state-node">
-            <strong>Proposal ready</strong>
-            <span>Ghost preview hoặc comment được hiển thị.</span>
-          </div>
-          <div class="state-node">
-            <strong>Review</strong>
-            <span>Human accept, reject, ask why hoặc chỉnh proposal.</span>
-          </div>
-          <div class="state-node">
-            <strong>Merged</strong>
-            <span>Transaction được apply, history tạo undo checkpoint.</span>
-          </div>
-        </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Trạng thái</th>
+          <th>Ý nghĩa</th>
+          <th>Agent nên làm gì</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Đang rảnh</td>
+          <td>Người dùng không thao tác trực tiếp.</td>
+          <td>Có thể phân tích hoặc hiện đề xuất nhẹ.</td>
+        </tr>
+        <tr>
+          <td>Người dùng đang thao tác</td>
+          <td>Người dùng đang kéo, gõ, resize, chọn nhiều object.</td>
+          <td>Chỉ quan sát; không sửa canvas thật.</td>
+        </tr>
+        <tr>
+          <td>Agent đang suy nghĩ</td>
+          <td>Agent đang phân tích vùng được giao.</td>
+          <td>Hiển thị trạng thái ngắn, không chiếm màn hình.</td>
+        </tr>
+        <tr>
+          <td>Đề xuất đã sẵn sàng</td>
+          <td>Agent đã có đề xuất.</td>
+          <td>Hiện preview, lý do và nút accept/reject.</td>
+        </tr>
+        <tr>
+          <td>Đang review</td>
+          <td>Người dùng đang xem đề xuất.</td>
+          <td>Chờ quyết định hoặc trả lời câu hỏi "vì sao".</td>
+        </tr>
+        <tr>
+          <td>Đã áp dụng</td>
+          <td>Đề xuất đã được áp dụng.</td>
+          <td>Tạo điểm undo và cập nhật lịch sử.</td>
+        </tr>
+      </tbody>
+    </table>
 
-        <div class="grid-3" style="margin-top: 18px;">
-          <div class="rule-card">
-            <h3><i class="fa-solid fa-hand"></i> Human priority</h3>
-            <p>Khi human đang thao tác trong selection scope, agent chỉ được observe hoặc comment nhẹ. Edit transaction phải chờ idle.</p>
-          </div>
-          <div class="rule-card">
-            <h3><i class="fa-solid fa-stopwatch"></i> Pause window</h3>
-            <p>Agent có thể đề xuất sau khi human dừng một nhịp ngắn, hoặc khi human gọi trực tiếp: “make this cleaner”.</p>
-          </div>
-          <div class="rule-card">
-            <h3><i class="fa-solid fa-ban"></i> Stop control</h3>
-            <p>Nút Stop chuyển agent về Observe, hủy background edits chưa merge và giữ lại proposal đã tạo để review sau.</p>
-          </div>
-        </div>
-      </section>
+    <h3>Luật chia lượt</h3>
+    <ul>
+      <li><strong>Ưu tiên người dùng:</strong> nếu người dùng đang thao tác trong vùng nào, agent không sửa vùng đó.</li>
+      <li><strong>Chờ một nhịp:</strong> agent chỉ hiện đề xuất sau khi người dùng dừng một nhịp ngắn hoặc gọi agent trực tiếp.</li>
+      <li><strong>Khóa phạm vi:</strong> agent chỉ được sửa vùng người dùng chọn hoặc vùng được cấp quyền.</li>
+      <li><strong>Luôn có nút dừng:</strong> người dùng luôn có quyền dừng agent.</li>
+      <li><strong>Giải thích trước khi áp dụng:</strong> với thay đổi lớn, agent phải nêu lý do trước khi áp dụng.</li>
+    </ul>
 
-      <section id="contracts" class="spec-section">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker"><i class="fa-solid fa-file-code"></i> Data model</span>
-            <h2 class="section-title">Ví dụ data model để triển khai</h2>
-            <p class="section-lede">
-              Đây là ví dụ dữ liệu tối thiểu hệ thống nên có. Mục tiêu là biết ai sửa gì, sửa ở đâu, proposal nào được duyệt và undo bằng cách nào.
-            </p>
-          </div>
-          <span class="section-num">07</span>
-        </div>
+    <h2>7. Dữ liệu tối thiểu để triển khai</h2>
+    <p>
+      Hệ thống không cần lưu mọi thứ phức tạp ngay từ đầu, nhưng cần đủ dữ liệu để trả lời bốn câu hỏi: ai sửa, sửa gì, sửa ở đâu, và quay lại bằng cách nào.
+    </p>
 
-        <div class="grid-2">
-          <div class="code-panel">
-            <div class="code-titlebar">
-              <span><i class="fa-solid fa-bolt"></i> operation event</span>
-              <span>canonical log</span>
-            </div>
-            <pre>{
-  "op_id": "op_1047",
-  "actor": { "type": "agent", "id": "design_agent" },
+    <h3>Ví dụ thao tác trên canvas</h3>
+    <pre>{
+  "change_id": "chg_1047",
+  "actor": "agent",
   "base_version": 203,
-  "scope": ["home_mobile", "metric_cards"],
-  "kind": "style.patch",
-  "patch": [
-    { "layer": "metric_cards", "prop": "gap", "from": 12, "to": 16 },
-    { "layer": "primary_cta", "prop": "fill", "to": "token.color.accent" }
+  "scope": ["pricing_section"],
+  "changes": [
+    { "object": "pricing_card_2", "property": "spacing", "from": 12, "to": 16 },
+    { "object": "primary_cta", "property": "label", "from": "Start", "to": "Start free trial" }
   ],
-  "proposal_id": "pr_38",
   "requires_approval": true,
-  "undo_group": "tx_agent_38"
+  "undo_group": "proposal_38"
 }</pre>
-          </div>
 
-          <div class="code-panel">
-            <div class="code-titlebar">
-              <span><i class="fa-solid fa-wand-magic-sparkles"></i> proposal object</span>
-              <span>review UI</span>
-            </div>
-            <pre>{
-  "proposal_id": "pr_38",
-  "title": "Rebalance card spacing and CTA emphasis",
-  "reason": "Metric cards are visually dense and CTA competes with body copy.",
-  "preview": {
-    "type": "draft_layer",
-    "layer_id": "ai_draft_38"
-  },
-  "impact": {
-    "layers_changed": 2,
-    "tokens_changed": 0,
-    "risk": "low"
-  },
+    <h3>Ví dụ đề xuất của agent</h3>
+    <pre>{
+  "proposal_id": "proposal_38",
+  "title": "Make pricing section easier to scan",
+  "reason": "Cards are dense and the main CTA is not clear enough.",
+  "risk": "low",
+  "preview": "draft_layer_38",
   "review_actions": ["accept_all", "accept_partial", "reject", "ask_why"]
 }</pre>
-          </div>
-        </div>
 
-        <div class="table-wrap" style="margin-top: 18px;">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Event</th>
-                <th>Producer</th>
-                <th>Consumer</th>
-                <th>Mục đích</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>presence.update</code></td>
-                <td>Client</td>
-                <td>Client + Agent</td>
-                <td>Cursor, selection, typing, active/idle state.</td>
-              </tr>
-              <tr>
-                <td><code>canvas.operation</code></td>
-                <td>Client / Agent</td>
-                <td>State server</td>
-                <td>Thay đổi canonical được kiểm tra version và conflict.</td>
-              </tr>
-              <tr>
-                <td><code>context.bundle.ready</code></td>
-                <td>Context builder</td>
-                <td>Agent runtime</td>
-                <td>Gói dữ liệu để agent “nhìn” canvas.</td>
-              </tr>
-              <tr>
-                <td><code>proposal.created</code></td>
-                <td>Agent</td>
-                <td>Review UI</td>
-                <td>Ghost layer, reason, diff, impact và action buttons.</td>
-              </tr>
-              <tr>
-                <td><code>transaction.merged</code></td>
-                <td>Merge service</td>
-                <td>All clients</td>
-                <td>Apply proposal đã duyệt, tạo undo checkpoint và audit log.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+    <h2>8. Rủi ro chính</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rủi ro</th>
+          <th>Cách giảm rủi ro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Agent sửa quá nhiều</td>
+          <td>Mặc định dùng chế độ đề xuất; chỉ sửa trực tiếp khi được cấp quyền rõ.</td>
+        </tr>
+        <tr>
+          <td>Người dùng không hiểu agent đã làm gì</td>
+          <td>Mỗi proposal có preview, diff, lý do và phạm vi ảnh hưởng.</td>
+        </tr>
+        <tr>
+          <td>Xung đột giữa người và agent</td>
+          <td>Người dùng có ưu tiên; agent chờ khi người dùng đang thao tác.</td>
+        </tr>
+        <tr>
+          <td>Undo khó đoán</td>
+          <td>Nhóm thay đổi theo proposal và actor; cho undo từng phần.</td>
+        </tr>
+        <tr>
+          <td>Agent nhìn sai canvas</td>
+          <td>Gửi cả ảnh chụp, layer, selection, style và thao tác gần nhất; không chỉ gửi screenshot.</td>
+        </tr>
+      </tbody>
+    </table>
 
-      <p class="footer-note">
-        Báo cáo Ngày 12 - Shared Canvas Human-Agent - Hoàng Thanh Chiến
-      </p>
-    </div>
+    <h2>9. Kết luận thiết kế</h2>
+    <p>
+      Shared canvas tốt không phải là nơi agent tự động sửa mọi thứ. Nó là nơi người dùng và agent cùng nhìn một bề mặt thiết kế, cùng trao đổi trên đúng object, và mọi thay đổi quan trọng đều có preview, lý do, quyền duyệt và undo rõ ràng.
+    </p>
+
+    <p>
+      Kiến trúc cốt lõi là vòng lặp: người dùng thao tác -> hệ thống đóng gói ngữ cảnh canvas -> agent đề xuất -> người dùng review -> hệ thống áp dụng thay đổi đã duyệt -> lưu lịch sử để undo và đồng bộ lại cho mọi người.
+    </p>
+
+    <p class="meta">Day 12 · Hoàng Thanh Chiến</p>
   </main>
-
-  <footer class="footer">
-    <div class="container">
-      <p class="footer-text">&copy; 2026 Hoàng Thanh Chiến. Nhật ký công việc Ngày 12.</p>
-    </div>
-  </footer>
-
-  <script>
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
-
-    function syncThemeIcon() {
-      if (!themeIcon) return;
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      themeIcon.className = currentTheme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-    }
-
-    syncThemeIcon();
-
-    if (themeToggleBtn) {
-      themeToggleBtn.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        syncThemeIcon();
-      });
-    }
-
-    const sections = document.querySelectorAll('section[id]');
-    const tabs = document.querySelectorAll('.nav-tab');
-
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach((section) => {
-        const top = section.offsetTop - 150;
-        if (window.scrollY >= top) {
-          current = section.getAttribute('id');
-        }
-      });
-
-      tabs.forEach((tab) => {
-        tab.classList.toggle('active', tab.getAttribute('href') === '#' + current);
-      });
-    }, { passive: true });
-  </script>
 </body>
 </html>
