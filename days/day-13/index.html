@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 13 - 1B Profile Search & Enrich API</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fbfaf7;
+      color: #1f2933;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.68;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 42px 24px 76px;
+    }
+
+    a {
+      color: #1f2933;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      max-width: 760px;
+      font-size: 32px;
+      line-height: 1.22;
+    }
+
+    h2 {
+      margin: 42px 0 8px;
+      padding-top: 20px;
+      border-top: 1px solid #d7d2c8;
+      font-size: 23px;
+      line-height: 1.28;
+    }
+
+    h3 {
+      margin: 26px 0 8px;
+      font-size: 18px;
+    }
+
+    p {
+      max-width: 760px;
+      margin: 8px 0 14px;
+    }
+
+    ul,
+    ol {
+      max-width: 780px;
+      margin: 8px 0 18px;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    table {
+      width: 100%;
+      margin: 16px 0 24px;
+      border-collapse: collapse;
+      background: #ffffff;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid #d7d2c8;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0ede7;
+      font-weight: 700;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    code {
+      padding: 1px 4px;
+      background: #f0ede7;
+      border-radius: 3px;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      padding: 14px 16px;
+      border: 1px solid #d7d2c8;
+      background: #ffffff;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 14px;
+      text-decoration: none;
+    }
+
+    .meta {
+      color: #5b6470;
+      font-size: 14px;
+    }
+
+    .thesis {
+      max-width: 760px;
+      margin: 18px 0 20px;
+      padding: 14px 16px;
+      border-left: 4px solid #3f5364;
+      background: #ffffff;
+    }
+
+    .note {
+      max-width: 780px;
+      margin: 16px 0 20px;
+      padding: 12px 14px;
+      border: 1px solid #d7d2c8;
+      background: #ffffff;
+    }
+
+    .flow {
+      max-width: 880px;
+      white-space: pre-wrap;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      .back-link {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back-link" href="../../vinsmart-log.html">&larr; Quay lại nhật ký VFS</a>
+
+    <p class="meta">Day 13 · System Design · Hoàng Thanh Chiến</p>
+    <h1>Thiết kế hệ thống 1 tỷ hồ sơ và API tìm kiếm/bổ sung thông tin cho AI agent</h1>
+
+    <div class="thesis">
+      Hệ thống này không chỉ là một crawler lớn. Nếu làm đúng, nó là một nền tảng dữ liệu con người: biết dữ liệu đến từ đâu, được phép dùng vào việc gì, có mới không, có chắc không, và có thể xóa đúng một người khi họ yêu cầu.
+    </div>
+
+    <p>
+      Lập trường của tài liệu: vẫn thiết kế đầy đủ kiến trúc ở quy mô 1 tỷ hồ sơ, nhưng không mô tả cách né chặn LinkedIn. Phần "anti-blocking" được hiểu là thu thập có kiểm soát: dùng nguồn được cấp phép, tôn trọng giới hạn truy cập, giảm tải cho nguồn, ghi log và có nút dừng khi điều kiện pháp lý thay đổi.
+    </p>
+
+    <h2>1. Ràng buộc pháp lý là một phần của kiến trúc</h2>
+    <p>
+      Với LinkedIn, không thể xem "profile public" là mặc nhiên được thu thập và bán lại ở quy mô lớn. LinkedIn có điều khoản cấm crawler, bot và scraping trái phép. Vì vậy, thiết kế thật phải bắt đầu bằng câu hỏi: nguồn dữ liệu nào được phép dùng, trường nào được phép lưu, trường nào được phép trả qua API, và dùng cho mục đích gì.
+    </p>
+
+    <p class="meta">
+      Tham khảo:
+      <a href="https://www.linkedin.com/legal/user-agreement" target="_blank" rel="noopener">LinkedIn User Agreement</a>,
+      <a href="https://www.linkedin.com/help/linkedin/answer/a1341387/prohibited-software-and-extensions" target="_blank" rel="noopener">LinkedIn prohibited software guidance</a>,
+      <a href="https://law.justia.com/cases/federal/appellate-courts/ca9/17-16783/17-16783-2022-04-18.html" target="_blank" rel="noopener">hiQ Labs v. LinkedIn</a>.
+    </p>
+
+    <h3>Nguyên tắc bắt buộc</h3>
+    <ul>
+      <li><strong>Không né chặn:</strong> không bypass captcha, không giả lập tài khoản, không xoay proxy để vượt giới hạn.</li>
+      <li><strong>Chỉ dùng nguồn được phép:</strong> official API, partner feed, licensed dataset, dữ liệu người dùng đồng ý cung cấp, hoặc dữ liệu khách hàng đưa vào hợp lệ.</li>
+      <li><strong>Lưu nguồn gốc từng trường:</strong> không chỉ biết profile đến từ đâu, mà phải biết từng field như chức danh, công ty, kỹ năng đến từ nguồn nào.</li>
+      <li><strong>API phải biết mục đích sử dụng:</strong> cùng một profile có thể được phép hiển thị cho nghiên cứu thị trường nhưng không được phép xuất contact để outreach tự động.</li>
+      <li><strong>Có quyền xóa và chặn tái nhập:</strong> nếu một người yêu cầu xóa hợp lệ, hệ thống phải xóa khỏi profile chính, chỉ mục tìm kiếm, bộ nhớ đệm, dữ liệu phụ sinh ra và ngăn nhập lại.</li>
+    </ul>
+
+    <div class="note">
+      Điểm quan trọng: pháp lý không phải đoạn ghi chú cuối bài. Nó ảnh hưởng trực tiếp đến mẫu dữ liệu, nơi lưu trữ, cách thu thập, cách gom trùng hồ sơ và hợp đồng API.
+    </div>
+
+    <h2>2. Kiến trúc tổng thể</h2>
+    <pre class="flow">Nguồn dữ liệu được phép
+  -> Bộ kiểm tra quyền sử dụng dữ liệu
+  -> Bộ lập lịch thu thập và làm mới
+  -> Các tiến trình lấy dữ liệu
+  -> Bộ đọc và chuẩn hóa dữ liệu
+  -> Kho dữ liệu gốc + dữ liệu đã chuẩn hóa
+  -> Bộ gom trùng và xác định danh tính
+  -> Hồ sơ chuẩn của từng người
+  -> Chỉ mục tìm kiếm + log kiểm toán
+  -> Search/Enrich API cho agent</pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Khối</th>
+          <th>Hiểu đơn giản</th>
+          <th>Lý do cần có</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Bộ kiểm tra quyền sử dụng dữ liệu</td>
+          <td>Danh sách nguồn nào được dùng, dùng được trường nào, dùng trong mục đích nào.</td>
+          <td>Ngăn hệ thống lấy hoặc trả dữ liệu ngoài quyền cho phép.</td>
+        </tr>
+        <tr>
+          <td>Bộ lập lịch</td>
+          <td>Quyết định hôm nay cần lấy hồ sơ nào, làm mới hồ sơ nào, bỏ qua hồ sơ nào.</td>
+          <td>1 tỷ hồ sơ không thể làm mới cùng lúc; cần ưu tiên.</td>
+        </tr>
+        <tr>
+          <td>Tiến trình lấy dữ liệu</td>
+          <td>Các tiến trình nhỏ lấy dữ liệu từ API/feed/nguồn hợp lệ.</td>
+          <td>Chia tải ra nhiều máy để xử lý quy mô lớn.</td>
+        </tr>
+        <tr>
+          <td>Bộ chuẩn hóa</td>
+          <td>Biến dữ liệu mỗi nguồn về cùng một mẫu: tên, chức danh, công ty, nơi ở, kỹ năng.</td>
+          <td>Nếu mỗi nguồn một kiểu, tìm kiếm và bổ sung thông tin sẽ không ổn định.</td>
+        </tr>
+        <tr>
+          <td>Bộ gom trùng</td>
+          <td>Nhận ra nhiều bản ghi thật ra là cùng một người.</td>
+          <td>Nếu không gom, API trả trùng. Nếu gom sai, dữ liệu hai người bị trộn.</td>
+        </tr>
+        <tr>
+          <td>API cho agent</td>
+          <td>Cho agent tìm người, enrich thông tin, xem độ chắc chắn và nguồn gốc.</td>
+          <td>Agent cần dữ liệu có thể hành động, không chỉ một danh sách profile thô.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Thu thập dữ liệu ở quy mô 1 tỷ hồ sơ</h2>
+    <p>
+      Ở quy mô này, vấn đề không phải chỉ là "chạy nhiều máy hơn". Hệ thống phải biết hồ sơ nào đáng lấy trước, nguồn nào còn quota, dữ liệu nào đã cũ, và khi nào cần dừng để tránh vi phạm giới hạn.
+    </p>
+
+    <h3>Luồng thu thập</h3>
+    <ol>
+      <li>Đăng ký nguồn dữ liệu: quyền dùng, trường được lấy, giới hạn truy cập, thời hạn lưu.</li>
+      <li>Tạo danh sách hồ sơ cần xử lý: backfill ban đầu, làm mới định kỳ, làm mới khi khách hàng/agent cần.</li>
+      <li>Xếp ưu tiên: hồ sơ đang được dùng nhiều, hồ sơ sắp hết hạn độ mới, hồ sơ có khả năng đổi việc cao.</li>
+      <li>Lấy dữ liệu theo giới hạn hợp lệ: tôn trọng quota, lỗi thì chờ rồi thử lại, dừng khi nguồn báo quá tải.</li>
+      <li>Chuẩn hóa dữ liệu: đổi các định dạng khác nhau về cùng một mẫu.</li>
+      <li>Ghi lại nguồn gốc: biết dữ liệu đến từ đâu, lúc nào, phiên bản bộ đọc nào xử lý.</li>
+      <li>Đẩy sang luồng gom trùng, lưu trữ và chỉ mục tìm kiếm.</li>
+    </ol>
+
+    <h3>Anti-blocking được hiểu đúng</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Không làm</th>
+          <th>Làm thay thế</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Vượt captcha, giả lập người dùng, dùng tài khoản ảo.</td>
+          <td>Dùng API/feed/nguồn có thỏa thuận hoặc dữ liệu do người dùng/khách hàng cung cấp hợp lệ.</td>
+        </tr>
+        <tr>
+          <td>Xoay proxy để vượt giới hạn tốc độ.</td>
+          <td>Dùng giới hạn tốc độ chung toàn hệ thống, lỗi thì chờ rồi thử lại, và dừng theo quy định của nguồn.</td>
+        </tr>
+        <tr>
+          <td>Thấy HTTP 200 là tăng tốc lấy dữ liệu.</td>
+          <td>Chỉ tăng tốc khi hợp đồng hoặc quy định nguồn dữ liệu cho phép.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Gom trùng và xác định một người</h2>
+    <p>
+      Một người có thể xuất hiện ở nhiều nguồn, nhiều URL, nhiều cách viết tên khác nhau. Hệ thống cần gom các bản ghi đó thành một hồ sơ chuẩn. Đây là phần rủi ro nhất: gom thiếu thì bị trùng, gom nhầm thì dữ liệu hai người bị trộn.
+    </p>
+
+    <h3>Cách làm</h3>
+    <ol>
+      <li><strong>Chuẩn hóa trước:</strong> tên, công ty, chức danh, vị trí, đường dẫn profile.</li>
+      <li><strong>Tạo nhóm ứng viên:</strong> chỉ so sánh các bản ghi có khả năng liên quan, ví dụ cùng profile URL, cùng tên + công ty, cùng tên + nơi ở.</li>
+      <li><strong>Chấm điểm:</strong> so mức giống nhau về tên, công ty, lịch sử làm việc, trường học, nơi ở, kỹ năng.</li>
+      <li><strong>Ra quyết định:</strong> chắc chắn thì gộp, chưa chắc thì giữ ở trạng thái cần review, mâu thuẫn mạnh thì không gộp.</li>
+      <li><strong>Có đường sửa sai:</strong> nếu phát hiện gộp nhầm, phải tách lại được và dựng lại phần tìm kiếm/bộ nhớ đệm liên quan.</li>
+    </ol>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Trạng thái</th>
+          <th>Ý nghĩa</th>
+          <th>Agent được làm gì</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>confirmed</td>
+          <td>Gần như chắc cùng một người.</td>
+          <td>Có thể dùng cho luồng tự động nếu quy định cho phép.</td>
+        </tr>
+        <tr>
+          <td>probable</td>
+          <td>Có vẻ cùng người nhưng chưa đủ chắc.</td>
+          <td>Chỉ hiển thị để review, không outreach tự động.</td>
+        </tr>
+        <tr>
+          <td>ambiguous</td>
+          <td>Nhiều ứng viên giống nhau.</td>
+          <td>Hỏi người dùng chọn hoặc yêu cầu thêm dữ kiện.</td>
+        </tr>
+        <tr>
+          <td>rejected</td>
+          <td>Có tín hiệu cho thấy không phải cùng người.</td>
+          <td>Không gộp, không dùng làm match.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      False merge nguy hiểm hơn missed merge. Gộp nhầm có thể làm API trả sai người, cập nhật CRM sai, hoặc khiến yêu cầu xóa của một người ảnh hưởng người khác. Vì vậy ngưỡng "confirmed" nên rất chặt.
+    </div>
+
+    <h2>5. Lưu trữ dữ liệu</h2>
+    <p>
+      Không dùng một database duy nhất cho mọi thứ. Mỗi loại dữ liệu có cách lưu khác nhau: bản gốc để kiểm tra lại, bản đã chuẩn hóa để xử lý, hồ sơ chuẩn để phục vụ API, chỉ mục để tìm kiếm nhanh, và log để audit.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tầng lưu trữ</th>
+          <th>Lưu gì</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Kho dữ liệu gốc</td>
+          <td>Dữ liệu gốc từ nguồn hợp lệ.</td>
+          <td>Dùng để kiểm tra và đọc lại; có thời hạn lưu và xóa theo quy định.</td>
+        </tr>
+        <tr>
+          <td>Kho dữ liệu đã chuẩn hóa</td>
+          <td>Dữ liệu đã được đưa về cùng một mẫu.</td>
+          <td>Dùng cho xử lý hàng loạt và dựng lại khi bộ đọc thay đổi.</td>
+        </tr>
+        <tr>
+          <td>Kho hồ sơ chuẩn</td>
+          <td>Hồ sơ chuẩn của từng người.</td>
+          <td>API lấy nhanh theo mã hồ sơ.</td>
+        </tr>
+        <tr>
+          <td>Chỉ mục tìm kiếm</td>
+          <td>Dữ liệu tối ưu cho tìm kiếm theo title, company, skill, location.</td>
+          <td>Đắt hơn kho gốc vì cần truy vấn nhanh và cập nhật liên tục.</td>
+        </tr>
+        <tr>
+          <td>Bản đồ liên kết danh tính</td>
+          <td>Các liên kết giữa bản ghi nguồn và hồ sơ chuẩn.</td>
+          <td>Giúp giải thích vì sao hệ thống gộp hoặc không gộp.</td>
+        </tr>
+        <tr>
+          <td>Nhật ký kiểm toán</td>
+          <td>Ai truy cập dữ liệu nào, vì mục đích gì, hệ thống cho phép hay chặn.</td>
+          <td>Bắt buộc cho tuân thủ và điều tra sự cố.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Xóa dữ liệu</h3>
+    <p>
+      Xóa một người không phải xóa một dòng. Hệ thống phải xóa hoặc ẩn dữ liệu ở nhiều nơi: hồ sơ chuẩn, chỉ mục tìm kiếm, bộ nhớ đệm, dữ liệu phụ đã sinh ra, và backup khi được khôi phục. Để tránh người đó bị nhập lại, hệ thống lưu một dấu vân tay tối thiểu đã mã hóa, không lưu lại email hoặc URL gốc nếu không cần.
+    </p>
+
+    <h2>6. Độ mới: giữ dữ liệu đủ mới</h2>
+    <p>
+      Không phải hồ sơ nào cũng cần làm mới liên tục. Người đang được search nhiều hoặc nằm trong workflow quan trọng cần được làm mới nhanh hơn. Hồ sơ ít dùng có thể làm mới chậm hơn.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nhóm</th>
+          <th>Làm mới</th>
+          <th>Áp dụng cho</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Hot</td>
+          <td>7-14 ngày nếu nguồn cho phép.</td>
+          <td>Hồ sơ được truy vấn nhiều, đang trong workflow sales/recruiting.</td>
+        </tr>
+        <tr>
+          <td>Warm</td>
+          <td>30-60 ngày.</td>
+          <td>Hồ sơ có giá trị nhưng ít được gọi hơn.</td>
+        </tr>
+        <tr>
+          <td>Cold</td>
+          <td>90-180 ngày hoặc khi có request.</td>
+          <td>Hồ sơ ít dùng hoặc nguồn có chi phí cao.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Độ mới nên được tính ở từng trường dữ liệu. Chức danh và công ty hiện tại dễ thay đổi nên cần kiểm tra thường hơn. Trường học thường ít thay đổi. Khả năng được phép liên hệ phải kiểm tra quy định và sự đồng ý mỗi lần trả ra.
+    </p>
+
+    <h2>7. Hợp đồng API cho agent</h2>
+    <p>
+      Agent-ready không có nghĩa là chỉ làm API dễ gọi. Nó có nghĩa là API phải trả cả độ chắc chắn, dữ liệu được phép dùng vào việc gì, và bước tiếp theo agent nên làm.
+    </p>
+
+    <h3>Endpoints chính</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Endpoint</th>
+          <th>Dùng để làm gì</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>POST /v1/profiles/search</code></td>
+          <td>Tìm người theo mô tả, công ty, chức danh, kỹ năng, địa điểm.</td>
+        </tr>
+        <tr>
+          <td><code>POST /v1/profiles/enrich</code></td>
+          <td>Bổ sung thông tin cho một người đã biết một phần.</td>
+        </tr>
+        <tr>
+          <td><code>GET /v1/profiles/{profile_id}</code></td>
+          <td>Lấy hồ sơ chuẩn của một người.</td>
+        </tr>
+        <tr>
+          <td><code>GET /v1/profiles/{profile_id}/provenance</code></td>
+          <td>Xem nguồn gốc dữ liệu, độ mới, lý do gộp hồ sơ.</td>
+        </tr>
+        <tr>
+          <td><code>POST /v1/profiles/bulk-enrich</code></td>
+          <td>Enrich danh sách lớn theo job bất đồng bộ.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Ví dụ agent gọi Search API</h3>
+    <pre>POST /v1/profiles/search
+{
+  "purpose": "sales_research",
+  "query": {
+    "title": ["VP Engineering", "Head of Engineering"],
+    "industry": ["fintech", "payments"],
+    "location": ["Singapore"],
+    "skills": ["fraud detection", "payments"]
+  },
+  "limit": 10,
+  "freshness_days": 60
+}</pre>
+
+    <h3>Ví dụ response</h3>
+    <pre>{
+  "results": [
+    {
+      "profile_id": "cp_123",
+      "identity_status": "confirmed",
+      "confidence": 0.91,
+      "profile": {
+        "name": "An Nguyen",
+        "title": "VP Engineering",
+        "company": "Merlion Pay",
+        "location": "Singapore",
+        "skills": ["payments", "fraud detection"]
+      },
+      "freshness": {
+        "title_days_old": 18,
+        "company_days_old": 18
+      },
+      "provenance": [
+        {
+          "source": "licensed_partner_a",
+          "observed_at": "2026-07-14"
+        }
+      ],
+      "allowed_actions": ["display_for_review", "save_to_crm"],
+      "blocked_actions": ["automated_outreach"],
+      "next_step": "show_to_user"
+    }
+  ],
+  "next_cursor": "cur_abc"
+}</pre>
+
+    <h3>Ví dụ agent gọi Enrich API</h3>
+    <pre>POST /v1/profiles/enrich
+{
+  "purpose": "recruiting_research",
+  "identifiers": {
+    "name": "Minh Tran",
+    "company": "Acme AI",
+    "profile_url": "https://example.com/profile/minh-tran"
+  },
+  "requested_fields": ["current_title", "skills", "work_history"],
+  "match_threshold": 0.82
+}</pre>
+
+    <h3>Ví dụ enrich response</h3>
+    <pre>{
+  "match_status": "probable",
+  "confidence": 0.86,
+  "profile_id": "cp_456",
+  "profile": {
+    "current_title": "Staff Machine Learning Engineer",
+    "skills": ["ranking systems", "feature stores"]
+  },
+  "allowed_actions": ["display_for_review"],
+  "blocked_actions": ["automated_outreach", "employment_decision"],
+  "next_step": "request_human_review",
+  "reason": "Match is probable, not confirmed."
+}</pre>
+
+    <h3>Error codes</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Lỗi</th>
+          <th>Ý nghĩa</th>
+          <th>Agent nên làm gì</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>policy_denied</code></td>
+          <td>Không được trả field hoặc không được dùng cho mục đích này.</td>
+          <td>Không retry. Bỏ field hoặc hỏi user đổi mục đích hợp lệ.</td>
+        </tr>
+        <tr>
+          <td><code>no_match</code></td>
+          <td>Không tìm thấy hồ sơ đủ chắc.</td>
+          <td>Hỏi thêm tên công ty, địa điểm, URL hoặc identifier khác.</td>
+        </tr>
+        <tr>
+          <td><code>ambiguous_match</code></td>
+          <td>Có nhiều người giống nhau.</td>
+          <td>Đưa danh sách ứng viên để người dùng chọn.</td>
+        </tr>
+        <tr>
+          <td><code>stale_data</code></td>
+          <td>Dữ liệu cũ hơn mức yêu cầu.</td>
+          <td>Yêu cầu làm mới nếu nguồn và quy định cho phép.</td>
+        </tr>
+        <tr>
+          <td><code>rate_limited</code></td>
+          <td>Đã vượt quota.</td>
+          <td>Đợi theo thời gian trả về hoặc chuyển sang batch job.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>8. Ước tính sức chứa và chi phí</h2>
+    <h3>Giả định</h3>
+    <ul>
+      <li>1 tỷ hồ sơ chuẩn.</li>
+      <li>1.2-1.5 tỷ bản ghi nguồn trước khi gom trùng.</li>
+      <li>Dữ liệu gốc nén: 50-200KB/profile.</li>
+      <li>Dữ liệu chuẩn: 5-20KB/profile.</li>
+      <li>Search/enrich API: 1.000-10.000 yêu cầu/giây.</li>
+      <li>Backfill ban đầu trong 30 ngày; refresh trung bình 90 ngày.</li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Hạng mục</th>
+          <th>Quy mô</th>
+          <th>Ước tính chi phí hạ tầng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Backfill ban đầu</td>
+          <td>1B hồ sơ / 30 ngày = khoảng 33M hồ sơ/ngày.</td>
+          <td>10K-60K USD trong tháng backfill.</td>
+        </tr>
+        <tr>
+          <td>Refresh liên tục</td>
+          <td>1B / 90 ngày = khoảng 11M hồ sơ/ngày.</td>
+          <td>5K-30K USD/tháng.</td>
+        </tr>
+        <tr>
+          <td>Raw + parsed storage</td>
+          <td>100-300TB tùy kích thước và số phiên bản giữ lại.</td>
+          <td>3K-15K USD/tháng trước egress lớn.</td>
+        </tr>
+        <tr>
+          <td>Search serving</td>
+          <td>Chỉ mục tìm kiếm + bản sao để chịu tải 1.000-10.000 yêu cầu/giây.</td>
+          <td>50K-200K USD/tháng.</td>
+        </tr>
+        <tr>
+          <td>Gom trùng/danh tính</td>
+          <td>Xử lý batch và cập nhật streaming trên 1.2B-1.5B bản ghi.</td>
+          <td>20K-80K USD/tháng.</td>
+        </tr>
+        <tr>
+          <td>API, bộ nhớ đệm, kiểm toán, tuân thủ</td>
+          <td>Xác thực, quota, kiểm tra quyền sử dụng, log, luồng xóa/ẩn hồ sơ.</td>
+          <td>15K-60K USD/tháng.</td>
+        </tr>
+        <tr>
+          <td><strong>Tổng hạ tầng</strong></td>
+          <td>Production multi-AZ, chưa tính multi-region active-active.</td>
+          <td><strong>150K-500K USD/tháng</strong>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Chi phí mua quyền dữ liệu, pháp lý, hỗ trợ tuân thủ và quan hệ đối tác chưa nằm trong bảng. Với sản phẩm kiểu này, phí quyền dữ liệu có thể lớn hơn nhiều so với hạ tầng cloud.
+    </p>
+
+    <h2>9. Rủi ro chính</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rủi ro</th>
+          <th>Cách giảm rủi ro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Vi phạm ToS/pháp lý</td>
+          <td>Chỉ dùng nguồn được phép, legal review, source contract, audit log, kill switch.</td>
+        </tr>
+        <tr>
+          <td>Gộp nhầm người</td>
+          <td>Ngưỡng confirmed cao, review cho trường hợp chưa chắc, có split workflow.</td>
+        </tr>
+        <tr>
+          <td>Dữ liệu cũ</td>
+          <td>Freshness theo từng field, refresh theo tier, hiện rõ days-old trong API.</td>
+        </tr>
+        <tr>
+          <td>Agent dùng dữ liệu sai mục đích</td>
+          <td>Khóa mục đích sử dụng, allowed_actions, blocked_actions, quota theo từng lần agent chạy.</td>
+        </tr>
+        <tr>
+          <td>Chi phí tăng nhanh</td>
+          <td>Làm mới theo ưu tiên, dùng bộ nhớ đệm, xử lý danh sách lớn theo job, giới hạn chi phí theo khách hàng/agent.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>10. Kết luận thiết kế</h2>
+    <p>
+      Cách làm đúng là xây một nền tảng dữ liệu con người có kiểm soát: nguồn dữ liệu được phép đi vào luồng thu thập có quota; dữ liệu được chuẩn hóa và gom trùng cẩn thận; hồ sơ chuẩn được đưa vào chỉ mục để tìm kiếm nhanh; API trả về không chỉ profile, mà cả độ chắc chắn, độ mới, nguồn gốc và quyền được sử dụng.
+    </p>
+
+    <p>
+      Nếu bỏ phần legal/ToS và chỉ tập trung vào "làm sao scrape 1 tỷ trang", hệ thống có thể chạy được về mặt kỹ thuật nhưng không phải một thiết kế production hợp lệ.
+    </p>
+
+    <p class="meta">Day 13 · Hoàng Thanh Chiến</p>
+  </main>
+</body>
+</html>
