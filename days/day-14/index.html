@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 14 - Agent-Native Browser</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fbfaf7;
+      color: #1f2933;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.68;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 42px 24px 76px;
+    }
+
+    a {
+      color: #1f2933;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      max-width: 790px;
+      font-size: 32px;
+      line-height: 1.22;
+    }
+
+    h2 {
+      margin: 42px 0 8px;
+      padding-top: 20px;
+      border-top: 1px solid #d7d2c8;
+      font-size: 23px;
+      line-height: 1.28;
+    }
+
+    h3 {
+      margin: 26px 0 8px;
+      font-size: 18px;
+    }
+
+    p {
+      max-width: 780px;
+      margin: 8px 0 14px;
+    }
+
+    ul,
+    ol {
+      max-width: 800px;
+      margin: 8px 0 18px;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    table {
+      width: 100%;
+      margin: 16px 0 24px;
+      border-collapse: collapse;
+      background: #ffffff;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid #d7d2c8;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0ede7;
+      font-weight: 700;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    code {
+      padding: 1px 4px;
+      background: #f0ede7;
+      border-radius: 3px;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      padding: 14px 16px;
+      border: 1px solid #d7d2c8;
+      background: #ffffff;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 14px;
+      text-decoration: none;
+    }
+
+    .meta {
+      color: #5b6470;
+      font-size: 14px;
+    }
+
+    .thesis {
+      max-width: 790px;
+      margin: 18px 0 20px;
+      padding: 14px 16px;
+      border-left: 4px solid #3f5364;
+      background: #ffffff;
+    }
+
+    .note {
+      max-width: 800px;
+      margin: 16px 0 20px;
+      padding: 12px 14px;
+      border: 1px solid #d7d2c8;
+      background: #ffffff;
+    }
+
+    .flow {
+      max-width: 900px;
+      white-space: pre-wrap;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      .back-link {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back-link" href="../../vinsmart-log.html">&larr; Quay lại nhật ký VFS</a>
+
+    <p class="meta">Day 14 · System Design · Hoàng Thanh Chiến</p>
+    <h1>Agent-Native Browser: thiết kế lại trình duyệt web khi người dùng chính là AI agent</h1>
+
+    <div class="thesis">
+      Nếu không còn "mắt người" là trung tâm, browser không nên tối ưu cho pixel trước tiên. Nó nên tối ưu cho ý nghĩa, quyền hạn, trạng thái, bộ nhớ và hành động có thể kiểm toán. Trình duyệt mới không phải là Chrome có thêm automation; nó là một môi trường vận hành cho agent trên web.
+    </div>
+
+    <p>
+      Tài liệu này thiết kế lại web browser với giả định: người dùng chính không phải human nhìn màn hình, mà là agent cần hiểu trang, điều hướng, đăng nhập, ghi nhớ và thực hiện hành động một cách an toàn. Deliverable gồm ba phần: design manifesto, kiến trúc lõi, và interface dành cho agent kèm ví dụ cụ thể.
+    </p>
+
+    <h2>1. Design manifesto</h2>
+    <p>
+      Browser hiện tại sinh ra để trả lời câu hỏi: "Trang này trông như thế nào với người dùng?". Agent-native browser phải trả lời câu hỏi khác: "Trạng thái này có nghĩa gì, tôi được phép làm gì, hành động nào có hậu quả gì, và làm sao chứng minh tôi đã làm đúng?".
+    </p>
+
+    <h3>Nguyên tắc thiết kế</h3>
+    <ol>
+      <li><strong>Meaning over pixels:</strong> pixel chỉ là một view. Nguồn sự thật cho agent là semantic state tree có intent, role, constraint, data binding và side effect.</li>
+      <li><strong>Actions over events:</strong> agent không nên phải click tọa độ hoặc đoán nút. Trang phải công bố action có kiểu, input schema, effect model, quyền cần có và khả năng undo.</li>
+      <li><strong>Navigation as task graph:</strong> điều hướng không chỉ là URL/back/forward. Nó là đồ thị trạng thái và nhiệm vụ: vào đâu, cần điều kiện gì, rủi ro gì, có thể quay lại ra sao.</li>
+      <li><strong>Auth is delegation:</strong> agent không nên mượn toàn bộ danh tính user. Mỗi phiên cần token ủy quyền có scope, thời hạn, mục đích và policy gate.</li>
+      <li><strong>Memory is governed:</strong> browser cần nhớ việc đang làm, nhưng phải nhớ có nguồn gốc, thời hạn, phạm vi và quyền xóa. Bộ nhớ không được biến thành kho dữ liệu mơ hồ.</li>
+      <li><strong>Every side effect is auditable:</strong> mọi hành động như gửi form, mua hàng, hủy gói, xóa dữ liệu phải có preview, commit record, actor, lý do và log kiểm toán.</li>
+      <li><strong>Human visibility remains available:</strong> không cần eyeballs trong vòng lặp mặc định, nhưng cần render khi debug, khi tranh chấp, khi agent không chắc, hoặc khi user muốn xem lại.</li>
+    </ol>
+
+    <div class="note">
+      Agent-native không có nghĩa là bỏ HTML/CSS. Nó có nghĩa là không bắt agent hiểu thế giới qua cùng lớp biểu diễn dành cho mắt người. Pixel trở thành một adapter, không phải API chính.
+    </div>
+
+    <h2>2. Điều gì thay đổi khi không còn eyeballs?</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Thành phần</th>
+          <th>Browser cho human</th>
+          <th>Browser cho agent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>DOM / Rendering</td>
+          <td>DOM + CSSOM tạo layout, paint, composite để người dùng nhìn và click.</td>
+          <td>Semantic DOM mô tả object, intent, data, constraints, confidence, action bindings. Rendering pixel là optional.</td>
+        </tr>
+        <tr>
+          <td>Navigation</td>
+          <td>URL, link, history, back/forward, route trong SPA.</td>
+          <td>Task graph, state transition, deep links theo năng lực, undo theo nghĩa vụ và side effect.</td>
+        </tr>
+        <tr>
+          <td>Auth</td>
+          <td>User login, cookie/session, toàn bộ quyền nằm trong browser profile.</td>
+          <td>Delegated agent session: scope cụ thể, time-bound, purpose-bound, approval gate cho hành động nhạy cảm.</td>
+        </tr>
+        <tr>
+          <td>Memory</td>
+          <td>Tab state, cache, localStorage, cookies, history.</td>
+          <td>Working memory, site memory, task memory, policy memory, audit memory, tất cả có provenance và isolation.</td>
+        </tr>
+        <tr>
+          <td>Action API</td>
+          <td>Click, type, scroll, wait, query selector.</td>
+          <td>List/inspect/preview/commit/undo action có schema, effect model, risk, permissions và result contract.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Kiến trúc lõi</h2>
+    <p>
+      Agent-native browser nên được chia thành nhiều tầng rõ ràng. Web engine truyền thống vẫn tồn tại để chạy web thật, nhưng phía trên nó có một lớp diễn giải ngữ nghĩa, một lớp chính sách và một action runtime.
+    </p>
+
+    <pre class="flow">Web nguồn: HTML, CSS, JS, HTTP, Web APIs
+  -> Legacy Web Engine
+       - network stack
+       - JavaScript runtime
+       - DOM/CSSOM compatibility
+       - optional renderer
+  -> Semantic Extraction Layer
+       - semantic state tree
+       - form/data binding detection
+       - action discovery
+       - state and effect inference
+  -> Agent Runtime Layer
+       - task graph navigator
+       - action planner/executor
+       - memory vault
+       - auth delegation manager
+       - policy and approval engine
+  -> Agent Interface
+       - observe state
+       - inspect action
+       - preview effect
+       - commit action
+       - undo/compensate
+       - explain/audit</pre>
+
+    <h3>Các module chính</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Nhiệm vụ</th>
+          <th>Ví dụ output</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Semantic State Tree</td>
+          <td>Biến DOM, accessibility tree, schema.org, ARIA, text, network data và app state thành cây ý nghĩa.</td>
+          <td>"Đây là bảng invoices, có 12 dòng, mỗi dòng có action download_pdf."</td>
+        </tr>
+        <tr>
+          <td>Action Registry</td>
+          <td>Phát hiện hoặc nhận khai báo action mà site hỗ trợ.</td>
+          <td>"update_billing_address", "cancel_subscription", "export_report".</td>
+        </tr>
+        <tr>
+          <td>Effect Modeler</td>
+          <td>Mô tả hậu quả trước khi làm: chỉ đọc, ghi dữ liệu, gửi email, thanh toán, xóa, không thể undo.</td>
+          <td>"Hành động này sẽ đổi địa chỉ billing và gửi email xác nhận."</td>
+        </tr>
+        <tr>
+          <td>Task Graph Navigator</td>
+          <td>Điều hướng theo mục tiêu thay vì click từng menu.</td>
+          <td>"Từ dashboard có thể đến invoices bằng state billing.invoices."</td>
+        </tr>
+        <tr>
+          <td>Delegated Auth Manager</td>
+          <td>Cấp phiên agent có quyền nhỏ hơn user và gắn với task.</td>
+          <td>"Đọc invoice được, đổi payment method thì cần user approve."</td>
+        </tr>
+        <tr>
+          <td>Memory Vault</td>
+          <td>Lưu task state, preference, site map, dữ liệu tạm và audit theo phạm vi.</td>
+          <td>"Đã tải invoice tháng 7, không cần tải lại."</td>
+        </tr>
+        <tr>
+          <td>Policy Engine</td>
+          <td>Chặn hoặc yêu cầu phê duyệt dựa trên rủi ro, quyền, chi phí, dữ liệu nhạy cảm.</td>
+          <td>"Không được commit cancel_subscription nếu chưa có approval token."</td>
+        </tr>
+        <tr>
+          <td>Visual Adapter</td>
+          <td>Render screenshot khi cần kiểm tra thị giác hoặc debug.</td>
+          <td>"Có modal xác nhận mà semantic layer chưa hiểu chắc."</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. DOM và rendering mới</h2>
+    <p>
+      DOM hiện tại nói nhiều về cấu trúc tài liệu, ít nói về ý định. Agent cần một cây có thể trả lời: node này là gì, liên quan đến dữ liệu nào, có thể làm gì với nó, action nào nguy hiểm, và trạng thái nào là nguồn sự thật.
+    </p>
+
+    <h3>Semantic node</h3>
+    <pre>{
+  "node_id": "invoice_row_2026_07",
+  "kind": "record",
+  "domain_type": "billing.invoice",
+  "label": "Invoice July 2026",
+  "data": {
+    "invoice_id": "inv_2026_07",
+    "amount": "128.00",
+    "currency": "USD",
+    "status": "paid"
+  },
+  "bindings": {
+    "source_dom": "#billing-table tr[data-id='inv_2026_07']",
+    "source_endpoint": "GET /api/invoices"
+  },
+  "available_actions": ["download_invoice_pdf", "view_invoice_detail"],
+  "confidence": 0.97
+}</pre>
+
+    <h3>Rendering không biến mất, nhưng đổi vai trò</h3>
+    <ul>
+      <li><strong>Default mode:</strong> không cần vẽ toàn bộ trang, chỉ cần chạy JS/app state và xuất semantic state.</li>
+      <li><strong>Verification mode:</strong> render ảnh khi semantic extraction chưa chắc hoặc khi cần xác nhận UI thật đang hiển thị gì.</li>
+      <li><strong>Replay mode:</strong> render lại phiên làm việc cho human audit: agent đã thấy gì, chọn gì, commit gì.</li>
+      <li><strong>Fallback mode:</strong> nếu site không hỗ trợ semantic/action manifest, browser dùng DOM + accessibility tree + vision/OCR như cầu nối tạm.</li>
+    </ul>
+
+    <div class="note">
+      Browser cho agent vẫn cần tương thích web cũ. Nhưng chuẩn tốt nhất là site tự khai báo semantic/action manifest để agent không phải đoán từ class name, màu nút hoặc vị trí trên màn hình.
+    </div>
+
+    <h2>5. Navigation trở thành task graph</h2>
+    <p>
+      Với human, navigation là "click Settings rồi Billing rồi Invoices". Với agent, navigation nên là "đưa tôi đến state có capability billing.invoice.list". Đường đi cụ thể có thể thay đổi theo UI, nhưng capability thì ổn định hơn.
+    </p>
+
+    <h3>Ví dụ task graph</h3>
+    <pre>{
+  "site": "acme-saas.example",
+  "states": [
+    {
+      "state_id": "dashboard.home",
+      "capabilities": ["account.summary", "navigation.search"]
+    },
+    {
+      "state_id": "billing.invoices",
+      "capabilities": ["billing.invoice.list", "billing.invoice.download"],
+      "requires": ["auth.scope:billing.read"]
+    },
+    {
+      "state_id": "billing.payment_method",
+      "capabilities": ["billing.payment_method.view", "billing.payment_method.update"],
+      "requires": ["auth.scope:billing.write", "approval:payment_change"]
+    }
+  ],
+  "transitions": [
+    {
+      "from": "dashboard.home",
+      "to": "billing.invoices",
+      "method": "internal_route",
+      "route": "/settings/billing/invoices",
+      "side_effect": "none"
+    }
+  ]
+}</pre>
+
+    <h3>Navigation API</h3>
+    <pre>agentBrowser.navigate.toCapability("billing.invoice.list")
+
+Response:
+{
+  "state_id": "billing.invoices",
+  "url": "https://acme-saas.example/settings/billing/invoices",
+  "side_effect": "none",
+  "confidence": 0.99,
+  "available_actions": ["download_invoice_pdf", "filter_invoices", "open_invoice"]
+}</pre>
+
+    <h2>6. Auth là ủy quyền có phạm vi</h2>
+    <p>
+      Browser hiện tại thường có cookie mạnh ngang với user. Nếu agent nắm cookie đó, mọi hành động user làm được đều có nguy cơ bị tự động hóa. Agent-native browser cần phiên ủy quyền riêng: làm task nào, được đọc/ghi gì, hết hạn khi nào, hành động nào phải hỏi lại.
+    </p>
+
+    <h3>Mẫu delegated session</h3>
+    <pre>{
+  "agent_session_id": "ags_742",
+  "human_principal": "user_123",
+  "agent_principal": "agent_invoice_helper",
+  "purpose": "download_monthly_invoices",
+  "expires_at": "2026-08-03T18:00:00+07:00",
+  "scopes": [
+    "billing.invoice.read",
+    "billing.invoice.download"
+  ],
+  "denied_scopes": [
+    "billing.payment_method.update",
+    "subscription.cancel"
+  ],
+  "approval_policy": {
+    "read": "auto",
+    "download": "auto",
+    "send_external": "ask",
+    "purchase": "ask",
+    "delete": "ask",
+    "irreversible": "ask"
+  }
+}</pre>
+
+    <h3>Auth thay đổi ở cấp sản phẩm</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tình huống</th>
+          <th>Thiết kế agent-native</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Agent đọc invoice</td>
+          <td>Cấp scope <code>billing.invoice.read</code>, không cấp quyền đổi billing.</td>
+        </tr>
+        <tr>
+          <td>Agent cập nhật địa chỉ billing</td>
+          <td>Cần scope write và preview diff trước khi commit.</td>
+        </tr>
+        <tr>
+          <td>Agent hủy subscription</td>
+          <td>Luôn cần human approval vì có side effect lớn và có thể không undo được.</td>
+        </tr>
+        <tr>
+          <td>Agent gửi email qua webmail</td>
+          <td>Preview người nhận, subject, body, attachment; commit chỉ sau approval nếu policy yêu cầu.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>7. Memory: browser có trí nhớ nhưng phải có luật</h2>
+    <p>
+      Agent làm việc tốt hơn nếu browser nhớ cấu trúc site, trạng thái task, quyết định trước đó và preference của user. Nhưng memory cũng là nơi dễ rò dữ liệu nhất. Vì vậy mỗi mẩu nhớ cần có phạm vi, nguồn, thời hạn và quyền truy cập.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Loại memory</th>
+          <th>Lưu gì</th>
+          <th>Luật an toàn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Working memory</td>
+          <td>Task hiện tại, state đang mở, action đang pending.</td>
+          <td>Xóa khi task kết thúc hoặc user yêu cầu.</td>
+        </tr>
+        <tr>
+          <td>Site memory</td>
+          <td>Map capability của website, selector ổn định, lỗi thường gặp.</td>
+          <td>Không lưu dữ liệu cá nhân nếu chỉ cần cấu trúc site.</td>
+        </tr>
+        <tr>
+          <td>Task memory</td>
+          <td>Invoice nào đã tải, form nào đã gửi, kết quả từng bước.</td>
+          <td>Gắn với task id và audit log.</td>
+        </tr>
+        <tr>
+          <td>Policy memory</td>
+          <td>Giới hạn chi tiêu, hành động cần hỏi, domain bị chặn.</td>
+          <td>User chỉnh được, agent không tự nới quyền.</td>
+        </tr>
+        <tr>
+          <td>Audit memory</td>
+          <td>Agent đã quan sát gì, vì sao chọn action, commit lúc nào.</td>
+          <td>Append-only, có retention và xuất báo cáo được.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Memory record mẫu</h3>
+    <pre>{
+  "memory_id": "mem_884",
+  "scope": "task:download_invoices_aug_2026",
+  "type": "task_result",
+  "content": {
+    "downloaded": ["inv_2026_06", "inv_2026_07"],
+    "skipped": ["inv_2026_08_draft"]
+  },
+  "provenance": {
+    "site": "acme-saas.example",
+    "observed_state": "billing.invoices",
+    "action_id": "act_221"
+  },
+  "expires_at": "2026-09-03T00:00:00+07:00",
+  "visibility": "human_and_agent",
+  "contains_sensitive_data": false
+}</pre>
+
+    <h2>8. Agent-facing interface</h2>
+    <p>
+      Interface chính không nên là WebDriver kiểu click/type. Nó nên là một API có vòng đời: observe, plan, inspect, preview, commit, verify, undo và audit.
+    </p>
+
+    <h3>Core API surface</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Mục đích</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>observe()</code></td>
+          <td>Lấy semantic state hiện tại.</td>
+          <td>Trả về state tree, capabilities, pending risks.</td>
+        </tr>
+        <tr>
+          <td><code>navigate.toCapability()</code></td>
+          <td>Đi tới trạng thái có năng lực cần dùng.</td>
+          <td>Không cần biết menu nằm ở đâu.</td>
+        </tr>
+        <tr>
+          <td><code>actions.list()</code></td>
+          <td>Liệt kê action agent có thể làm trong state hiện tại.</td>
+          <td>Gồm action site khai báo và action browser suy luận.</td>
+        </tr>
+        <tr>
+          <td><code>actions.inspect()</code></td>
+          <td>Xem input schema, effect, risk, permission.</td>
+          <td>Không commit gì ở bước này.</td>
+        </tr>
+        <tr>
+          <td><code>actions.preview()</code></td>
+          <td>Tạo diff/result dự kiến trước khi làm.</td>
+          <td>Cần cho write/delete/purchase/send.</td>
+        </tr>
+        <tr>
+          <td><code>actions.commit()</code></td>
+          <td>Thực hiện action đã preview hoặc action read-only.</td>
+          <td>Policy engine có thể chặn hoặc yêu cầu approval token.</td>
+        </tr>
+        <tr>
+          <td><code>actions.undo()</code></td>
+          <td>Quay lại bằng undo thật hoặc compensating action.</td>
+          <td>Không phải action nào cũng undo được.</td>
+        </tr>
+        <tr>
+          <td><code>audit.explain()</code></td>
+          <td>Giải thích agent đã làm gì và vì sao.</td>
+          <td>Dùng cho user review hoặc compliance.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Action descriptor</h3>
+    <pre>{
+  "action_id": "download_invoice_pdf",
+  "label": "Download invoice PDF",
+  "capability": "billing.invoice.download",
+  "input_schema": {
+    "type": "object",
+    "required": ["invoice_id"],
+    "properties": {
+      "invoice_id": { "type": "string" }
+    }
+  },
+  "effect": {
+    "kind": "read_export",
+    "side_effects": ["file_download"],
+    "external_visibility": "none",
+    "undo": "delete_downloaded_file"
+  },
+  "risk": "low",
+  "requires": ["billing.invoice.download"],
+  "approval_required": false,
+  "result_schema": {
+    "file_path": "string",
+    "sha256": "string"
+  }
+}</pre>
+
+    <h3>Action lifecycle</h3>
+    <pre class="flow">Agent observes state
+  -> Browser returns semantic tree and available actions
+  -> Agent inspects chosen action
+  -> Browser returns schema, effect, risk, permissions
+  -> Agent prepares arguments
+  -> Browser previews effect
+  -> Policy engine approves, denies, or asks human
+  -> Agent commits action
+  -> Browser verifies result
+  -> Memory vault records task state
+  -> Audit log records evidence</pre>
+
+    <h2>9. Ví dụ cụ thể 1: tải hóa đơn tháng 7</h2>
+    <p>
+      Với browser truyền thống, agent sẽ vào dashboard, click menu billing, đọc bảng bằng selector, click nút download. Với agent-native browser, agent yêu cầu capability và dùng action có schema.
+    </p>
+
+    <h3>Agent gọi API</h3>
+    <pre>browser.navigate.toCapability("billing.invoice.list")
+
+state = browser.observe({
+  "include": ["semantic_tree", "actions", "records"]
+})
+
+browser.actions.commit("download_invoice_pdf", {
+  "invoice_id": "inv_2026_07"
+})</pre>
+
+    <h3>Kết quả</h3>
+    <pre>{
+  "status": "success",
+  "action_id": "download_invoice_pdf",
+  "result": {
+    "file_path": "/downloads/acme-invoice-2026-07.pdf",
+    "sha256": "a7e3...",
+    "source_record": "invoice_row_2026_07"
+  },
+  "audit": {
+    "actor": "agent_invoice_helper",
+    "human_principal": "user_123",
+    "reason": "User requested monthly invoice download",
+    "side_effect": "file_download"
+  }
+}</pre>
+
+    <h2>10. Ví dụ cụ thể 2: đổi địa chỉ billing</h2>
+    <p>
+      Đây là action ghi dữ liệu. Agent không nên gửi form ngay. Nó phải preview diff, kiểm tra policy, sau đó commit nếu phiên có quyền hoặc có approval.
+    </p>
+
+    <h3>Preview trước khi commit</h3>
+    <pre>browser.actions.preview("update_billing_address", {
+  "company": "VFS",
+  "line1": "Technopark",
+  "city": "Hung Yen",
+  "country": "VN"
+})</pre>
+
+    <h3>Response</h3>
+    <pre>{
+  "status": "needs_approval",
+  "risk": "medium",
+  "effect": {
+    "kind": "write_account_data",
+    "changes": [
+      {
+        "field": "billing_address.line1",
+        "from": "467 Linh Nam",
+        "to": "Technopark"
+      },
+      {
+        "field": "billing_address.city",
+        "from": "Ha Noi",
+        "to": "Hung Yen"
+      }
+    ],
+    "external_visibility": "vendor_account",
+    "undo": "restore_previous_address"
+  },
+  "approval_request": {
+    "approval_id": "apr_532",
+    "message": "Agent muốn đổi địa chỉ billing của tài khoản Acme SaaS."
+  }
+}</pre>
+
+    <p>
+      Sau khi user duyệt, browser phát hành approval token ngắn hạn. Agent chỉ dùng token đó cho đúng action, đúng payload đã preview.
+    </p>
+
+    <h2>11. Ví dụ cụ thể 3: hủy subscription</h2>
+    <p>
+      Hủy gói là ví dụ tốt để thấy khác biệt giữa click automation và action API. Nếu agent chỉ click, nó có thể bị dark pattern, modal giữ chân, hoặc nút có chữ mập mờ làm sai ý định. Action API bắt site khai báo hậu quả.
+    </p>
+
+    <h3>Inspect action</h3>
+    <pre>browser.actions.inspect("cancel_subscription")</pre>
+
+    <h3>Descriptor trả về</h3>
+    <pre>{
+  "action_id": "cancel_subscription",
+  "capability": "subscription.cancel",
+  "risk": "high",
+  "effect": {
+    "kind": "irreversible_or_costly",
+    "side_effects": [
+      "service_access_ends_at_period_end",
+      "team_members_lose_premium_features",
+      "retention_email_sent"
+    ],
+    "undo": "not_guaranteed"
+  },
+  "requires": [
+    "subscription.cancel",
+    "approval:human_explicit"
+  ],
+  "approval_required": true,
+  "confirmation_phrase": "Cancel Acme Pro subscription"
+}</pre>
+
+    <div class="note">
+      Một browser thật cho agent nên coi "hủy", "mua", "gửi", "xóa", "mời user", "đổi quyền", "công khai dữ liệu" là nhóm action cần effect model rõ ràng. Không được để agent suy luận hậu quả từ text trên nút.
+    </div>
+
+    <h2>12. Kết luận thiết kế</h2>
+    <p>
+      Khi primary user là agent, browser phải đổi từ "máy hiển thị trang" thành "máy vận hành trạng thái và hành động". DOM cần giàu ý nghĩa hơn. Rendering không còn là trung tâm. Navigation phải đi theo capability và task. Auth phải là delegated permission. Memory phải được quản trị như tài sản nhạy cảm. Action API phải typed, inspectable, previewable, committable và auditable.
+    </p>
+
+    <p>
+      Câu hỏi thiết kế không còn là "agent có click được nút này không?". Câu hỏi đúng là: "agent có hiểu hành động này nghĩa là gì, có quyền làm nó không, hậu quả là gì, có cần hỏi người dùng không, và sau này có giải thích lại được không?".
+    </p>
+
+    <p class="meta">Day 14 · Hoàng Thanh Chiến</p>
+  </main>
+</body>
+</html>
