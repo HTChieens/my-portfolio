@@ -1,0 +1,3 @@
+data: {"type":"data-chatbotConvoId","data":"6a618dbf7ecdb1d0e03d7f9e","transient":true}
+data: {"type":"error","errorText":"An error occurred while generating the agent response."}
+data: [DONE]
