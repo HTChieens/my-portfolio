@@ -277,34 +277,6 @@
       white-space: pre-wrap;
     }
 
-    .download-links {
-      display: flex;
-      gap: 16px;
-      margin-top: 16px;
-      flex-wrap: wrap;
-    }
-
-    .btn-file {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: 10px;
-      background: #f1f5f9;
-      color: #0f172a;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      border: 1px solid var(--card-border);
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-
-    .btn-file:hover {
-      background: #e2e8f0;
-      color: var(--primary);
-    }
-
     /* Embedded Full Code Viewer Section */
     .source-viewer {
       background: #090d16;
@@ -533,6 +505,25 @@ def get_order_details(order_id: str): ...
       <h2>5. Minh chứng Hoàn thành & Kiểm thử</h2>
       <p>Đã thực hiện kiểm thử trực tiếp mã nguồn bằng Python. Agent trải qua 3 vòng lặp ReAct (bao gồm 5 thao tác xử lý chi tiết) để hoàn thành tác vụ tra cứu đơn hàng và tính tổng hóa đơn.</p>
 
+    </div>
+
+    <!-- LIVE DEMO SIMULATION (NOW BEFORE SOURCE CODE VIEWER) -->
+    <div class="demo-section">
+      <div class="demo-header">
+        <div>
+          <h3 style="margin: 0 0 4px; font-size: 18px; color: #0f172a;">🎮 Trình Mô Phỏng Chạy Agent Trực Tiếp (Live Demo)</h3>
+          <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Mô phỏng lại luồng chạy thực tế của script <code>mini_pal.py</code> trên giao diện Web.</p>
+        </div>
+        <button id="runBtn" class="btn-run" onclick="runSimulation()">
+          <span>▶ Chạy Mô Phỏng Agent</span>
+        </button>
+      </div>
+
+      <div id="logContainer" class="step-log">
+        <div style="text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px;">
+          Nhấn nút <strong>"▶ Chạy Mô Phỏng Agent"</strong> để xem quá trình Agent suy luận và gọi Tool từng bước.
+        </div>
+      </div>
     </div>
 
     <!-- EMBEDDED SOURCE CODE VIEWER SECTION -->
@@ -809,25 +800,6 @@ if __name__ == "__main__":
     # Inspect final Memory state
     agent.memory.print_history()
 </div>
-    </div>
-
-    <!-- LIVE DEMO SIMULATION -->
-    <div class="demo-section">
-      <div class="demo-header">
-        <div>
-          <h3 style="margin: 0 0 4px; font-size: 18px; color: #0f172a;">🎮 Trình Mô Phỏng Chạy Agent Trực Tiếp (Live Demo)</h3>
-          <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Mô phỏng lại luồng chạy thực tế của script <code>mini_pal.py</code> trên giao diện Web.</p>
-        </div>
-        <button id="runBtn" class="btn-run" onclick="runSimulation()">
-          <span>▶ Chạy Mô Phỏng Agent</span>
-        </button>
-      </div>
-
-      <div id="logContainer" class="step-log">
-        <div style="text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px;">
-          Nhấn nút <strong>"▶ Chạy Mô Phỏng Agent"</strong> để xem quá trình Agent suy luận và gọi Tool từng bước.
-        </div>
-      </div>
     </div>
 
   </div>
