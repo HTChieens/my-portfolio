@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 18 - Báo Cáo Thiết Kế Mini-PAL (Minimal Agent Runtime) | Hoàng Thanh Chiến</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fbfaf7;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.08);
+      --accent: #6366f1;
+      --success: #059669;
+      --warning: #d97706;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+      --table-header: #f1f5f9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.68;
+      padding-bottom: 80px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Navigation Back Link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      transition: transform 0.2s ease;
+    }
+    .back-link:hover {
+      transform: translateX(-4px);
+    }
+
+    /* Header & Meta */
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--primary-glow);
+      color: var(--primary);
+      border: 1px solid rgba(2, 132, 199, 0.2);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.28;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    .meta-info {
+      display: flex;
+      gap: 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Section Typography */
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 36px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary-glow);
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 24px 0 12px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: #334155;
+    }
+
+    ul, ol {
+      margin: 12px 0 20px;
+      padding-left: 24px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    /* Content Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+    }
+
+    /* Vector SVG Flowchart Wrapper */
+    .svg-flowchart-box {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 24px 16px;
+      margin: 24px 0;
+      border: 1px solid #1e293b;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      overflow-x: auto;
+    }
+
+    /* Code Blocks & Tables */
+    .code-box {
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      padding: 20px;
+      border-radius: 12px;
+      overflow-x: auto;
+      line-height: 1.5;
+      margin: 16px 0;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .report-table th {
+      background: var(--table-header);
+      color: #0f172a;
+      font-weight: 700;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .report-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border);
+      color: #334155;
+    }
+
+    .report-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Interactive Simulator Card */
+    .demo-section {
+      background: #ffffff;
+      border: 2px solid #e0f2fe;
+      border-radius: 20px;
+      padding: 28px;
+      margin: 32px 0;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.05);
+    }
+
+    .demo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .btn-run {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #ffffff;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-run:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+    }
+
+    .step-log {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .step-item {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .step-item.tool-exec {
+      border-left-color: var(--warning);
+      background: #fffbeb;
+    }
+
+    .step-item.final-out {
+      border-left-color: var(--success);
+      background: #ecfdf5;
+    }
+
+    .step-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .step-content {
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .download-links {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: #0f172a;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid var(--card-border);
+      transition: all 0.2s ease;
+    }
+
+    .btn-file:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="../../index.html" class="back-link">← Quay lại trang chủ Portfolio</a>
+    
+    <div>
+      <span class="badge">DAY 18 • AGENT HARNESS & RUNTIME</span>
+      <h1>Báo Cáo Thiết Kế: Mini-PAL (Minimal Agent Runtime)</h1>
+      <div class="meta-info">
+        <span class="meta-item">👤 <strong>Tác giả:</strong> Hoàng Thanh Chiến</span>
+        <span class="meta-item">📅 <strong>Ngày thực hiện:</strong> Tháng 8, 2026</span>
+        <span class="meta-item">🎯 <strong>Nhiệm vụ:</strong> Day 18 - Minimal Agent Runtime</span>
+      </div>
+    </div>
+
+    <!-- MAIN DESIGN NOTE CONTENT -->
+    <div class="card">
+      
+      <h2>1. Tổng quan & Mục tiêu</h2>
+      <p>Tài liệu này trình bày thiết kế và cài đặt hệ thống <strong>Mini-PAL</strong> — một Agent Runtime tối giản (Engine lõi) vận hành theo mô hình suy luận ReAct (Reasoning + Acting).</p>
+      <p>Không phụ thuộc vào các framework bên ngoài cồng kềnh, hệ thống trực tiếp điều phối 3 thành phần cốt lõi:</p>
+      <ul>
+        <li><strong>Orchestration Loop</strong>: Vòng lặp điều phối đa bước với cơ chế kiểm tra điều kiện dừng an toàn.</li>
+        <li><strong>Tool-Calling Engine</strong>: Cơ chế đăng ký và thực thi công cụ có cách ly lỗi (Error Boundary).</li>
+        <li><strong>Memory Manager</strong>: Quản lý lịch sử hội thoại có cấu trúc ngữ cảnh.</li>
+      </ul>
+
+      <h2>2. Kiến trúc Vòng lặp Điều phối (Orchestration Loop)</h2>
+      <p>Vòng lặp điều phối đóng vai trò là động cơ chính xử lý tương tác giữa người dùng, LLM và môi trường thực thi công cụ.</p>
+
+      <!-- CRISP VECTOR SVG FLOWCHART WITH EXPLICIT LOOP-BACK ARROW -->
+      <div class="svg-flowchart-box">
+        <svg viewBox="0 0 760 410" width="100%" height="100%" style="min-width: 650px;">
+          <defs>
+            <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
+            </marker>
+            <marker id="arrow-orange" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+            </marker>
+          </defs>
+
+          <!-- Node 1: User Prompt -->
+          <g transform="translate(230, 15)">
+            <rect width="300" height="42" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+            <text x="150" y="26" text-anchor="middle" fill="#f8fafc" font-size="13.5" font-weight="600" font-family="Plus Jakarta Sans">📥 Yêu cầu từ Người dùng (User Prompt)</text>
+          </g>
+
+          <!-- Arrow 1 -> 2 -->
+          <line x1="380" y1="57" x2="380" y2="81" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+          <!-- Node 2: Save to Memory -->
+          <g transform="translate(230, 83)">
+            <rect width="300" height="42" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+            <text x="150" y="26" text-anchor="middle" fill="#f8fafc" font-size="13.5" font-weight="600" font-family="Plus Jakarta Sans">💾 Thêm Prompt vào Context Memory</text>
+          </g>
+
+          <!-- Arrow 2 -> 3 -->
+          <line x1="380" y1="125" x2="380" y2="149" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+          <!-- Node 3: LLM Inference (LOOP RE-ENTRY TARGET) -->
+          <g transform="translate(190, 151)">
+            <rect width="380" height="48" rx="10" fill="rgba(2, 132, 199, 0.25)" stroke="#38bdf8" stroke-width="2"/>
+            <text x="190" y="29" text-anchor="middle" fill="#38bdf8" font-size="14.5" font-weight="700" font-family="Plus Jakarta Sans">🧠 Gửi Memory + Tool Schemas cho LLM</text>
+          </g>
+
+          <!-- Branch Arrows from LLM -->
+          <!-- Down Left to Tool Branch -->
+          <path d="M 290 199 L 290 222 L 190 222 L 190 250" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-orange)"/>
+          
+          <!-- Down Right to Final Answer Branch -->
+          <path d="M 470 199 L 470 222 L 570 222 L 570 250" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+          <!-- Branch Labels -->
+          <rect x="110" y="211" width="160" height="22" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1"/>
+          <text x="190" y="226" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700" font-family="Plus Jakarta Sans">TRƯỜNG HỢP A: GỌI TOOL</text>
+
+          <rect x="490" y="211" width="160" height="22" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+          <text x="570" y="226" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="Plus Jakarta Sans">TRƯỜNG HỢP B: KẾT QUẢ CUỐI</text>
+
+          <!-- LEFT BRANCH (Tool Execution & Curve Loop Back) -->
+          <g transform="translate(60, 255)">
+            <rect width="260" height="42" rx="8" fill="rgba(217, 119, 6, 0.15)" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="130" y="26" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="600" font-family="Plus Jakarta Sans">🛠️ Thực thi Tool An toàn (Catch Error)</text>
+          </g>
+
+          <line x1="190" y1="297" x2="190" y2="321" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+          <g transform="translate(60, 323)">
+            <rect width="260" height="42" rx="8" fill="rgba(217, 119, 6, 0.15)" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="130" y="26" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="600" font-family="Plus Jakarta Sans">📥 Đẩy kết quả Tool vào Memory</text>
+          </g>
+
+          <!-- CURVED LOOP-BACK ARROW WITH LABEL -->
+          <path d="M 60 344 C 10 344, 10 175, 182 175" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrow-orange)"/>
+          
+          <g transform="translate(12, 245)">
+            <rect width="105" height="24" rx="5" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="52.5" y="16.5" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="800" font-family="Plus Jakarta Sans">🔄 VÒNG LẶP TIẾP</text>
+          </g>
+
+          <!-- RIGHT BRANCH (Final Answer & Exit) -->
+          <g transform="translate(440, 255)">
+            <rect width="260" height="42" rx="8" fill="rgba(5, 150, 105, 0.15)" stroke="#10b981" stroke-width="1.5"/>
+            <text x="130" y="26" text-anchor="middle" fill="#34d399" font-size="13" font-weight="600" font-family="Plus Jakarta Sans">💬 Thêm phản hồi vào Memory</text>
+          </g>
+
+          <line x1="570" y1="297" x2="570" y2="321" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+          <g transform="translate(440, 323)">
+            <rect width="260" height="42" rx="8" fill="rgba(5, 150, 105, 0.25)" stroke="#10b981" stroke-width="2"/>
+            <text x="130" y="26" text-anchor="middle" fill="#34d399" font-size="14" font-weight="700" font-family="Plus Jakarta Sans">✅ Hoàn thành & Trả kết quả</text>
+          </g>
+        </svg>
+      </div>
+
+      <h3>Các điểm trọng tâm trong thiết kế:</h3>
+      <ul>
+        <li><strong>Giới hạn số bước (Max Steps Safeguard)</strong>: Thiết lập giới hạn <code>max_steps = 5</code> nhằm đảm bảo hệ thống không rơi vào vòng lặp vô tận khi LLM gặp sự cố suy luận.</li>
+        <li><strong>Kiểm soát trạng thái</strong>: Tại mỗi vòng lặp, runtime kiểm tra:
+          <ul>
+            <li>Nếu xuất hiện <code>tool_calls</code> → Chuyển sang tiến trình chạy Tool.</li>
+            <li>Phản hồi dạng văn bản thuần không chứa tool call → Coi là kết quả cuối cùng và kết thúc vòng lặp.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h2>3. Giao diện Công cụ & Cơ chế Thực thi (Tool Interface)</h2>
+      <p>Lớp <code>ToolRegistry</code> được thiết kế để tách biệt định nghĩa công cụ và logic thực thi:</p>
+
+      <div class="code-box">
+@registry.register(
+    name="get_order_details",
+    description="Tra cứu thông tin chi tiết đơn hàng.",
+    schema={"type": "object", "properties": {"order_id": {"type": "string"}}}
+)
+def get_order_details(order_id: str): ...
+      </div>
+
+      <p><strong>Error Boundaries (Bảo vệ cách ly lỗi)</strong>: Toàn bộ quá trình thực thi Tool được bọc trong khối <code>try...except</code>. Nếu Tool phát sinh lỗi, thông báo lỗi được biến đổi thành chuỗi JSON phản hồi lại cho LLM. Nhờ đó, LLM có thể tự điều chỉnh suy luận ở bước sau thay vì làm dừng chương trình.</p>
+
+      <h2>4. Mô hình Quản lý Bộ nhớ (Memory Management)</h2>
+      <p>Bộ nhớ được quản lý theo mô hình hàng đợi tin nhắn nối tiếp có phân định vai trò (<code>role</code>):</p>
+
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Bước</th>
+            <th>Role</th>
+            <th>Nội dung</th>
+            <th>Mục đích</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>0</strong></td>
+            <td><code>system</code></td>
+            <td>Lệnh hệ thống (System Prompt)</td>
+            <td>Định hình tính cách & quy tắc làm việc</td>
+          </tr>
+          <tr>
+            <td><strong>1</strong></td>
+            <td><code>user</code></td>
+            <td>Yêu cầu của người dùng</td>
+            <td>Mục tiêu bài toán cần giải quyết</td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td><code>assistant</code></td>
+            <td>Suy luận & Ý định gọi Tool</td>
+            <td>Ghi lại bước trung gian của Agent</td>
+          </tr>
+          <tr>
+            <td><strong>3</strong></td>
+            <td><code>tool</code></td>
+            <td>Kết quả JSON thực thi Tool</td>
+            <td>Cung cấp dữ liệu thực tế cho Agent</td>
+          </tr>
+          <tr>
+            <td><strong>4</strong></td>
+            <td><code>assistant</code></td>
+            <td>Phản hồi tổng hợp cuối cùng</td>
+            <td>Trả kết quả hoàn chỉnh cho người dùng</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>5. Minh chứng Hoàn thành & Kiểm thử</h2>
+      <p>Đã thực hiện kiểm thử trực tiếp mã nguồn bằng Python. Agent trải qua 3 vòng lặp ReAct (bao gồm 5 thao tác xử lý chi tiết) để hoàn thành tác vụ tra cứu đơn hàng và tính tổng hóa đơn.</p>
+
+      <div class="download-links">
+        <a href="mini_pal.py" class="btn-file">🐍 Xem mã nguồn core mini_pal.py</a>
+        <a href="design_note.md" class="btn-file">📄 File thiết kế gốc design_note.md</a>
+      </div>
+
+    </div>
+
+    <!-- LIVE DEMO SIMULATION -->
+    <div class="demo-section">
+      <div class="demo-header">
+        <div>
+          <h3 style="margin: 0 0 4px; font-size: 18px; color: #0f172a;">🎮 Trình Mô Phỏng Chạy Agent Trực Tiếp (Live Demo)</h3>
+          <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Mô phỏng lại luồng chạy thực tế của script <code>mini_pal.py</code> trên giao diện Web.</p>
+        </div>
+        <button id="runBtn" class="btn-run" onclick="runSimulation()">
+          <span>▶ Chạy Mô Phỏng Agent</span>
+        </button>
+      </div>
+
+      <div id="logContainer" class="step-log">
+        <div style="text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px;">
+          Nhấn nút <strong>"▶ Chạy Mô Phỏng Agent"</strong> để xem quá trình Agent suy luận và gọi Tool từng bước.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const stepsData = [
+      {
+        title: "STEP 1/5 • TURN 1: AGENT REASONING",
+        content: "🧠 [Thought]: Người dùng muốn kiểm tra đơn hàng ORD-101 và áp mã giảm giá HE2026.\nTrước tiên tôi cần tra cứu thông tin đơn hàng ORD-101.",
+        class: ""
+      },
+      {
+        title: "STEP 2/5 • TURN 1: TOOL EXECUTION",
+        content: "🛠️ Executing: get_order_details({'order_id': 'ORD-101'})\n📥 Result: {'items': [{'name': 'Áo sơ mi Premium', 'price': 450000}, {'name': 'Quần Tây Khaki', 'price': 550000}], 'status': 'pending'}",
+        class: "tool-exec"
+      },
+      {
+        title: "STEP 3/5 • TURN 2: AGENT REASONING",
+        content: "🧠 [Thought]: Đơn hàng ORD-101 có tổng subtotal là 1,000,000 VNĐ.\nBây giờ tôi sẽ gọi tool apply_discount để áp dụng mã HE2026.",
+        class: ""
+      },
+      {
+        title: "STEP 4/5 • TURN 2: TOOL EXECUTION",
+        content: "🛠️ Executing: apply_discount({'subtotal': 1000000, 'promo_code': 'HE2026'})\n📥 Result: {'subtotal': 1000000, 'promo_code': 'HE2026', 'discount_percent': '20%', 'discount_amount': 200000.0, 'final_price': 800000.0}",
+        class: "tool-exec"
+      },
+      {
+        title: "STEP 5/5 • TURN 3: FINAL OUTPUT",
+        content: "🎉 **Báo cáo đơn hàng ORD-101**:\n- **Danh sách sản phẩm**: Áo sơ mi Premium (450,000đ) & Quần Tây Khaki (550,000đ)\n- **Tạm tính (Subtotal)**: 1,000,000 VNĐ\n- **Mã giảm giá áp dụng**: HE2026 (Giảm 20% = -200,000 VNĐ)\n- **Tổng thanh toán cuối cùng**: **800,000 VNĐ**",
+        class: "final-out"
+      }
+    ];
+
+    async function runSimulation() {
+      const btn = document.getElementById("runBtn");
+      const container = document.getElementById("logContainer");
+      btn.disabled = true;
+      container.innerHTML = "";
+
+      for (let i = 0; i < stepsData.length; i++) {
+        const item = stepsData[i];
+        const el = document.createElement("div");
+        el.className = `step-item ${item.class}`;
+        el.innerHTML = `
+          <div class="step-title">
+            <span>${item.title}</span>
+            <span>MEMORY STATE: ${i + 2} MESSAGES</span>
+          </div>
+          <div class="step-content">${item.content}</div>
+        `;
+        container.appendChild(el);
+        await new Promise(r => setTimeout(r, 600));
+      }
+
+      btn.disabled = false;
+    }
+  </script>
+</body>
+</html>
