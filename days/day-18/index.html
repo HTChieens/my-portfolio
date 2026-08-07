@@ -132,7 +132,7 @@
       margin-bottom: 8px;
     }
 
-    /* Content Cards */
+    /* Unified Content Card */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -196,14 +196,13 @@
       border-bottom: none;
     }
 
-    /* Interactive Simulator Card */
+    /* Interactive Simulator Card Inside Card */
     .demo-section {
-      background: #ffffff;
-      border: 2px solid #e0f2fe;
-      border-radius: 20px;
-      padding: 28px;
-      margin: 32px 0;
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.05);
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
     }
 
     .demo-header {
@@ -244,7 +243,7 @@
     }
 
     .step-item {
-      background: #f8fafc;
+      background: #ffffff;
       border: 1px solid #cbd5e1;
       border-left: 4px solid var(--primary);
       border-radius: 10px;
@@ -282,9 +281,9 @@
       background: #090d16;
       border-radius: 16px;
       border: 1px solid #1e293b;
-      margin: 32px 0;
+      margin: 24px 0 0;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
 
     .source-viewer-header {
@@ -305,7 +304,7 @@
 
     .source-code-body {
       padding: 20px;
-      max-height: 600px;
+      max-height: 550px;
       overflow-y: auto;
       font-family: 'Fira Code', monospace;
       font-size: 13px;
@@ -330,7 +329,7 @@
       </div>
     </div>
 
-    <!-- MAIN DESIGN NOTE CONTENT -->
+    <!-- UNIFIED MAIN CARD CONTAINER -->
     <div class="card">
       
       <h2>1. Tổng quan & Mục tiêu</h2>
@@ -505,34 +504,32 @@ def get_order_details(order_id: str): ...
       <h2>5. Minh chứng Hoàn thành & Kiểm thử</h2>
       <p>Đã thực hiện kiểm thử trực tiếp mã nguồn bằng Python. Agent trải qua 3 vòng lặp ReAct (bao gồm 5 thao tác xử lý chi tiết) để hoàn thành tác vụ tra cứu đơn hàng và tính tổng hóa đơn.</p>
 
-    </div>
-
-    <!-- LIVE DEMO SIMULATION (NOW BEFORE SOURCE CODE VIEWER) -->
-    <div class="demo-section">
-      <div class="demo-header">
-        <div>
-          <h3 style="margin: 0 0 4px; font-size: 18px; color: #0f172a;">🎮 Trình Mô Phỏng Chạy Agent Trực Tiếp (Live Demo)</h3>
-          <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Mô phỏng lại luồng chạy thực tế của script <code>mini_pal.py</code> trên giao diện Web.</p>
+      <!-- LIVE DEMO SIMULATION (INTEGRATED SEAMLESSLY INSIDE MAIN CARD) -->
+      <div class="demo-section">
+        <div class="demo-header">
+          <div>
+            <h3 style="margin: 0 0 4px; font-size: 18px; color: #0f172a;">🎮 Trình Mô Phỏng Chạy Agent Trực Tiếp (Live Demo)</h3>
+            <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Mô phỏng lại luồng chạy thực tế của script <code>mini_pal.py</code> trên giao diện Web.</p>
+          </div>
+          <button id="runBtn" class="btn-run" onclick="runSimulation()">
+            <span>▶ Chạy Mô Phỏng Agent</span>
+          </button>
         </div>
-        <button id="runBtn" class="btn-run" onclick="runSimulation()">
-          <span>▶ Chạy Mô Phỏng Agent</span>
-        </button>
-      </div>
 
-      <div id="logContainer" class="step-log">
-        <div style="text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px;">
-          Nhấn nút <strong>"▶ Chạy Mô Phỏng Agent"</strong> để xem quá trình Agent suy luận và gọi Tool từng bước.
+        <div id="logContainer" class="step-log">
+          <div style="text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px;">
+            Nhấn nút <strong>"▶ Chạy Mô Phỏng Agent"</strong> để xem quá trình Agent suy luận và gọi Tool từng bước.
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- EMBEDDED SOURCE CODE VIEWER SECTION -->
-    <div id="source-code" class="source-viewer">
-      <div class="source-viewer-header">
-        <span class="source-viewer-title">🐍 mini_pal.py — Python Source Code</span>
-        <a href="https://github.com/HTChieens/my-portfolio/blob/main/days/day-18/mini_pal.py" target="_blank" style="color: #38bdf8; font-size: 13px; text-decoration: none; font-weight: 600;">Mở trên GitHub ↗</a>
-      </div>
-      <div class="source-code-body">"""
+      <!-- EMBEDDED SOURCE CODE VIEWER SECTION (INTEGRATED SEAMLESSLY INSIDE MAIN CARD) -->
+      <div id="source-code" class="source-viewer">
+        <div class="source-viewer-header">
+          <span class="source-viewer-title">🐍 mini_pal.py — Python Source Code</span>
+          <a href="https://github.com/HTChieens/my-portfolio/blob/main/days/day-18/mini_pal.py" target="_blank" style="color: #38bdf8; font-size: 13px; text-decoration: none; font-weight: 600;">Mở trên GitHub ↗</a>
+        </div>
+        <div class="source-code-body">"""
 Mini-PAL: Minimal Agent Runtime (Day 18 Task)
 Tác giả: Hoàng Thanh Chiến
 Cấu trúc: Orchestration Loop + Tool-Calling Engine + Conversation Memory
@@ -800,6 +797,8 @@ if __name__ == "__main__":
     # Inspect final Memory state
     agent.memory.print_history()
 </div>
+      </div>
+
     </div>
 
   </div>
