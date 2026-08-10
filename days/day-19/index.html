@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 19 - Memory & Context Architecture | Hoàng Thanh Chiến</title>
+  <style>
+    :root {
+      --bg: #fbfaf7;
+      --paper: #ffffff;
+      --ink: #1f2933;
+      --muted: #5b6470;
+      --line: #d7d2c8;
+      --soft: #f0ede7;
+      --blue: #315c7c;
+      --green: #2f6f5e;
+      --amber: #8a5a12;
+      --red: #9a3d35;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.68;
+    }
+
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 42px 24px 76px;
+    }
+
+    a {
+      color: var(--ink);
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 18px 0 12px;
+      font-size: 30px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      margin: 42px 0 10px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      font-size: 22px;
+      line-height: 1.28;
+    }
+
+    h3 {
+      margin: 24px 0 8px;
+      font-size: 17.5px;
+    }
+
+    p {
+      max-width: 900px;
+      margin: 8px 0 14px;
+    }
+
+    ul,
+    ol {
+      max-width: 920px;
+      margin: 8px 0 18px;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    table {
+      width: 100%;
+      margin: 16px 0 26px;
+      border-collapse: collapse;
+      background: var(--paper);
+      font-size: 14.5px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--soft);
+      font-weight: 700;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    code {
+      padding: 1px 4px;
+      background: var(--soft);
+      border-radius: 3px;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 14px;
+      text-decoration: none;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .thesis,
+    .callout {
+      max-width: 920px;
+      margin: 18px 0 20px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--blue);
+      background: var(--paper);
+    }
+
+    .callout.green {
+      border-left-color: var(--green);
+      background: #f4faf4;
+    }
+
+    .callout.amber {
+      border-left-color: var(--amber);
+      background: #fff8eb;
+    }
+
+    .callout.red {
+      border-left-color: var(--red);
+      background: #fff5f5;
+    }
+
+    .flow {
+      max-width: 960px;
+      white-space: pre-wrap;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      .back-link {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back-link" href="../../vinsmart-log.html">&larr; Quay lại nhật ký VSF</a>
+
+    <p class="meta">Day 19 · Agent Memory & Context Architecture · Hoàng Thanh Chiến · 10/08/2026</p>
+    <h1>Báo cáo Day 19: Memory &amp; Context Architecture cho Long-Running Agents trên PAL</h1>
+    <h2>Deliverable 1: Architecture</h2>
+
+
+    <pre class="flow">[1] Agent Run
+    User hỏi / workflow chạy / webhook gọi agent
+        |
+        v
+[2] Event Capture + Raw Trace
+    Lưu tin nhắn, tool result, file, approval, provenance
+        |
+        v
+[3] Memory Processing
+    Summarization, fact extraction, task state update
+        |
+        v
+[4] Governed Memory Store
+    Short-term memory | Task state | User/entity memory
+    Workflow memory   | Tool evidence | RAG/Knowledge
+        |
+        v
+[5] Retrieval + Context Builder
+    Lấy đúng memory liên quan, nén theo token budget,
+    sắp xếp theo độ mới/độ tin cậy/quyền truy cập
+        |
+        v
+[6] LLM Prompt Context
+    Context ngắn, đúng việc, có nguồn, tránh context-rot</pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Bước</th>
+          <th>Thành phần</th>
+          <th>Nhiệm vụ chính</th>
+          <th>Vì sao cần?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Agent Run</strong></td>
+          <td>Agent nhận user request, trigger, schedule hoặc webhook.</td>
+          <td>Xác định mục tiêu hiện tại trước khi lấy memory.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Raw Trace</strong></td>
+          <td>Lưu transcript, tool payload, file, approval và provenance.</td>
+          <td>Giữ bằng chứng gốc để audit, debug hoặc rebuild summary.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Memory Processing</strong></td>
+          <td>Tóm tắt, rút facts, cập nhật task state.</td>
+          <td>Biến lịch sử dài thành memory dùng lại được.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Memory Store</strong></td>
+          <td>Lưu short-term memory, task state, user/entity memory, workflow memory, tool evidence, RAG.</td>
+          <td>Tách rõ loại memory để không trộn lẫn mọi thứ vào chat history.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Retrieval + Context Builder</strong></td>
+          <td>Lấy phần liên quan, kiểm tra freshness, nén theo token budget và sắp xếp vào prompt.</td>
+          <td>Giảm cost/latency và tăng quality của context.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>LLM Prompt Context</strong></td>
+          <td>Gửi context cuối cùng cho model.</td>
+          <td>Agent chỉ thấy thông tin cần thiết, mới, có nguồn và ít context-rot.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>1.1 What to remember</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Memory type</th>
+          <th>Nhớ gì?</th>
+          <th>Dùng khi nào?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Working memory</strong></td>
+          <td>Vài lượt chat gần nhất, câu hỏi hiện tại, bước agent đang làm.</td>
+          <td>Luôn đưa vào prompt nhưng giới hạn token chặt.</td>
+        </tr>
+        <tr>
+          <td><strong>Task state</strong></td>
+          <td>Mục tiêu, bước đã xong, bước còn chờ, blocker, next action.</td>
+          <td>Dùng để agent không quên tiến độ khi workflow chạy dài.</td>
+        </tr>
+        <tr>
+          <td><strong>User/entity memory</strong></td>
+          <td>Preference ổn định, thông tin lead/customer/project đã xác nhận.</td>
+          <td>Dùng khi cá nhân hóa hoặc tiếp tục một quan hệ/đối tượng cũ.</td>
+        </tr>
+        <tr>
+          <td><strong>Workflow memory</strong></td>
+          <td>Prompt version, enabled tools, output schema, model setting, knowledge source.</td>
+          <td>Dùng khi agent chạy trong một workflow cụ thể trên PAL.</td>
+        </tr>
+        <tr>
+          <td><strong>Tool evidence</strong></td>
+          <td>Kết quả tool quan trọng ở dạng digest: conclusion, source id, timestamp.</td>
+          <td>Dùng để ra quyết định mà không nhét raw JSON dài vào context.</td>
+        </tr>
+        <tr>
+          <td><strong>RAG/knowledge memory</strong></td>
+          <td>Tài liệu, chính sách, guideline, playbook, FAQ.</td>
+          <td>Dùng khi câu hỏi cần kiến thức ngoài hội thoại.</td>
+        </tr>
+        <tr>
+          <td><strong>Audit memory</strong></td>
+          <td>Approval, action log, lý do quyết định, provenance.</td>
+          <td>Dùng khi cần giải thích, rollback, compliance hoặc debug.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>1.2 Retrieval architecture</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Retrieval method</th>
+          <th>Dùng để lấy</th>
+          <th>Trade-off</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Recent turns</strong></td>
+          <td>Mạch hội thoại mới nhất.</td>
+          <td>Rất nhanh, nhưng dễ kéo theo nhiễu nếu thread dài.</td>
+        </tr>
+        <tr>
+          <td><strong>Structured lookup</strong></td>
+          <td>Task state, workflow config, user/project/lead theo ID.</td>
+          <td>Chính xác và nhanh, nhưng cần schema tốt.</td>
+        </tr>
+        <tr>
+          <td><strong>BM25/keyword</strong></td>
+          <td>Mã đơn, tên riêng, policy code, field name.</td>
+          <td>Tốt với match chính xác, kém với synonym.</td>
+        </tr>
+        <tr>
+          <td><strong>Vector search</strong></td>
+          <td>Summary, note, tài liệu dài, nội dung mô tả tự nhiên.</td>
+          <td>Tốt cho semantic recall, nhưng cần filter và rerank.</td>
+        </tr>
+        <tr>
+          <td><strong>Rerank</strong></td>
+          <td>Top kết quả có khả năng cạnh tranh.</td>
+          <td>Tăng quality nhưng thêm latency/cost.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>1.3 Summarization & compression architecture</h3>
+
+    <pre class="flow">Raw events
+  -> turn summary
+  -> task checkpoint
+  -> entity/fact extraction
+  -> tool evidence digest
+  -> prompt-ready context pack</pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tầng nén</th>
+          <th>Đầu ra</th>
+          <th>Điểm cần giữ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Turn summary</strong></td>
+          <td>Tóm tắt mỗi đoạn hội thoại dài.</td>
+          <td>User intent, quyết định mới, câu hỏi còn mở.</td>
+        </tr>
+        <tr>
+          <td><strong>Task checkpoint</strong></td>
+          <td>Trạng thái task sau mỗi cột mốc .</td>
+          <td>Goal, done, pending, blocker, next action.</td>
+        </tr>
+        <tr>
+          <td><strong>Entity/fact extraction</strong></td>
+          <td>Fact có schema theo user, lead, project, workflow.</td>
+          <td>Source event, timestamp, confidence, sensitivity.</td>
+        </tr>
+        <tr>
+          <td><strong>Tool digest</strong></td>
+          <td>Kết luận quan trọng từ tool output lớn.</td>
+          <td>Raw payload id, source system, retrieved_at.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Deliverable 2: Policies</h2>
+
+
+    <h3>2.1 Remember policy</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nên lưu dài hạn khi</th>
+          <th>Không nên lưu dài hạn khi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Thông tin ảnh hưởng tới quyết định tương lai.</td>
+          <td>Chỉ là câu nói xã giao hoặc cảm xúc nhất thời.</td>
+        </tr>
+        <tr>
+          <td>Preference ổn định hoặc được user xác nhận.</td>
+          <td>Dữ liệu nhạy cảm không cần cho nhiệm vụ.</td>
+        </tr>
+        <tr>
+          <td>Trạng thái workflow chưa hoàn tất.</td>
+          <td>Raw output quá lớn đã có digest thay thế.</td>
+        </tr>
+        <tr>
+          <td>Evidence cho hành động đã thực hiện.</td>
+          <td>Thông tin mâu thuẫn chưa được xác minh.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>2.2 Forget policy</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Khi nào quên?</th>
+          <th>Cách xử lý</th>
+          <th>Lý do</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Task đã hoàn tất.</td>
+          <td>Đóng task state, nén thành final summary, giữ raw trace cho audit.</td>
+          <td>Giảm nhiễu trong prompt tương lai.</td>
+        </tr>
+        <tr>
+          <td>Fact có version mới hơn.</td>
+          <td>Mark fact cũ là <code>superseded</code>, ưu tiên fact mới.</td>
+          <td>Chống stale memory.</td>
+        </tr>
+        <tr>
+          <td>Dữ liệu nhạy cảm hoặc tạm thời.</td>
+          <td>Không retrieve mặc định, đặt TTL ngắn, mã hóa nếu phải lưu.</td>
+          <td>Giảm rủi ro privacy leakage.</td>
+        </tr>
+        <tr>
+          <td>User yêu cầu xóa/quên.</td>
+          <td>Xóa hoặc tombstone theo scope: thread, entity, workspace.</td>
+          <td>User phải kiểm soát được memory.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>2.3 Compression policy</h3>
+    <ul>
+      <li><strong>Không nén mất nguồn:</strong> summary phải trỏ về raw event hoặc document version.</li>
+      <li><strong>Không ghi đè raw trace:</strong> raw event dùng cho audit; summary chỉ là bản đọc nhanh.</li>
+      <li><strong>Không dùng summary cho quyết định rủi ro cao nếu thiếu confidence:</strong> mở lại raw evidence hoặc gọi tool mới.</li>
+      <li><strong>Nén theo milestone:</strong> sau khi hoàn thành bước lớn, tạo checkpoint để lượt sau không phải đọc lại toàn bộ transcript.</li>
+    </ul>
+
+    <h3>2.4 Context-rot policy</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Vấn đề</th>
+          <th>Policy chống lỗi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Stale facts</strong></td>
+          <td>Fact có freshness score; pricing, promotion, schedule, policy phải có TTL ngắn.</td>
+        </tr>
+        <tr>
+          <td><strong>Conflicting facts</strong></td>
+          <td>Nếu hai memory mâu thuẫn, ưu tiên nguồn mới/nguồn hệ thống; nếu vẫn rủi ro thì hỏi user.</td>
+        </tr>
+        <tr>
+          <td><strong>Over-retrieval</strong></td>
+          <td>Không lấy thêm chỉ vì còn token budget; dưới relevance threshold thì loại.</td>
+        </tr>
+        <tr>
+          <td><strong>Summary drift</strong></td>
+          <td>Summary quan trọng cần định kỳ rebuild từ raw trace hoặc kiểm tra bằng eval.</td>
+        </tr>
+        <tr>
+          <td><strong>Wrong scope</strong></td>
+          <td>Memory phải filter theo workspace, agent, workflow, user permission trước khi rerank.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>2.5 Cost, quality, latency trade-off</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th>Dùng gì?</th>
+          <th>Cost</th>
+          <th>Latency</th>
+          <th>Quality</th>
+          <th>Khi dùng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Fast</strong></td>
+          <td>Recent turns + task state.</td>
+          <td>Thấp</td>
+          <td>Nhanh</td>
+          <td>Đủ cho task đơn giản</td>
+          <td>Chat thường, hỏi tiếp câu vừa rồi.</td>
+        </tr>
+        <tr>
+          <td><strong>Balanced</strong></td>
+          <td>Fast + structured lookup + BM25/vector top-k.</td>
+          <td>Vừa</td>
+          <td>Vừa</td>
+          <td>Tốt</td>
+          <td>Workflow vận hành hằng ngày.</td>
+        </tr>
+        <tr>
+          <td><strong>Careful</strong></td>
+          <td>Balanced + rerank + conflict/freshness check.</td>
+          <td>Cao hơn</td>
+          <td>Chậm hơn</td>
+          <td>Cao</td>
+          <td>Gửi email, cập nhật CRM, báo giá, hành động nhạy cảm.</td>
+        </tr>
+        <tr>
+          <td><strong>Audit</strong></td>
+          <td>Raw trace + approval log + tool payload.</td>
+          <td>Cao</td>
+          <td>Chậm</td>
+          <td>Cao nhất cho giải thích</td>
+          <td>Debug, rollback, dispute, compliance.</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h2>Deliverable 3: Worked Examples</h2>
+
+    <h3>3.1 Sales Agent chăm sóc lead qua nhiều ngày</h3>
+    <p>
+      Lead B2B vào chat ngày thứ Hai, cung cấp ngành nghề, ngân sách, pain point. Thứ Tư quay lại hỏi gói triển khai. Thứ Sáu agent cần tạo proposal.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Giai đoạn</th>
+          <th>Memory cần nhớ</th>
+          <th>Context cần đưa vào prompt</th>
+          <th>Context cần bỏ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ngày 1: Intake</td>
+          <td>Lead profile, BANT score, pain point, budget, source message.</td>
+          <td>Recent chat + lead fact extraction.</td>
+          <td>Câu xã giao và transcript dài.</td>
+        </tr>
+        <tr>
+          <td>Ngày 3: Follow-up</td>
+          <td>Lead summary, objection history, pricing policy hiện tại.</td>
+          <td>Lead summary + policy RAG + CRM stage.</td>
+          <td>Tool raw JSON nếu digest đủ.</td>
+        </tr>
+        <tr>
+          <td>Ngày 5: Proposal</td>
+          <td>Package đã chọn, budget đã xác nhận, approval gửi email.</td>
+          <td>Careful mode: facts + evidence + approval requirement.</td>
+          <td>Budget cũ đã bị superseded.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre class="flow">Prompt context pack trước khi tạo proposal:
+Goal: Create proposal for lead L-102.
+Task state: BANT completed; package recommended; waiting for send approval.
+Lead memory: industry = cosmetics; budget = 2.500 USD setup; pain = slow lead response.
+Evidence: CRM digest #crm_883; chat event #msg_172.
+Policy: External email requires explicit approval.
+Do not use: superseded budget = 1.500 USD from earlier draft.</pre>
+
+    <h3>3.2 Customer Support Agent xử lý ticket dài</h3>
+    <p>
+      Khách mở ticket hoàn tiền. Agent phải nhớ order id, lỗi đã xác minh, chính sách hoàn tiền và quyết định escalation.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Thiết kế đúng</th>
+          <th>Lý do</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Lưu order id, purchase date, issue type, refund policy version, escalation owner.</td>
+          <td>Đây là trạng thái nghiệp vụ cần dùng lại.</td>
+        </tr>
+        <tr>
+          <td>Ảnh lỗi và raw tool payload lưu object store, prompt chỉ nhận digest.</td>
+          <td>Giảm token và tránh đưa dữ liệu nhạy cảm vào prompt.</td>
+        </tr>
+        <tr>
+          <td>Structured order lookup thắng memory chat nếu trạng thái đơn hàng thay đổi.</td>
+          <td>Nguồn hệ thống mới hơn phải có quyền ưu tiên.</td>
+        </tr>
+        <tr>
+          <td>Nếu policy version trong summary cũ hơn policy hiện tại, agent phải retrieve policy mới.</td>
+          <td>Chống context-rot do chính sách cũ.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>3.3 Workflow Builder Agent nhớ cấu hình project</h3>
+    <p>
+      User xây một agent trên PAL, nhiều phiên sau liên tục chỉnh prompt, thêm knowledge source, đổi model, bật tool. Khi chất lượng agent giảm, hệ thống cần biết thay đổi nào gây regression.
+    </p>
+
+    <ul>
+      <li><strong>Remember:</strong> prompt version, model setting, enabled tools, knowledge source ids, output schema.</li>
+      <li><strong>Summarize:</strong> mỗi lần publish tạo checkpoint: đổi gì, vì sao đổi, test result trước/sau.</li>
+      <li><strong>Retrieve:</strong> khi debug, lấy config diff + eval memory + latest knowledge version.</li>
+      <li><strong>Forget:</strong> bản nháp chưa publish không nên ảnh hưởng agent production.</li>
+      <li><strong>Fight context-rot:</strong> nếu user hỏi "vì sao agent trả lời khác?", không dùng trí nhớ chung; phải mở config change log.</li>
+    </ul>
+
+    <h3>3.4 Context-rot: Agent nhớ mã giảm giá cũ</h3>
+    <p>
+      User từng dùng mã <code>HE2026</code> giảm 20%. Một tháng sau policy đổi, mã chỉ còn giảm 10%. Nếu agent retrieve memory cũ mà không kiểm tra freshness, nó sẽ tính sai hóa đơn.
+    </p>
+
+    <pre class="flow">Luồng đúng:
+1. User hỏi: "Áp mã HE2026 cho đơn ORD-101".
+2. Retrieval thấy memory cũ: HE2026 = 20%, created_at = 30 ngày trước.
+3. Freshness policy phát hiện promotion fact có TTL ngắn.
+4. Agent gọi promo/pricing tool hoặc retrieve policy version mới.
+5. Tool trả HE2026 = 10%, valid_until = 31/08/2026.
+6. Memory cũ được mark superseded.
+7. Agent trả lời theo policy mới và có thể nói rõ: "Mã này trước đây từng giảm 20%, hiện tại giảm 10%."</pre>
+
+   
+  </main>
+</body>
+</html>
