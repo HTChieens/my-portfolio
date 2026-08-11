@@ -300,37 +300,35 @@
       <p class="eyebrow">PAL Tool/Plugin SDK</p>
       <h1>Thiết kế Tool/Plugin SDK cho MindPal</h1>
       <p class="lead">
-        Bài thiết kế tập trung vào cách third-party developers định nghĩa, xác thực, chạy, version, test và publish custom tools cho MindPal mà vẫn giữ được boundary an toàn cho agent, workflow và dữ liệu workspace.
+        Bài thiết kế tập trung vào cách developers bên ngoài tạo, kiểm thử và phát hành custom tools cho MindPal mà vẫn bảo vệ agent, workflow và dữ liệu trong workspace.
       </p>
     </header>
 
     <section id="sdk-design">
-      <h2>1. SDK Design</h2>
-      <p>
-        PAL Tool/Plugin SDK nên được thiết kế theo hướng <strong>schema-first governed tool platform</strong>. Plugin có thể là một remote HTTPS service do developer vận hành hoặc một isolated runtime được MindPal quản lý. Trong cả hai trường hợp, MindPal vẫn là policy layer: validate schema, kiểm soát permission, xử lý auth, ký request, giới hạn runtime, quản lý version, và ghi audit log.
-      </p>
+      <h2>1. Thiết kế SDK</h2>
+
 
       <h3>1.1 Kiến trúc tổng thể</h3>
       <div class="flow" aria-label="Plugin flow">
         <div class="flow-step">
           <b>1. Plugin Manifest</b>
-          <span>Developer khai báo metadata, tools, auth, permissions, runtime endpoint.</span>
+          <span>Developer khai báo tên plugin, tools, auth, quyền và nơi plugin nhận request.</span>
         </div>
         <div class="flow-step">
           <b>2. Validation</b>
-          <span>MindPal kiểm tra manifest, tool schema, version, domain, permission.</span>
+          <span>MindPal kiểm tra manifest, tool schema, version, domain và quyền.</span>
         </div>
         <div class="flow-step">
           <b>3. Install</b>
           <span>Workspace admin chọn plugin, cấp quyền, bật tools cho agent/workflow.</span>
         </div>
         <div class="flow-step">
-          <b>4. Invocation</b>
-          <span>Agent hoặc workflow gọi tool qua MindPal Invocation Gateway.</span>
+          <b>4. Gọi tool</b>
+          <span>Agent hoặc workflow gửi yêu cầu qua cổng gọi tool của MindPal.</span>
         </div>
         <div class="flow-step">
           <b>5. Result</b>
-          <span>MindPal validate output, log sự kiện, trả kết quả an toàn cho agent.</span>
+          <span>MindPal kiểm tra output, ghi log sự kiện, rồi trả kết quả an toàn cho agent.</span>
         </div>
       </div>
 
@@ -344,27 +342,27 @@
         <tbody>
           <tr>
             <td><code>Plugin Manifest</code></td>
-            <td>Khai báo plugin là gì, có tools nào, cần auth nào, cần permissions nào, chạy ở endpoint nào. Manifest được validate, snapshot theo version, và gắn với verified domain.</td>
+            <td>Khai báo plugin là gì, có tools nào, cần auth nào, cần quyền nào, và chạy ở endpoint nào. MindPal sẽ kiểm tra manifest, lưu lại theo version và gắn với domain đã xác minh.</td>
           </tr>
           <tr>
             <td><code>Tool Registry</code></td>
-            <td>Lưu danh sách tools đã được approve trong workspace, mapping tool với agent/workflow được phép dùng, và pin version đang chạy.</td>
+            <td>Lưu danh sách tools đã được duyệt trong workspace, tool nào được agent/workflow nào dùng, và version nào đang được chạy.</td>
           </tr>
           <tr>
-            <td><code>Invocation Gateway</code></td>
-            <td>Nhận tool call từ agent, validate input, kiểm tra permission, ký request, gọi plugin endpoint, enforce idempotency, validate output.</td>
+            <td><code>Cổng gọi tool</code></td>
+            <td>Nhận yêu cầu từ agent, kiểm tra input, kiểm tra quyền, ký request, gọi plugin và kiểm tra output.</td>
           </tr>
           <tr>
-            <td><code>Auth Broker</code></td>
-            <td>Quản lý OAuth/API key, lưu secret trong vault, hỗ trợ token rotation/revocation, không đưa secret vào prompt hoặc workflow variable.</td>
+            <td><code>Bộ quản lý auth</code></td>
+            <td>Quản lý OAuth/API key, lưu secret trong kho mã hóa, hỗ trợ đổi hoặc thu hồi token, và không đưa secret vào prompt hoặc workflow variable.</td>
           </tr>
           <tr>
-            <td><code>Policy Engine</code></td>
-            <td>Áp dụng least privilege, confirmation rule, data access policy, rate limit, timeout, output size limit, và kill switch.</td>
+            <td><code>Bộ kiểm soát quyền</code></td>
+            <td>Áp dụng quyền tối thiểu, yêu cầu xác nhận với hành động rủi ro, giới hạn dữ liệu, giới hạn số lần gọi, timeout, giới hạn output và nút tắt khẩn cấp.</td>
           </tr>
           <tr>
             <td><code>Developer SDK/CLI</code></td>
-            <td>Giúp developer tạo plugin, validate manifest, test local invocation, publish plugin package, và kiểm tra compatibility.</td>
+            <td>Giúp developer tạo plugin, kiểm tra manifest, test cách MindPal gọi tool, phát hành plugin và kiểm tra plugin có tương thích không.</td>
           </tr>
         </tbody>
       </table>
@@ -385,8 +383,8 @@
   },
   "verification": {
     "domain": "vendor.com",
-    "publisher_jwks_url": "https://plugin.vendor.com/.well-known/jwks.json",
-    "manifest_signature": "required"
+    "public_key_url": "https://plugin.vendor.com/.well-known/plugin-public-key.json",
+    "signed_manifest": true
   },
   "auth": [],
   "permissions": [],
@@ -411,15 +409,15 @@
           </tr>
           <tr>
             <td><code>input_schema</code></td>
-            <td>JSON Schema cho input. MindPal reject call nếu input sai schema.</td>
+            <td>JSON Schema cho input. MindPal từ chối tool call nếu input sai schema.</td>
           </tr>
           <tr>
             <td><code>output_schema</code></td>
-            <td>JSON Schema cho output. MindPal reject hoặc sanitize response nếu output sai schema.</td>
+            <td>JSON Schema cho output. MindPal từ chối hoặc làm sạch response nếu output sai schema.</td>
           </tr>
           <tr>
             <td><code>permissions</code></td>
-            <td>Danh sách capability tool cần, ví dụ <code>network:api.vendor.com</code>, <code>tickets.write</code>.</td>
+            <td>Danh sách quyền tool cần, ví dụ được gọi API nào hoặc được tạo ticket hay không.</td>
           </tr>
           <tr>
             <td><code>risk_level</code></td>
@@ -430,8 +428,8 @@
             <td>Quy định có cần user approval trước khi gọi tool hay không.</td>
           </tr>
           <tr>
-            <td><code>idempotency</code></td>
-            <td>Quy định tool có hỗ trợ idempotency key hay không, đặc biệt quan trọng với write action.</td>
+            <td><code>duplicate_protection</code></td>
+            <td>Cho biết tool có cơ chế chống tạo trùng khi MindPal phải gọi lại request hay không.</td>
           </tr>
           <tr>
             <td><code>data_access</code></td>
@@ -442,7 +440,7 @@
 
       <h3>1.3 Auth</h3>
       <p>
-        Khi invoke tool, MindPal chỉ cấp <code>short-lived scoped token</code> hoặc <code>opaque token_ref</code> qua Auth Broker. Plugin không nhận refresh token và không được tự lưu credential lâu dài.
+        Khi gọi tool, MindPal chỉ cấp token dùng ngắn hạn hoặc một mã tham chiếu token qua bộ quản lý auth. Plugin không nhận refresh token và không được tự lưu credential lâu dài.
       </p>
 
       <table>
@@ -462,55 +460,55 @@
           <tr>
             <td><code>api_key</code></td>
             <td>Workspace-level integration, ví dụ một API key dùng chung cho team.</td>
-            <td>Admin nhập API key vào MindPal. MindPal encrypt, hỗ trợ rotation, và inject server-side khi invoke.</td>
+            <td>Admin nhập API key vào MindPal. MindPal mã hóa, hỗ trợ đổi key khi cần, và chỉ dùng key ở phía server.</td>
           </tr>
           <tr>
             <td><code>oauth2</code></td>
             <td>User-specific integration, ví dụ Gmail, HubSpot, Notion, support desk.</td>
-            <td>User authorize qua OAuth popup. MindPal lưu token trong vault, enforce scope binding, refresh token an toàn, và cho phép revoke theo user/workspace.</td>
+            <td>User authorize qua OAuth popup. MindPal lưu token trong kho mã hóa, chỉ cấp đúng scope đã được duyệt, và cho phép thu hồi theo user/workspace.</td>
           </tr>
         </tbody>
       </table>
 
       <h3>1.4 Sandboxing</h3>
       <p>
-        <code>sandboxing</code> dùng nhiều lớp: execution boundary, network boundary, data boundary, runtime boundary, và output boundary. Third-party code không được quyền truy cập trực tiếp vào MindPal database, agent memory, credential vault, hoặc workflow internals. MindPal chỉ gửi payload tối thiểu qua HTTPS hoặc isolated runtime channel đã được policy engine kiểm soát.
+        <code>sandboxing</code> nghĩa là plugin bị cách ly khỏi phần lõi của MindPal. Code của plugin không được truy cập trực tiếp database, memory của agent, kho credential hoặc chi tiết bên trong workflow. MindPal chỉ gửi lượng dữ liệu tối thiểu cần thiết để tool chạy.
       </p>
 
       <table>
         <thead>
           <tr>
-            <th>Boundary</th>
-            <th>Control</th>
+            <th>Lớp bảo vệ</th>
+            <th>Cách kiểm soát</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Code boundary</td>
-            <td>Remote plugin chạy ngoài MindPal process. Hosted plugin phải chạy trong isolated container hoặc WASM worker, không có filesystem/network mặc định.</td>
+            <td>Cách ly code</td>
+            <td>Plugin chạy ngoài phần lõi của MindPal. Nếu MindPal host plugin, plugin phải chạy trong môi trường riêng và không có quyền đọc file hoặc gọi mạng mặc định.</td>
           </tr>
           <tr>
-            <td>Network boundary</td>
-            <td>Plugin chỉ được invoke qua endpoint đã khai báo, domain đã verify, egress allowlist, TLS bắt buộc, và request signing.</td>
+            <td>Giới hạn network</td>
+            <td>Plugin chỉ được gọi qua endpoint đã khai báo, domain đã xác minh, dùng HTTPS và request có chữ ký.</td>
           </tr>
           <tr>
-            <td>Data boundary</td>
-            <td>Plugin chỉ nhận tool input, run metadata tối thiểu, data fields đã declare trong <code>data_access</code>, và auth reference đã được approve.</td>
+            <td>Giới hạn dữ liệu</td>
+            <td>Plugin chỉ nhận input của tool, một ít thông tin về lần chạy, các trường đã khai báo trong <code>data_access</code>, và auth đã được duyệt.</td>
           </tr>
           <tr>
-            <td>Runtime boundary</td>
-            <td>MindPal áp dụng timeout, retry budget, input/output size limit, rate limit, circuit breaker, và concurrency limit.</td>
+            <td>Giới hạn khi chạy</td>
+            <td>MindPal giới hạn thời gian chạy, số lần thử lại, kích thước input/output, số lần gọi và số request chạy cùng lúc.</td>
           </tr>
           <tr>
-            <td>Output boundary</td>
-            <td>Plugin output phải match <code>output_schema</code>, được sanitize, redact secret, và giới hạn field length trước khi trả về agent.</td>
+            <td>Kiểm tra output</td>
+            <td>Output của plugin phải đúng <code>output_schema</code>, được làm sạch, xóa secret nếu có và giới hạn độ dài trước khi trả về agent.</td>
           </tr>
         </tbody>
       </table>
 
       <h3>1.5 Versioning</h3>
       <p>
-        <code>versioning</code> phải tách rõ giữa manifest, SDK, plugin release, tool schema và runtime protocol. MindPal nên pin version đã được admin approve, chỉ tự động nhận non-breaking update, và yêu cầu review lại nếu tool đổi permission, auth scope, risk level hoặc input/output schema theo hướng breaking change.
+        <code>versioning</code> cần tách rõ giữa manifest, SDK, plugin release, tool schema và cách gọi tool. MindPal nên khóa version đã được admin duyệt, chỉ tự động nhận update nhỏ không làm đổi hành vi, và yêu cầu duyệt lại nếu plugin đổi quyền, scope, mức rủi ro hoặc input/output schema.
       </p>
 
       <table>
@@ -535,11 +533,11 @@
           </tr>
           <tr>
             <td><code>tool.version</code></td>
-            <td>Version riêng cho từng tool. Nếu đổi input/output schema gây breaking change thì tăng major version.</td>
+            <td>Version riêng cho từng tool. Nếu đổi input/output schema theo cách có thể làm tool cũ hỏng thì tăng version lớn.</td>
           </tr>
           <tr>
             <td><code>runtime_protocol</code></td>
-            <td>Version của invocation envelope, request signing, error format.</td>
+            <td>Version của cách MindPal gửi request sang plugin, ký request và trả lỗi.</td>
           </tr>
         </tbody>
       </table>
@@ -553,28 +551,28 @@
         </thead>
         <tbody>
           <tr>
-            <td>Backward compatibility</td>
-            <td>Minor/patch update không được xóa field, đổi meaning của field, hoặc mở rộng permission ngầm.</td>
+            <td>Tương thích ngược</td>
+            <td>Update nhỏ không được xóa field, đổi ý nghĩa field hoặc tự mở rộng quyền.</td>
           </tr>
           <tr>
-            <td>Explicit upgrade</td>
-            <td>Breaking change cần major version mới và admin approval trước khi agent/workflow dùng bản mới.</td>
+            <td>Duyệt lại khi đổi lớn</td>
+            <td>Thay đổi lớn cần version mới và admin approval trước khi agent/workflow dùng bản mới.</td>
           </tr>
           <tr>
-            <td>Rollback</td>
-            <td>MindPal giữ manifest snapshot theo installed version để rollback khi plugin release lỗi.</td>
+            <td>Quay lại bản cũ</td>
+            <td>MindPal giữ bản manifest đã cài để quay lại nếu release mới bị lỗi.</td>
           </tr>
           <tr>
-            <td>Deprecation</td>
-            <td>SDK cũ có deprecation notice trong CLI validate trước khi bị chặn bởi runtime.</td>
+            <td>Thông báo ngừng hỗ trợ</td>
+            <td>SDK cũ được cảnh báo trong CLI validate trước khi MindPal ngừng hỗ trợ.</td>
           </tr>
         </tbody>
       </table>
 
 
-      <h3>1.6 Developer Experience</h3>
+      <h3>1.6 Trải nghiệm developer</h3>
       <p>
-        <code>developer experience</code> của SDK cần giúp developer tự phát hiện lỗi schema, auth, permission, và output format trước khi plugin được cài vào MindPal workspace.
+        <code>developer experience</code> là trải nghiệm của người viết plugin. SDK cần giúp developer tự phát hiện lỗi schema, auth, quyền và output format trước khi plugin được cài vào MindPal workspace.
       </p>
 
       <pre><code>npm create @mindpal/plugin supportdesk-plugin
@@ -599,28 +597,28 @@ mindpal plugin publish</code></pre>
           </tr>
           <tr>
             <td><code>dev</code></td>
-            <td>Chạy local plugin server và mock MindPal invocation.</td>
+            <td>Chạy plugin server local và giả lập cách MindPal gọi tool.</td>
           </tr>
           <tr>
             <td><code>validate</code></td>
-            <td>Validate manifest, JSON Schema, permission strings, auth config, risk labels.</td>
+            <td>Kiểm tra manifest, JSON Schema, quyền, auth config và nhãn rủi ro.</td>
           </tr>
           <tr>
             <td><code>test</code></td>
-            <td>Replay sample invocation payload và validate output schema.</td>
+            <td>Chạy thử sample request và kiểm tra output schema.</td>
           </tr>
           <tr>
             <td><code>publish</code></td>
-            <td>Register manifest URL, upload package metadata, và tạo release có version pinning.</td>
+            <td>Đăng ký manifest URL, upload thông tin plugin và tạo release được khóa version.</td>
           </tr>
         </tbody>
       </table>
     </section>
 
     <section id="sample-plugin">
-      <h2>2. Sample Plugin Definition</h2>
+      <h2>2. Ví dụ plugin definition</h2>
       <p>
-        Ví dụ dưới đây là plugin <code>Acme Support Desk</code>. Plugin cho phép MindPal agent lookup customer và create support ticket. Tool <code>lookup_customer</code> là read action. Tool <code>create_ticket</code> là write action và cần user confirmation.
+        Ví dụ dưới đây là plugin <code>Acme Support Desk</code>. Plugin cho phép MindPal agent tra cứu customer và tạo support ticket. Tool <code>lookup_customer</code> chỉ đọc dữ liệu. Tool <code>create_ticket</code> có ghi dữ liệu mới nên cần user xác nhận.
       </p>
 
       <pre><code>{
@@ -643,8 +641,8 @@ mindpal plugin publish</code></pre>
   },
   "verification": {
     "domain": "acme.example.com",
-    "publisher_jwks_url": "https://plugins.acme.example.com/.well-known/jwks.json",
-    "manifest_signature": "required"
+    "public_key_url": "https://plugins.acme.example.com/.well-known/plugin-public-key.json",
+    "signed_manifest": true
   },
   "auth": [
     {
@@ -671,7 +669,7 @@ mindpal plugin publish</code></pre>
       "auth_required": "acme_oauth",
       "permissions": ["customers.read", "network:api.acme.example.com"],
       "data_access": ["tool_input.email", "auth_connection"],
-      "idempotency": {
+      "duplicate_protection": {
         "required": false
       },
       "input_schema": {
@@ -707,7 +705,7 @@ mindpal plugin publish</code></pre>
       "auth_required": "acme_oauth",
       "permissions": ["tickets.write", "network:api.acme.example.com"],
       "data_access": ["tool_input.customer_email", "tool_input.subject", "tool_input.body", "auth_connection"],
-      "idempotency": {
+      "duplicate_protection": {
         "required": true,
         "scope": "workspace_tool"
       },
@@ -754,9 +752,9 @@ mindpal plugin publish</code></pre>
   ]
 }</code></pre>
 
-      <h3>Invocation envelope</h3>
+      <h3>Gói request MindPal gửi sang plugin</h3>
       <p>
-        Khi agent gọi tool, MindPal không gọi plugin trực tiếp từ model. MindPal tạo một invocation envelope đã validate, ký request, rồi gửi đến plugin endpoint.
+        Khi agent gọi tool, model không gọi plugin trực tiếp. MindPal tạo một request đã kiểm tra, ký request, rồi gửi đến plugin endpoint.
       </p>
 
       <pre><code>POST https://plugins.acme.example.com/mindpal/invoke
@@ -764,7 +762,7 @@ Content-Type: application/json
 X-MindPal-Plugin-Id: com.acme.supportdesk
 X-MindPal-Tool: create_ticket
 X-MindPal-Signature: t=...,v1=...
-X-MindPal-Idempotency-Key: idem_01J...
+X-MindPal-Request-Key: reqkey_01J...
 
 {
   "request_id": "req_01J...",
@@ -782,7 +780,7 @@ X-MindPal-Idempotency-Key: idem_01J...
   },
   "auth": {
     "connection_id": "conn_789",
-    "token_ref": "opaque_token_reference"
+    "credential": "managed_by_mindpal"
   },
   "context": {
     "run_id": "run_abc",
@@ -792,51 +790,51 @@ X-MindPal-Idempotency-Key: idem_01J...
     </section>
 
     <section id="security-model">
-      <h2>3. Security Model</h2>
+      <h2>3. Mô hình bảo mật</h2>
       <p>
-        Security model của PAL Tool/Plugin SDK dựa trên nguyên tắc: plugin là untrusted by default. MindPal phải kiểm soát input, permission, auth, execution boundary, output, và audit log cho từng tool call.
+        Mô hình bảo mật của PAL Tool/Plugin SDK dựa trên nguyên tắc: không tin plugin một cách mặc định. Mỗi lần tool được gọi, MindPal phải kiểm tra input, quyền, auth, nơi chạy, output và ghi audit log.
       </p>
 
       <h3>3.1 Security principles</h3>
       <table>
         <thead>
           <tr>
-            <th>Principle</th>
+            <th>Nguyên tắc</th>
             <th>Thiết kế</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Least privilege</td>
-            <td>Plugin và từng tool chỉ được xin đúng permissions cần thiết. Admin có thể enable/disable từng tool.</td>
+            <td>Cấp quyền tối thiểu</td>
+            <td>Plugin và từng tool chỉ được xin đúng quyền cần thiết. Admin có thể bật/tắt từng tool.</td>
           </tr>
           <tr>
-            <td>Explicit consent</td>
-            <td>Install flow hiển thị tool list, scopes, risk level, allowed domains trước khi admin approve.</td>
+            <td>Xin phép rõ ràng</td>
+            <td>Màn hình cài đặt hiển thị tool list, scope, mức rủi ro và domain được gọi trước khi admin duyệt.</td>
           </tr>
           <tr>
-            <td>No prompt secrets</td>
+            <td>Không đưa secret vào prompt</td>
             <td>API key, OAuth token, refresh token không bao giờ đi vào prompt, tool description, workflow variable, hoặc logs thô.</td>
           </tr>
           <tr>
-            <td>Signed invocation</td>
-            <td>Mỗi request từ MindPal sang plugin có timestamp, request ID, và HMAC signature để chống giả mạo/replay.</td>
+            <td>Request có chữ ký</td>
+            <td>Mỗi request từ MindPal sang plugin có thời gian gửi, request ID và chữ ký để plugin biết request là thật.</td>
           </tr>
           <tr>
-            <td>Publisher verification</td>
-            <td>Plugin manifest gắn với verified domain và signed release để giảm rủi ro bị thay đổi package hoặc endpoint ngoài ý muốn.</td>
+            <td>Xác minh nhà phát hành</td>
+            <td>Plugin manifest gắn với domain đã xác minh và bản phát hành có chữ ký để giảm rủi ro bị thay đổi ngoài ý muốn.</td>
           </tr>
           <tr>
-            <td>Schema gate</td>
-            <td>Input và output đều phải match JSON Schema. Sai schema thì reject hoặc sanitize.</td>
+            <td>Kiểm tra dữ liệu</td>
+            <td>Input và output đều phải đúng JSON Schema. Sai schema thì từ chối hoặc làm sạch trước khi dùng.</td>
           </tr>
           <tr>
-            <td>Auditability</td>
-            <td>Mỗi tool call được ghi lại với actor, plugin, tool, risk level, auth connection, status, latency.</td>
+            <td>Có audit log</td>
+            <td>Mỗi tool call được ghi lại với người gọi, plugin, tool, mức rủi ro, auth connection, trạng thái và thời gian xử lý.</td>
           </tr>
           <tr>
-            <td>Kill switch</td>
-            <td>MindPal có thể disable plugin, disable từng tool, hoặc revoke credential ngay khi phát hiện rủi ro.</td>
+            <td>Nút tắt khẩn cấp</td>
+            <td>MindPal có thể tắt plugin, tắt từng tool, hoặc thu hồi credential ngay khi phát hiện rủi ro.</td>
           </tr>
         </tbody>
       </table>
@@ -845,42 +843,42 @@ X-MindPal-Idempotency-Key: idem_01J...
       <table>
         <thead>
           <tr>
-            <th>Threat</th>
-            <th>Mitigation</th>
+            <th>Rủi ro</th>
+            <th>Cách giảm rủi ro</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>Plugin xin quyền quá rộng.</td>
-            <td>Permission review, per-tool enablement, scope labels, admin approval.</td>
+            <td>Review quyền, bật/tắt từng tool, hiển thị scope rõ ràng và cần admin approval.</td>
           </tr>
           <tr>
             <td>Manifest hoặc plugin package bị thay đổi.</td>
-            <td>Verified domain, manifest snapshot, publisher signature, version pinning, và release rollback.</td>
+            <td>Dùng domain đã xác minh, lưu bản manifest đã cài, yêu cầu chữ ký của nhà phát hành, khóa version và có thể quay lại bản cũ.</td>
           </tr>
           <tr>
             <td>Agent gọi nhầm write/destructive action.</td>
-            <td><code>risk_level</code>, confirmation rule, policy check trước khi invoke.</td>
+            <td>Dùng <code>risk_level</code>, yêu cầu user xác nhận, và kiểm tra quyền trước khi gọi tool.</td>
           </tr>
           <tr>
             <td>Plugin output chứa prompt injection.</td>
-            <td>Output schema validation, field length limit, result sanitization, tool-output isolation.</td>
+            <td>Kiểm tra output schema, giới hạn độ dài field, làm sạch kết quả và tách output của tool khỏi chỉ dẫn hệ thống.</td>
           </tr>
           <tr>
-            <td>Credential leak.</td>
-            <td>Vault storage, secret redaction, opaque token reference, token revocation.</td>
+            <td>Lộ secret hoặc token.</td>
+            <td>Lưu secret trong kho mã hóa, tự động che secret trong log, dùng mã tham chiếu token và cho phép thu hồi token.</td>
           </tr>
           <tr>
-            <td>Replay attack vào plugin endpoint.</td>
-            <td>HMAC signature, timestamp window, nonce/request ID deduplication.</td>
+            <td>Request cũ bị gửi lại để lạm dụng plugin endpoint.</td>
+            <td>Dùng chữ ký request, giới hạn thời gian hợp lệ của request và không xử lý lại request ID đã dùng.</td>
           </tr>
           <tr>
             <td>Plugin chậm hoặc lỗi.</td>
-            <td>Health check, timeout, circuit breaker, bounded retries, graceful error.</td>
+            <td>Kiểm tra tình trạng plugin, đặt timeout, giới hạn số lần thử lại và trả lỗi dễ hiểu cho agent/workflow.</td>
           </tr>
           <tr>
-            <td>Plugin bị compromise sau khi đã install.</td>
-            <td>Kill switch, credential revocation, domain/signature re-check, audit investigation, và rollback về manifest snapshot an toàn.</td>
+            <td>Plugin bị chiếm quyền sau khi đã cài.</td>
+            <td>Tắt plugin khẩn cấp, thu hồi credential, kiểm tra lại domain/chữ ký, xem audit log và quay lại bản manifest an toàn.</td>
           </tr>
           <tr>
             <td>Lạm dụng qua public chatbot/workflow.</td>
@@ -910,7 +908,7 @@ X-MindPal-Idempotency-Key: idem_01J...
 }</code></pre>
 
       <div class="callout green">
-        Tóm lại: SDK cho phép plugin đủ mạnh để mở rộng MindPal, nhưng mọi tool call đều đi qua schema validation, permission check, auth broker, sandbox boundary, version control, và audit log. Đây là phần thể hiện API/platform thinking của thiết kế.
+        Tóm lại: SDK cho phép plugin mở rộng MindPal, nhưng mọi tool call đều phải đi qua kiểm tra dữ liệu, kiểm tra quyền, quản lý auth, sandboxing, quản lý version và audit log. Đây là phần thể hiện tư duy thiết kế API/platform.
       </div>
     </section>
   </div>
