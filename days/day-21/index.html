@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAL Team Workspace Product Spec</title>
+  <style>
+    :root {
+      --bg: #f4f6f4;
+      --paper: #ffffff;
+      --ink: #17212b;
+      --muted: #5d6876;
+      --line: #d9e1df;
+      --soft: #edf3f1;
+      --blue-soft: #e7f0fb;
+      --amber-soft: #fff2da;
+      --red-soft: #fde8e5;
+      --teal-soft: #e2f4f1;
+      --blue: #255f91;
+      --teal: #16756f;
+      --green: #2e6f53;
+      --amber: #9a6518;
+      --red: #a0443c;
+      --violet: #6750a4;
+      --shadow: 0 18px 45px rgba(30, 45, 54, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.68;
+    }
+
+    a {
+      color: var(--blue);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 24px 72px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 18px;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 28px;
+      align-items: stretch;
+      margin-bottom: 22px;
+      padding: 34px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0 0 16px;
+      font-size: 42px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 830px;
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 820px;
+    }
+
+    .meta-item {
+      padding: 12px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .meta-label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .meta-value {
+      display: block;
+      margin-top: 3px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .workspace-visual {
+      min-height: 330px;
+      padding: 18px;
+      background: #111c24;
+      border-radius: 8px;
+      color: #ecf5f4;
+      overflow: hidden;
+    }
+
+    .visual-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .visual-title {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .avatar-row {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      margin-left: -6px;
+      place-items: center;
+      background: #2c6f76;
+      border: 2px solid #111c24;
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .visual-board {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 14px;
+      min-height: 250px;
+    }
+
+    .visual-panel {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+    }
+
+    .visual-panel h2 {
+      margin: 0 0 12px;
+      padding: 0;
+      border: 0;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    .mini-list,
+    .node-map {
+      display: grid;
+      gap: 9px;
+    }
+
+    .mini-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .node {
+      padding: 11px 12px;
+      background: #f6fbfa;
+      border-left: 4px solid #2f9b8d;
+      border-radius: 6px;
+      color: #152932;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .node.secondary {
+      border-left-color: #6d80c4;
+    }
+
+    .node.warning {
+      border-left-color: #db9e35;
+    }
+
+    .node small {
+      display: block;
+      margin-top: 2px;
+      color: #5f6e83;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 9px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #31445b;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .pill.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .pill.green {
+      background: #dff3eb;
+      color: var(--green);
+    }
+
+    .pill.amber {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .pill.red {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding: 12px;
+      background: rgba(244, 246, 244, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .toc a {
+      padding: 7px 10px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #31445b;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    section {
+      margin-bottom: 22px;
+      padding: 30px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 25px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 18px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    p {
+      max-width: 940px;
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      max-width: 960px;
+      margin: 8px 0 18px;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 16px 0 22px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 16px;
+      background: #fbfdfc;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+
+    .card p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .callout {
+      margin: 16px 0 20px;
+      padding: 15px 16px;
+      background: var(--teal-soft);
+      border-left: 4px solid var(--teal);
+      border-radius: 6px;
+    }
+
+    .callout strong {
+      color: #104d4a;
+    }
+
+    table {
+      width: 100%;
+      margin: 16px 0 24px;
+      border-collapse: collapse;
+      background: var(--paper);
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--soft);
+      font-weight: 800;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .yes {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .no {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .approval {
+      color: var(--amber);
+      font-weight: 800;
+    }
+
+    .limited {
+      color: var(--violet);
+      font-weight: 800;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      align-items: center;
+      margin: 16px 0 22px;
+    }
+
+    .flow-step {
+      padding: 9px 12px;
+      background: var(--blue-soft);
+      border: 1px solid #c6d8ec;
+      border-radius: 999px;
+      color: #1f4e78;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .flow-arrow {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .footer {
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 920px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .grid,
+      .grid.two,
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 20px 14px 48px;
+      }
+
+      .hero,
+      section {
+        padding: 22px 18px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      .visual-board {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+      }
+
+      .flow {
+        display: grid;
+      }
+
+      .flow-arrow {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back-link" href="../../vinsmart-log.html">Quay lại nhật ký VSF</a>
+
+
+    <nav class="toc" aria-label="Mục lục">
+      <a href="#product-design">Product design</a>
+      <a href="#roles">Permissions & roles</a>
+      <a href="#flows">Key flows</a>
+    </nav>
+
+    <section id="product-design">
+      <h2>1. Product Design</h2>
+      <p>
+        PAL Team Workspace là không gian để một tổ chức cùng tạo, thử nghiệm, review và publish agents.
+        Vì agent có thể truy cập dữ liệu, gọi tools và tác động tới workflow thật, workspace cần được thiết kế như một
+        lớp cộng tác có kiểm soát, không chỉ là nơi lưu file.
+      </p>
+
+      <h3>Information architecture</h3>
+      <div class="grid">
+        <div class="card">
+          <h3>Organization</h3>
+          <p>Cấp công ty, nơi quản lý security policy, thành viên, groups và quyền mặc định.</p>
+        </div>
+        <div class="card">
+          <h3>Workspace</h3>
+          <p>Không gian theo department hoặc business unit, ví dụ Support, Sales Ops, Internal Tools.</p>
+        </div>
+        <div class="card">
+          <h3>Project</h3>
+          <p>Nhóm agents theo use case, ví dụ Support Automation hoặc Lead Qualification.</p>
+        </div>
+        <div class="card">
+          <h3>Agent</h3>
+          <p>Agent cụ thể gồm canvas flow, prompt, tools, knowledge, guardrails, evals và deployment settings.</p>
+        </div>
+        <div class="card">
+          <h3>Draft / Version</h3>
+          <p>Bản đang edit, bản đang review hoặc bản đang chạy trong staging/production.</p>
+        </div>
+        <div class="card">
+          <h3>Environment</h3>
+          <p>Sandbox, staging và production có quyền tách biệt để tránh thay đổi nhầm môi trường thật.</p>
+        </div>
+      </div>
+
+      <h3>Workspace dashboard</h3>
+      <p>Dashboard cần giúp user hiểu nhanh agent nào đang chạy, agent nào cần xử lý và team đang thay đổi gì.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Khu vực</th>
+              <th>Nội dung</th>
+              <th>Lý do thiết kế</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Agent list</td>
+              <td>Agent name, owner, status, environment, last updated</td>
+              <td>Giúp team scan nhanh tài sản agent đang có.</td>
+            </tr>
+            <tr>
+              <td>Review queue</td>
+              <td>Change requests cần review, risk level, required reviewers</td>
+              <td>Biến approval thành một workflow rõ ràng, không phụ thuộc chat rời rạc.</td>
+            </tr>
+            <tr>
+              <td>Production health</td>
+              <td>Agent status, recent failures, rollback option</td>
+              <td>Nhắc team rằng agent là hệ thống đang vận hành, không chỉ bản thiết kế.</td>
+            </tr>
+            <tr>
+              <td>Recent activity</td>
+              <td>Ai sửa prompt, ai thêm tool, ai approve, ai deploy</td>
+              <td>Tăng accountability trong môi trường nhiều người.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Agent editor no-code</h3>
+      <p>Editor là nơi Builder thiết kế agent và cộng tác với team.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>Layout</h3>
+          <p>Left sidebar cho nodes/tools/knowledge/test cases, center canvas cho agent flow, right inspector cho cấu hình node, bottom panel cho test console và eval results.</p>
+        </div>
+        <div class="card">
+          <h3>Top bar</h3>
+          <p>Hiển thị agent name, draft/version, environment, collaborators online, Share và Submit for Review.</p>
+        </div>
+      </div>
+
+      <h3>Sharing surface</h3>
+      <p>
+        Nút Share trong agent editor cho phép chia sẻ agent với user, group, workspace hoặc guest.
+        Share modal cần hiển thị rõ scope, access level, environment và cảnh báo khi quyền có rủi ro.
+      </p>
+
+      <h3>Review surface</h3>
+      <p>
+        Review queue và review detail cần cho Reviewer thấy summary, diff, risk level, eval results, comments và các actions:
+        Approve, Request changes, Reject. PAL nên tóm tắt risk bằng ngôn ngữ dễ hiểu để người review không phải đọc cấu hình thô.
+      </p>
+
+      <h3>Multiplayer layer</h3>
+      <p>
+        Editor cần hỗ trợ presence, cursor/selection trong prompt, node-level editing state, comments và section lock cho các phần nhạy cảm
+        như system instructions, tool permissions, secrets reference và production settings.
+      </p>
+    </section>
+
+    <section id="roles">
+      <h2>2. Permissions & Roles Model</h2>
+
+      <h3>Role mặc định</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Mục đích</th>
+              <th>Phạm vi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Org Owner</td>
+              <td>Quản lý toàn bộ organization, security policy và quyền cấp cao.</td>
+              <td>Organization</td>
+            </tr>
+            <tr>
+              <td>Workspace Admin</td>
+              <td>Quản lý members, groups, projects và workspace settings.</td>
+              <td>Workspace</td>
+            </tr>
+            <tr>
+              <td>Project Admin</td>
+              <td>Quản lý project và các agents trong project đó.</td>
+              <td>Project</td>
+            </tr>
+            <tr>
+              <td>Agent Owner</td>
+              <td>Sở hữu một agent, quản lý sharing, review policy và version.</td>
+              <td>Agent</td>
+            </tr>
+            <tr>
+              <td>Builder</td>
+              <td>Tạo và chỉnh draft agent, chạy test, submit review.</td>
+              <td>Project hoặc Agent</td>
+            </tr>
+            <tr>
+              <td>Reviewer</td>
+              <td>Review, comment, approve hoặc request changes.</td>
+              <td>Project hoặc Agent</td>
+            </tr>
+            <tr>
+              <td>Operator</td>
+              <td>Deploy, monitor và rollback agent.</td>
+              <td>Environment hoặc Agent</td>
+            </tr>
+            <tr>
+              <td>Viewer</td>
+              <td>Xem agent, docs và status nhưng không chỉnh sửa.</td>
+              <td>Workspace, Project hoặc Agent</td>
+            </tr>
+            <tr>
+              <td>Guest</td>
+              <td>Cộng tác tạm thời từ vendor/client.</td>
+              <td>Agent, có expiry date</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Permission matrix</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Owner</th>
+              <th>Admin</th>
+              <th>Agent Owner</th>
+              <th>Builder</th>
+              <th>Reviewer</th>
+              <th>Operator</th>
+              <th>Viewer</th>
+              <th>Guest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Xem workspace / agent</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="limited">Limited</td>
+            </tr>
+            <tr>
+              <td>Manage members / groups</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td>Share agent</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="approval">Optional</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td>Edit draft agent</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="limited">Optional</td>
+            </tr>
+            <tr>
+              <td>Run sandbox tests</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="limited">Optional</td>
+            </tr>
+            <tr>
+              <td>Change production tool access</td>
+              <td class="yes">Yes</td>
+              <td class="approval">Approval</td>
+              <td class="approval">Approval</td>
+              <td class="approval">Approval</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td>View / edit secrets</td>
+              <td class="yes">Yes</td>
+              <td class="approval">Optional</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td>Submit change for review</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="limited">Optional</td>
+            </tr>
+            <tr>
+              <td>Approve change</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="approval">Optional</td>
+              <td class="no">No</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td>Deploy / rollback production</td>
+              <td class="yes">Yes</td>
+              <td class="approval">Optional</td>
+              <td class="approval">Optional</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Permission rules</h3>
+      <ul>
+        <li><strong>Least privilege:</strong> user mới chỉ có quyền tối thiểu.</li>
+        <li><strong>Scope-based access:</strong> quyền có thể gán ở organization, workspace, project, agent, environment hoặc resource.</li>
+        <li><strong>Environment separation:</strong> quyền edit/test ở sandbox không đồng nghĩa với quyền deploy production.</li>
+        <li><strong>Sensitive changes require approval:</strong> tool production, secrets, guardrails và deploy cần review theo policy.</li>
+        <li><strong>Explainable access:</strong> PAL luôn cho admin biết user có quyền vì role trực tiếp, group hay inheritance.</li>
+      </ul>
+    </section>
+
+    <section id="flows">
+      <h2>3. Key Flows</h2>
+
+      <h3>Flow 1: Share agent với user hoặc team</h3>
+      <div class="flow" aria-label="Share agent flow">
+        <span class="flow-step">Open Agent</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Share</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Select User/Group</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Choose Access</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Confirm</span>
+      </div>
+      <ol>
+        <li>Agent Owner mở agent và bấm Share.</li>
+        <li>Chọn user, group, workspace hoặc guest.</li>
+        <li>Chọn access level: View, Comment, Test, Edit Draft, Review, Operate hoặc Admin.</li>
+        <li>Chọn scope: agent, project hoặc workspace.</li>
+        <li>Nếu là quyền liên quan tới deploy/test, chọn environment tương ứng.</li>
+        <li>Nếu là guest, PAL bắt buộc chọn expiry date và khóa quyền xem secrets/production logs.</li>
+        <li>PAL hiển thị impact summary: người được share sẽ làm được gì, không làm được gì.</li>
+        <li>Owner xác nhận; PAL ghi audit log.</li>
+      </ol>
+
+      <h3>Flow 2: Multiplayer editing trên agent canvas</h3>
+      <div class="flow" aria-label="Multiplayer editing flow">
+        <span class="flow-step">Open Shared Draft</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">See Presence</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Edit Nodes</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Resolve Conflict</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Run Tests</span>
+      </div>
+      <ol>
+        <li>Linh mở Shared Draft và chỉnh node "Refund eligibility".</li>
+        <li>Minh mở cùng agent, thấy avatar Linh trên node đang edit.</li>
+        <li>Minh chỉnh test case ở bottom panel; PAL autosave từng object để tránh ghi đè.</li>
+        <li>Linh chỉnh system instructions; field này bị section lock.</li>
+        <li>Minh muốn sửa cùng field nên chọn Request control.</li>
+        <li>Linh release lock hoặc lock tự hết hạn khi inactive.</li>
+        <li>Cả hai chạy eval suite và xem kết quả chung trong draft.</li>
+      </ol>
+
+      <h3>Flow 3: Submit change for review</h3>
+      <div class="flow" aria-label="Submit review flow">
+        <span class="flow-step">Finish Draft</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Submit Review</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Pre-checks</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Assign Reviewers</span>
+      </div>
+      <ol>
+        <li>Builder hoàn tất draft và bấm Submit for Review.</li>
+        <li>PAL tạo change summary: prompt changes, flow changes, tool changes, knowledge changes.</li>
+        <li>PAL chạy pre-review checks: missing tests, failed evals, sensitive tool changes, knowledge risk.</li>
+        <li>PAL xác định risk level: Low, Medium, High hoặc Critical.</li>
+        <li>PAL đề xuất required reviewers theo policy.</li>
+        <li>Nếu thiếu test hoặc thiếu reviewer bắt buộc, PAL block submit và nêu lý do.</li>
+        <li>Builder submit; reviewers nhận notification.</li>
+      </ol>
+
+      <h3>Flow 4: Review, approve và request changes</h3>
+      <div class="flow" aria-label="Review approval flow">
+        <span class="flow-step">Open Review</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Inspect Diff</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Comment</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Approve / Request Changes</span>
+      </div>
+      <ol>
+        <li>Reviewer mở Review Queue và chọn change request.</li>
+        <li>Xem summary, risk level, changed components, diff và eval results.</li>
+        <li>Comment trực tiếp trên node, prompt section, tool permission hoặc eval result.</li>
+        <li>Reviewer chọn Approve, Request changes hoặc Reject.</li>
+        <li>Nếu Request changes, Builder nhận task và cập nhật draft.</li>
+        <li>Nếu đủ approval theo policy, change request chuyển sang Approved.</li>
+      </ol>
+
+      <h3>Flow 5: Deploy hoặc rollback production</h3>
+      <div class="flow" aria-label="Deploy rollback flow">
+        <span class="flow-step">Approved Change</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Deploy Checklist</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Production</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">Rollback if Needed</span>
+      </div>
+      <ol>
+        <li>Operator mở approved change request và chọn Deploy.</li>
+        <li>PAL kiểm tra approvals, evals, tool credentials, rate limits và rollback version.</li>
+        <li>Operator chọn deploy immediately, schedule deploy hoặc canary rollout.</li>
+        <li>PAL deploy version mới và ghi audit log.</li>
+        <li>Nếu production health xấu đi, Operator chọn Rollback.</li>
+        <li>PAL đề xuất version ổn định gần nhất, yêu cầu lý do rollback và chuyển production về version đó.</li>
+      </ol>
+    </section>
+
+    <footer class="footer">
+      Day 21 · PAL Team Workspace · Product Design, Permissions/Roles, Key Flows
+    </footer>
+  </main>
+</body>
+</html>
