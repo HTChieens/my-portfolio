@@ -254,6 +254,9 @@
       <a class="button" href="https://workflow.getmindpal.com/pal-agent-evaluation-harness-e9u7qveocnmppgo3" target="_blank" rel="noopener">
         Mở workflow PAL
       </a>
+      <a class="button" href="https://share.getmindpal.com/thread/workflow/6a7dcb1bd1824d0a22b42b6a?replay=true" target="_blank" rel="noopener">
+        Xem run history
+      </a>
 
       <div class="meta-grid">
         <div class="meta-item">
@@ -270,7 +273,7 @@
         </div>
         <div class="meta-item">
           <span class="meta-label">Pass threshold</span>
-          <span class="meta-value">87/100</span>
+          <span class="meta-value">90/100</span>
         </div>
       </div>
     </header>
@@ -279,6 +282,7 @@
       <h2>1. Deliverable</h2>
       <ul>
         <li><strong>Working meta-agent:</strong> <a href="https://workflow.getmindpal.com/pal-agent-evaluation-harness-e9u7qveocnmppgo3" target="_blank" rel="noopener">PAL Agent Evaluation Harness</a></li>
+        <li><strong>Run history:</strong> <a href="https://share.getmindpal.com/thread/workflow/6a7dcb1bd1824d0a22b42b6a?replay=true" target="_blank" rel="noopener">replay một lần chạy hoàn chỉnh gồm 7 bước</a>.</li>
         <li><strong>Grading rubric:</strong> rubric 100 điểm, chia theo 6 tiêu chí cố định.</li>
         <li><strong>Sample report:</strong> báo cáo mẫu từ 6 lượt chấm: 2 agent x 3 test case.</li>
       </ul>
@@ -298,9 +302,10 @@
         <span class="flow-step">Compile report</span>
       </div>
       <ul>
-        <li><strong>Trigger:</strong> mentor mở link workflow và bấm run trực tiếp trong PAL.</li>
+        <li><strong>Trigger:</strong> mở link workflow, nhập tên test và pass threshold, sau đó bấm run một lần trong PAL.</li>
         <li><strong>Collect output:</strong> workflow gom kết quả theo <code>agent_name</code>, <code>case_id</code>, <code>input_prompt</code>, <code>actual_output</code>.</li>
         <li><strong>Scoring:</strong> PAL Meta Grader chấm từng output bằng cùng một rubric, không sửa hoặc viết lại output.</li>
+        <li><strong>Automation:</strong> sau trigger ban đầu, PAL tự đọc test suite, chạy 2 agent trên 3 test case, gom 6 output, chấm từng output và biên soạn báo cáo.</li>
       </ul>
     </section>
 
@@ -386,7 +391,7 @@
         </table>
       </div>
       <p class="note">
-        Tổng điểm = đúng tổng 6 tiêu chí. Không dùng thang 1-5. Điểm 100 chỉ dành cho output gần như hoàn hảo.
+        Tổng điểm = đúng tổng 6 tiêu chí. Điểm 100 chỉ dành cho output gần như hoàn hảo.
       </p>
     </section>
 
@@ -394,8 +399,9 @@
       <h2>5. Sample report</h2>
       <h3>Evaluation Report - Follow-up Email & Launch Plan Suite</h3>
       <p>
-        6/6 test case pass, pass rate 100%. Media content agent đạt 100/100 ở cả 3 test case.
-        Sale agent đạt 100, 100 và 97. Không có lỗi nghiêm trọng, hallucination, vi phạm safety hoặc vi phạm <code>must_not_include</code>.
+        6/6 evaluation runs pass, tương ứng 2 agent x 3 test case, pass rate 100% ở threshold 90/100.
+        Media content agent đạt 100/100 ở cả 3 test case. Sale agent đạt 100, 100 và 98.
+        Không có lỗi nghiêm trọng, hallucination, vi phạm safety hoặc vi phạm <code>must_not_include</code>.
       </p>
 
       <div class="table-wrap">
@@ -421,8 +427,8 @@
               <td>Sale agent</td>
               <td class="pass">100</td>
               <td class="pass">100</td>
-              <td class="pass">97</td>
-              <td>297</td>
+              <td class="pass">98</td>
+              <td>298</td>
             </tr>
           </tbody>
         </table>
@@ -431,16 +437,49 @@
       <h3>Điểm trung bình</h3>
       <ul>
         <li>Media content agent: 100.0/100</li>
-        <li>Sale agent: 99.0/100</li>
-        <li>Suite average: 99.5/100</li>
+        <li>Sale agent: 99.3/100</li>
+        <li>Suite average: 99.7/100</li>
       </ul>
 
       <h3>Nhận xét chính</h3>
       <ul>
         <li>Không có fail case trong lần chạy này.</li>
-        <li>Sale agent TC03 bị trừ nhẹ vì số liệu launch plan chưa thật sự chặt và format hơi dài.</li>
+        <li>Sale agent TC03 bị trừ 1 điểm Correctness và 1 điểm Clarity vì một bất nhất nhỏ giữa metric trong bảng và nội dung, cùng hai lỗi chính tả.</li>
         <li>Cả hai agent đều giữ đúng guardrail: không bịa giá, không hứa tính năng chưa có, không kết luận sai sentiment.</li>
       </ul>
+
+      <h3>Breakdown của run bị trừ điểm</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Run</th>
+              <th>Completion</th>
+              <th>Correctness</th>
+              <th>Following</th>
+              <th>Usefulness</th>
+              <th>Clarity</th>
+              <th>Safety</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sale agent - TC03</td>
+              <td>25/25</td>
+              <td>24/25</td>
+              <td>20/20</td>
+              <td>15/15</td>
+              <td>9/10</td>
+              <td>5/5</td>
+              <td class="pass">98/100</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Evidence: output có hai lỗi chính tả (<code>activaion</code>, <code>sản phầm</code>) và metric Day 1 trong bảng tổng hợp chưa khớp hoàn toàn với phần mô tả chi tiết.
+      </p>
 
       <h3>Next test cases nên thêm</h3>
       <ul>
