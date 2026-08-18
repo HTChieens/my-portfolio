@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 26 - Design Thinking Challenge</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <a class="back-link" href="../../index.html">← Back to portfolio</a>
+
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Day 26 Prototype</p>
+        <h1>Design Thinking Challenge</h1>
+        <p class="intro">Một prototype tương tác giúp người mới học Design Thinking thực hành qua quyết định, sai thử, feedback và cải thiện.</p>
+      </div>
+      <div class="status-pill" id="status-pill">Start</div>
+    </header>
+
+    <section class="brief-grid" aria-label="Product brief">
+      <article class="brief">
+        <strong>1. Problem — Sản phẩm giải quyết vấn đề gì?</strong>
+        <p>Người mới học Design Thinking không biết bắt đầu từ đâu và khó hiểu cách áp dụng 5 bước vào một vấn đề thực tế.</p>
+      </article>
+      <article class="brief">
+        <strong>2. User Flow — User sẽ sử dụng sản phẩm thế nào?</strong>
+        <div class="flow-line">
+          <span>Start</span>
+          <span>Chọn problem</span>
+          <span>Empathize</span>
+          <span>Define</span>
+          <span>Ideate</span>
+          <span>Prototype</span>
+          <span>Test</span>
+          <span>Improve</span>
+          <span>Xem kết quả</span>
+        </div>
+      </article>
+    </section>
+
+    <main class="challenge-shell">
+      <aside class="progress-panel" aria-label="Design Thinking progress">
+        <p class="progress-title">Journey</p>
+        <ol class="step-list" id="step-list">
+          <li class="step-item is-active" data-step="start"><span>1</span><b>Start</b></li>
+          <li class="step-item" data-step="empathize"><span>2</span><b>Empathize</b></li>
+          <li class="step-item" data-step="define"><span>3</span><b>Define</b></li>
+          <li class="step-item" data-step="ideate"><span>4</span><b>Ideate</b></li>
+          <li class="step-item" data-step="prototype"><span>5</span><b>Prototype</b></li>
+          <li class="step-item" data-step="test"><span>6</span><b>Test</b></li>
+          <li class="step-item" data-step="improve"><span>7</span><b>Improve</b></li>
+          <li class="step-item" data-step="reflection"><span>8</span><b>Reflection</b></li>
+        </ol>
+      </aside>
+
+      <div class="workspace">
+        <section class="screen is-active" data-screen="start">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Start</p>
+              <h2>Chọn một challenge thực tế</h2>
+              <p>Bạn là Product Designer của một trường đại học. Hãy chọn vấn đề để bắt đầu luyện Design Thinking.</p>
+            </div>
+            <span class="step-badge">Chọn problem</span>
+          </div>
+
+          <div class="start-layout">
+            <div>
+              <div class="problem-grid" id="problem-grid" aria-label="Problem choices"></div>
+
+              <div class="scenario-panel selected-problem" id="selected-problem-panel">
+                <h3 id="selected-problem-title">Sinh viên bỏ bữa sáng</h3>
+                <p id="selected-problem-description">Sinh viên thường bỏ bữa sáng trước khi đi học.</p>
+                <div class="mission">
+                  <strong>Nhiệm vụ của bạn:</strong>
+                  <p id="selected-problem-mission">Thiết kế một giải pháp giúp sinh viên ăn sáng thuận tiện hơn.</p>
+                </div>
+              </div>
+
+              <div class="action-row">
+                <button class="btn primary" type="button" data-go="empathize">Bắt đầu thử thách →</button>
+              </div>
+            </div>
+
+            <div class="breakfast-visual" aria-label="Challenge snapshot">
+              <div class="visual-card">
+                <strong id="visual-stat-one">7:15</strong>
+                <span id="visual-caption-one">Thức dậy muộn, còn 45 phút đến tiết đầu.</span>
+              </div>
+              <div class="visual-row">
+                <div class="visual-card">
+                  <strong id="visual-stat-two">8:00</strong>
+                  <span id="visual-caption-two">Vào lớp.</span>
+                </div>
+                <div class="visual-card">
+                  <strong id="visual-stat-three">30k</strong>
+                  <span id="visual-caption-three">Ngân sách mỗi sáng.</span>
+                </div>
+              </div>
+              <div class="visual-card">
+                <strong>Insight cần tìm</strong>
+                <span id="visual-insight-question">Điều gì thật sự khiến sinh viên bỏ bữa?</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="empathize">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Empathize</p>
+              <h2>Gặp người dùng trước khi nghĩ giải pháp</h2>
+              <p>Chọn điều muốn tìm hiểu, phỏng vấn user, rồi viết lại insight bằng lời của bạn.</p>
+            </div>
+            <span class="step-badge">Understand users</span>
+          </div>
+
+          <div class="user-grid" id="user-grid"></div>
+
+          <div class="question-panel">
+            <h3>Điều gì bạn muốn tìm hiểu thêm?</h3>
+            <div class="checkbox-list" id="research-list"></div>
+          </div>
+
+          <div class="interview-panel" id="interview-panel" aria-live="polite">
+            <h3 id="interview-title">Phỏng vấn user</h3>
+            <div class="dialogue" id="interview-dialogue"></div>
+          </div>
+
+          <div class="insight-panel">
+            <label class="field-group" for="insight-input">
+              <span>Insight bạn học được</span>
+              <textarea id="insight-input" placeholder="Ví dụ: Lan bỏ bữa không phải vì không thích ăn sáng, mà vì sợ bị muộn học."></textarea>
+            </label>
+            <div class="action-row">
+              <button class="btn primary" type="button" id="check-insight">Kiểm tra insight</button>
+            </div>
+            <div class="insight-result" id="insight-result" aria-live="polite"></div>
+          </div>
+
+          <div class="learning-note" id="empathize-complete" aria-live="polite">
+            <h3>💡 Bạn vừa hoàn thành Empathize</h3>
+            <p>Design Thinking không bắt đầu bằng:</p>
+            <p><strong>❌ "Tôi nghĩ chúng ta nên làm app."</strong></p>
+            <p>Mà bắt đầu bằng:</p>
+            <p><strong>✅ "Tôi cần hiểu người dùng đang gặp vấn đề gì."</strong></p>
+            <div class="action-row">
+              <button class="btn primary" type="button" data-go="define">Tiếp tục Define →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="define">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Define</p>
+              <h2>Viết problem statement</h2>
+              <p>Định nghĩa đúng vấn đề trước khi chuyển sang giải pháp.</p>
+            </div>
+            <span class="step-badge">Frame the problem</span>
+          </div>
+
+          <div class="template-box">"Sinh viên ______ cần ______ bởi vì ______."</div>
+          <p class="example" id="define-example"><strong>Ví dụ:</strong> Sinh viên có lịch học buổi sáng cần một cách ăn sáng nhanh bởi vì họ không có nhiều thời gian trước giờ học.</p>
+
+          <label class="field-group" for="problem-statement">
+            <span>Problem Statement của bạn</span>
+            <textarea id="problem-statement" placeholder="Sinh viên ... cần ... bởi vì ..."></textarea>
+          </label>
+
+          <div class="action-row">
+            <button class="btn primary" type="button" id="evaluate-statement">Đánh giá statement</button>
+            <button class="btn ghost" type="button" id="fill-good-statement">Dùng ví dụ tốt</button>
+            <button class="btn ghost" type="button" id="fill-solution-statement">Thử lỗi solution</button>
+          </div>
+
+          <div class="define-result" id="define-result" aria-live="polite">
+            <h3>Problem Statement của bạn</h3>
+            <div class="criteria">
+              <div>User: Chưa đánh giá</div>
+              <div>Need: Chưa đánh giá</div>
+              <div>Reason: Chưa đánh giá</div>
+              <div>Problem-not-solution: Chưa đánh giá</div>
+            </div>
+            <p>Nhấn đánh giá để xem statement đang là problem hay solution.</p>
+          </div>
+
+          <div class="action-row">
+            <button class="btn primary" type="button" id="to-ideate" data-go="ideate" disabled>Tiếp tục Ideate →</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="ideate">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Ideate</p>
+              <h2>Nghĩ càng nhiều giải pháp càng tốt</h2>
+              <p>Bạn có 2 phút để mở rộng lựa chọn. Prototype cố tình chưa cho chọn ý tưởng đầu tiên.</p>
+            </div>
+            <span class="step-badge">Go wide</span>
+          </div>
+
+          <div class="counter-row">
+            <span class="counter" id="idea-counter">Ideas: 0</span>
+            <span class="counter timer" id="idea-timer">02:00</span>
+            <span class="challenge-alert" id="idea-challenge">🔥 Challenge: Hãy nghĩ ra 10 ý tưởng trước khi chọn một ý tưởng.</span>
+          </div>
+
+          <div class="action-row timer-row">
+            <button class="btn ghost" type="button" id="start-timer">Bắt đầu 2 phút</button>
+            <button class="btn ghost" type="button" id="reset-timer">Reset timer</button>
+          </div>
+
+          <div class="idea-entry">
+            <label class="field-group" for="idea-input">
+              <span>Nhập ý tưởng</span>
+              <input id="idea-input" type="text" placeholder="Ví dụ: Đặt trước breakfast box">
+            </label>
+            <button class="btn primary" type="button" id="add-idea">Thêm ý tưởng</button>
+          </div>
+
+          <div class="idea-category-grid" id="idea-suggestions" aria-label="Idea suggestions"></div>
+          <div class="idea-grid" id="idea-list" aria-live="polite"></div>
+
+          <div class="action-row">
+            <button class="btn primary" type="button" id="to-prototype" data-go="prototype" disabled>Tiếp tục Prototype →</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="prototype">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Prototype</p>
+              <h2>Biến ý tưởng thành bản nháp có thể thử</h2>
+              <p>Điền canvas đơn giản. Preview bên phải sẽ đổi theo dữ liệu bạn nhập.</p>
+            </div>
+            <span class="step-badge">Make it tangible</span>
+          </div>
+
+          <div class="prototype-layout">
+            <form class="prototype-form" id="prototype-form">
+              <label class="field-group" for="solution-name">
+                <span>Tên giải pháp</span>
+                <input id="solution-name" type="text" value="Đặt trước breakfast box">
+              </label>
+              <label class="field-group" for="solution-user">
+                <span>User</span>
+                <input id="solution-user" type="text" value="Sinh viên có lịch học buổi sáng">
+              </label>
+              <label class="field-group" for="solution-how">
+                <span>Cách hoạt động</span>
+                <textarea id="solution-how">Sinh viên chọn món trước giờ học, thanh toán nhanh và nhận breakfast box tại điểm lấy đồ gần lớp.</textarea>
+              </label>
+              <div class="detail-grid">
+                <label class="field-group" for="solution-location">
+                  <span>Địa điểm / kênh nhận</span>
+                  <input id="solution-location" type="text" value="Điểm nhận gần lớp">
+                </label>
+                <label class="field-group" for="solution-time">
+                  <span>Thời gian</span>
+                  <input id="solution-time" type="text" value="7:30">
+                </label>
+                <label class="field-group" for="solution-price">
+                  <span>Chi phí / ràng buộc</span>
+                  <input id="solution-price" type="text" value="Khoảng 30k">
+                </label>
+              </div>
+              <div class="field-group">
+                <span>3 màn hình chính</span>
+                <div class="screen-list">
+                  <input id="screen-one" type="text" value="Chọn món">
+                  <input id="screen-two" type="text" value="Chọn giờ nhận">
+                  <input id="screen-three" type="text" value="Xác nhận điểm nhận">
+                </div>
+              </div>
+              <div class="action-row">
+                <button class="btn primary" type="button" id="save-prototype">Lưu prototype</button>
+              </div>
+            </form>
+
+            <div class="mockup-panel">
+              <h3 id="mockup-heading">BREAKFAST BOX</h3>
+              <div class="mock-device" aria-label="Prototype preview">
+                <p class="mock-title" id="mock-title">BREAKFAST BOX</p>
+                <div class="mock-meta"><strong>User:</strong><span id="mock-user">Sinh viên có lịch học buổi sáng</span></div>
+                <div class="mock-meta"><strong>Cách hoạt động:</strong><span id="mock-how">Sinh viên chọn món trước giờ học, thanh toán nhanh và nhận breakfast box tại điểm lấy đồ gần lớp.</span></div>
+                <div class="mock-time" id="mock-time">Nhận lúc: 7:30</div>
+                <div class="mock-meta"><strong>Địa điểm:</strong><span id="mock-location">Điểm nhận gần lớp</span></div>
+                <div class="mock-meta"><strong>Chi phí:</strong><span id="mock-price">Khoảng 30k</span></div>
+                <strong>3 màn hình chính:</strong>
+                <div class="mock-screen-list" id="mock-screen-list"></div>
+                <div class="mock-button">THỬ VỚI USER</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn primary" type="button" id="to-test" data-go="test" disabled>Đưa prototype đi Test →</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="test">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Test</p>
+              <h2>Đưa prototype cho user giả lập</h2>
+              <p>Feedback sẽ thay đổi theo prototype bạn nhập. Mục tiêu là học, không phải bảo vệ ý tưởng.</p>
+            </div>
+            <span class="step-badge">Learn fast</span>
+          </div>
+
+          <div class="test-layout">
+            <div class="feedback-panel">
+              <h3 id="test-user-title">User đang thử sản phẩm của bạn</h3>
+              <p id="lan-feedback">"Ý tưởng khá tiện, nhưng tôi vẫn thấy vài điểm chưa rõ."</p>
+              <div class="feedback-list" id="feedback-list"></div>
+            </div>
+
+            <div>
+              <h3>Bạn sẽ làm gì tiếp theo?</h3>
+              <div class="option-grid">
+                <label><input type="radio" name="test-choice" value="A">A. Bỏ ý tưởng này</label>
+                <label><input type="radio" name="test-choice" value="B">B. Cải thiện prototype</label>
+                <label><input type="radio" name="test-choice" value="C">C. Làm thêm tính năng mới</label>
+                <label><input type="radio" name="test-choice" value="D">D. Giữ nguyên</label>
+              </div>
+              <div class="test-result" id="test-result" aria-live="polite"></div>
+              <div class="action-row">
+                <button class="btn primary" type="button" id="to-improve" data-go="improve" disabled>Đi tới Improve →</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="improve">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Improve</p>
+              <h2>Cải thiện prototype rồi test lại</h2>
+              <p>Chọn cách sửa dựa trên feedback. Đây là vòng lặp quan trọng nhất của Design Thinking.</p>
+            </div>
+            <span class="step-badge">Test → Improve → Test again</span>
+          </div>
+
+          <div class="improve-layout">
+            <div class="feedback-panel">
+              <h3>Feedback cần xử lý</h3>
+              <div class="feedback-list" id="improve-feedback-list"></div>
+            </div>
+
+            <div class="improve-panel">
+              <h3>Bạn sẽ cải thiện gì?</h3>
+              <div class="checkbox-list improve-options">
+                <label><input type="checkbox" name="improve-choice" value="location">Làm rõ địa điểm nhận</label>
+                <label><input type="checkbox" name="improve-choice" value="time">Làm rõ thời gian nhận</label>
+                <label><input type="checkbox" name="improve-choice" value="price">Thêm giá / ngân sách</label>
+                <label><input type="checkbox" name="improve-choice" value="screens">Đơn giản hóa màn hình chính</label>
+              </div>
+              <label class="field-group" for="improve-plan">
+                <span>Kế hoạch cải thiện của bạn</span>
+                <textarea id="improve-plan" placeholder="Ví dụ: Thêm điểm nhận cụ thể ở sảnh tòa A và hiển thị khung giờ 7:25-7:45."></textarea>
+              </label>
+              <div class="action-row">
+                <button class="btn primary" type="button" id="apply-improvements">Áp dụng cải thiện & test lại</button>
+              </div>
+              <div class="test-result" id="improve-result" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn primary" type="button" id="to-reflection" data-go="reflection" disabled>Xem Reflection →</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="reflection">
+          <div class="screen-header">
+            <div>
+              <p class="screen-kicker">Reflection</p>
+              <h2>What did you learn?</h2>
+              <p>Phần này tổng kết dựa trên lựa chọn và sai-sửa của bạn trong prototype.</p>
+            </div>
+            <span class="step-badge">Xem kết quả</span>
+          </div>
+
+          <div class="reflection-summary" id="reflection-summary"></div>
+
+          <div class="journey" aria-label="Design Thinking journey">
+            <div class="journey-title">DESIGN THINKING</div>
+            <div class="journey-step"><span>EMPATHIZE</span><b>✓</b></div>
+            <div class="journey-arrow">↓</div>
+            <div class="journey-step"><span>DEFINE</span><b>✓</b></div>
+            <div class="journey-arrow">↓</div>
+            <div class="journey-step"><span>IDEATE</span><b>✓</b></div>
+            <div class="journey-arrow">↓</div>
+            <div class="journey-step"><span>PROTOTYPE</span><b>✓</b></div>
+            <div class="journey-arrow">↓</div>
+            <div class="journey-step"><span>TEST</span><b>✓</b></div>
+            <div class="journey-arrow">↓</div>
+            <div class="journey-step"><span>IMPROVE</span><b>✓</b></div>
+          </div>
+
+          <div class="reflection-grid">
+            <article><strong>1. Bạn bắt đầu bằng cái gì?</strong><p>User needs, không phải ý tưởng đầu tiên.</p></article>
+            <article><strong>2. Tại sao không nên bắt đầu bằng solution?</strong><p>Vì có thể đang giải quyết sai vấn đề hoặc bỏ qua pain point thật.</p></article>
+            <article><strong>3. Prototype dùng để làm gì?</strong><p>Học hỏi và kiểm chứng ý tưởng nhanh bằng feedback cụ thể.</p></article>
+            <article><strong>4. Sau Test thì sao?</strong><p>Cải thiện và lặp lại: Test → Improve → Test again.</p></article>
+          </div>
+
+          <div class="action-row">
+            <button class="btn primary" type="button" id="restart-challenge">Làm lại thử thách</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
